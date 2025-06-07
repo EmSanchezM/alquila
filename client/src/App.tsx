@@ -44,14 +44,6 @@ function App() {
         >
           Call API
         </Button>
-        <Button
-          variant='secondary'
-          asChild
-        >
-          <a target='_blank' href="https://bhvr.dev">
-          Docs
-          </a>
-        </Button>
       </div>
         {data && (
           <pre className="bg-gray-100 p-4 rounded-md">
