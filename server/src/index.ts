@@ -23,7 +23,7 @@ export const app = new Hono()
 	return c.json(data, { status: 200 });
 })
 
-.get("/test-db", async (c) => {
+.get("/test", async (c) => {
 	try {
 		// Try to insert a test record
 		const result = await db.insert(testTable).values({
