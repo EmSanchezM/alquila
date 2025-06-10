@@ -29,8 +29,10 @@
     "monorepo"
   ],
   "devDependencies": {
+    "@types/pg": "^8.15.4",
     "bun-types": "latest",
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "tsx": "^4.19.4"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

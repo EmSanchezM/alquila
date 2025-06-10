@@ -2,23 +2,27 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import type { ApiResponse } from "shared/dist";
 import { hc } from "hono/client";
-import { db } from "./db";
-import { testTable } from "./db/schema";
+import { db } from "./database";
+import { users } from "./database/schema";
 
 export const app = new Hono()
-
-.use(cors())
+.use(cors({
+	origin: ['*'],
+	credentials: true,
+	allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+	maxAge: 600,
+}))
 
 .get("/", (c) => {
 	return c.text("Hello Hono!");
 })
 
 .get("/hello", async (c) => {
-	
-	const data: ApiResponse = {
-		message: "Hello BHVR!",
-		success: true,
-	};
+    const data: ApiResponse = {
+        message: "Hello world!",
+        success: true,
+    };
 
 	return c.json(data, { status: 200 });
 })
@@ -26,9 +30,23 @@ export const app = new Hono()
 .get("/test", async (c) => {
 	try {
 		// Try to insert a test record
-		const result = await db.insert(testTable).values({
-			name: "Test Connection",
-		}).returning();
+		const result = await db.insert(users).values([
+			{
+				id: "1",
+				email: "test@example.com",
+				password: "password",
+				firstName: "Test",
+				lastName: "User",
+				phone_number: "1234567890",
+				subscriptionPlan: "basic",
+				subscriptionStatus: "active",
+				subscriptionStartDate: new Date(),
+				subscriptionEndDate: new Date(),
+				maxProperties: 3,
+				createdAt: new Date(),
+				updatedAt: new Date()
+			}
+		]).returning();
 
 		return c.json({
 			success: true,
