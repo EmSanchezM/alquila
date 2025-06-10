@@ -6,13 +6,7 @@ import { db } from "./database";
 import { users } from "./database/schema";
 
 export const app = new Hono()
-.use(cors({
-	origin: ['*'],
-	credentials: true,
-	allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-	allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
-	maxAge: 600,
-}))
+.use(cors())
 
 .get("/", (c) => {
 	return c.text("Hello Hono!");
@@ -29,7 +23,6 @@ export const app = new Hono()
 
 .get("/test", async (c) => {
 	try {
-		// Try to insert a test record
 		const result = await db.insert(users).values([
 			{
 				id: "1",
