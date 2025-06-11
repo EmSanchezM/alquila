@@ -1,5 +1,6 @@
 import { pgTable, varchar, text, timestamp, boolean, decimal, integer, json, date } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 // Tabla de usuarios/propietarios
 export const users = pgTable('users', {
@@ -47,7 +48,7 @@ export const renters = pgTable('renters', {
   firstName: varchar('first_name', { length: 100 }).notNull(),
   lastName: varchar('last_name', { length: 100 }).notNull(),
   email: varchar('email', { length: 255 }),
-  phone: varchar('phone', { length: 20 }),
+  phoneNumber: varchar('phone_number', { length: 20 }),
   dniNumber: varchar('dni_number', { length: 50 }), // Cédula, DNI, etc.
   emergencyContact: json('emergency_contact'), // {name, phone, relationship}
   verificationStatus: varchar('verification_status', { length: 20 }).default('pending'), // pending, verified, rejected
@@ -287,3 +288,8 @@ export const communicationsRelations = relations(communications, ({ one }) => ({
 export const communicationTemplatesRelations = relations(communicationTemplates, ({ one }) => ({
   user: one(users, { fields: [communicationTemplates.userId], references: [users.id] })
 }));
+
+export const selectPropertiesSchema =  createSelectSchema(properties);
+export const insertPropertiesSchema = createInsertSchema(properties);
+
+export type Property = typeof properties.$inferSelect;
