@@ -7,7 +7,7 @@ import propertyRouter from "./modules/properties/presentation/routes";
 const app = new Hono()
 app.use(cors())
 
-app.route("api/properties", propertyRouter);
+app.route("/api/properties", propertyRouter);
 
 const client = hc<typeof app>("");
 export type Client = typeof client;
