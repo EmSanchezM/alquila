@@ -8,6 +8,7 @@
     "dev": "bun --watch run src/index.ts & tsc --watch"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.0",
     "drizzle-zod": "^0.8.2",
     "hono": "^4.7.7",
     "shared": "workspace:*",
