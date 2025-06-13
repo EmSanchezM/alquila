@@ -5,10 +5,9 @@ import { properties, type Property } from "@server/database/schema";
 import { eq } from "drizzle-orm";
 
 export class DrizzlePropertiesRepository implements PropertiesRepository {
-  async create(property: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>): Promise<Property | null> {
+  async create(property: Omit<Property, 'createdAt' | 'updatedAt'>): Promise<Property | null> {
     const [newProperty] = await db.insert(properties).values({
       ...property,
-      id: '1',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
