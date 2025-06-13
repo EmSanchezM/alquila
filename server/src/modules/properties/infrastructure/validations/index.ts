@@ -18,7 +18,7 @@ export const createPropertySchema = z.object({
   description: z.string(),
   amenities: amenitiesSchema,
   images: imagesSchema,
-  isActive: z.boolean(),
+  isActive: z.boolean().default(true),
 });
 
 export const findAllPropertiesSchema = z.object({
