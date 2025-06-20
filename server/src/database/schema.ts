@@ -292,4 +292,9 @@ export const communicationTemplatesRelations = relations(communicationTemplates,
 export const selectPropertiesSchema =  createSelectSchema(properties);
 export const insertPropertiesSchema = createInsertSchema(properties);
 
+export const selectRentersSchema =  createSelectSchema(renters);
+export const insertRentersSchema = createInsertSchema(renters);
+
 export type Property = typeof properties.$inferSelect;
+export type Renter = typeof renters.$inferSelect;
+

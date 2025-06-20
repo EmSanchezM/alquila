@@ -1,18 +1,20 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { hc } from "hono/client";
+import app from "@server/app";
 
-import propertyRouter from "./modules/properties/presentation/routes";
+import { z } from "zod";
 
-const app = new Hono()
-app.use(cors())
+const ServeEnv = z.object({
+  PORT: z
+    .string()
+    .regex(/^\d+$/, "Port must be a numeric string")
+    .default("3000")
+    .transform(Number),
+});
+const ProcessEnv = ServeEnv.parse(process.env);
 
-app.route("/api/properties", propertyRouter);
+const server = Bun.serve({
+  port: ProcessEnv.PORT,
+  hostname: "0.0.0.0",
+  fetch: app.fetch,
+});
 
-const client = hc<typeof app>("");
-export type Client = typeof client;
-
-export const hcWithType = (...args: Parameters<typeof hc>): Client =>
-hc<typeof app>(...args);
-
-export default app;
+console.log("server running", server.port);
