@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-export const amenitiesSchema = z.array(z.string()).optional();
-export const imagesSchema = z.array(z.string()).optional();
-
 export const creatRenterSchema = z.object({
   userId: z.string(),
   firstName: z.string(),
