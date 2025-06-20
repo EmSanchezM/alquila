@@ -14,8 +14,8 @@ const apiRoutes = app.basePath("/api")
     .route("/renters", renterRouter)
     .route("/leases", leaseRouter);
 
-app.get("*", serveStatic({ root: "./frontend/dist" }))
-app.get("*", serveStatic({ path: "./frontend/dist/index.html" }))
+app.get("*", serveStatic({ root: "./client/dist" }))
+app.get("*", serveStatic({ path: "./client/dist/index.html" }))
 
 export default app;
 export type ApiRoutes = typeof apiRoutes
