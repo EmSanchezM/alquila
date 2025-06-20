@@ -295,6 +295,10 @@ export const insertPropertiesSchema = createInsertSchema(properties);
 export const selectRentersSchema =  createSelectSchema(renters);
 export const insertRentersSchema = createInsertSchema(renters);
 
+export const selectLeasesSchema =  createSelectSchema(leases);
+export const insertLeasesSchema = createInsertSchema(leases);
+
 export type Property = typeof properties.$inferSelect;
 export type Renter = typeof renters.$inferSelect;
+export type Lease = typeof leases.$inferSelect;
 
