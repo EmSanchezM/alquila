@@ -12,5 +12,13 @@ export default defineConfig({
       "@shared": path.resolve(__dirname, "../shared/src"),
       "@": path.resolve(__dirname, "./src")
     }
-  }
+  },
+  server: {
+    proxy: {
+      "/api": {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
+      }
+    }
+  },
 })
