@@ -5,6 +5,6 @@ export class FindAllPropertiesUseCase {
   constructor(private readonly repository: PropertiesRepository) {}
 
   async execute(): Promise<Omit<Property[], 'updatedAt'>> {
-    return await this.repository.findAll();;
+    return await this.repository.findAll();
   }
 }
