@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const creatExpenseSchema = z.object({
+export const createExpenseSchema = z.object({
   propertyId: z.string(),
   userId: z.string(),
   category: z.string({ required_error: "category is required" }),
@@ -46,7 +46,7 @@ export const updateExpensesSchema = z.object({
   }),
 });
 
-export type CreateExpense = z.infer<typeof creatExpenseSchema>;
+export type CreateExpense = z.infer<typeof createExpenseSchema>;
 export type UpdateExpense = z.infer<typeof updateExpensesSchema>;
 export type FindAllExpenses = z.infer<typeof findAllExpensesSchema>;
 export type FindByIdExpenses = z.infer<typeof findByIdExpensesSchema>;

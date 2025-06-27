@@ -9,7 +9,7 @@ import {
 } from "@server/modules/expenses/application/use-cases";
 
 import { zValidator } from "@server/shared/validator-wrapper";
-import { creatExpenseSchema, findByIdExpensesSchema, updateExpensesSchema } from "@server/modules/expenses/infrastructure/validations";
+import { createExpenseSchema, findByIdExpensesSchema, updateExpensesSchema } from "@server/modules/expenses/infrastructure/validations";
 
 const expenseRouter = new Hono();
 const expenseRepository = new DrizzleExpensesRepository();
@@ -47,7 +47,7 @@ expenseRouter
       }, 400)
     }
   })
-  .post("/",  zValidator('json', creatExpenseSchema), async (c) => {
+  .post("/",  zValidator('json', createExpenseSchema), async (c) => {
     try {
       const body = await c.req.json();
 
