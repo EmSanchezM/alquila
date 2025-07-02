@@ -15,6 +15,7 @@ export const users = pgTable('users', {
   subscriptionStartDate: timestamp('subscription_start_date').defaultNow(),
   subscriptionEndDate: timestamp('subscription_end_date'),
   maxProperties: integer('max_properties').notNull().default(3),
+  isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -53,6 +54,7 @@ export const renters = pgTable('renters', {
   emergencyContact: json('emergency_contact'), // {name, phone, relationship}
   verificationStatus: varchar('verification_status', { length: 20 }).default('pending'), // pending, verified, rejected
   notes: text('notes'),
+  isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -73,6 +75,7 @@ export const leases = pgTable('leases', {
   contractFile: varchar('contract_file', { length: 500 }), // URL del contrato
   terms: text('terms'), // Términos específicos del contrato
   autoRenew: boolean('auto_renew').default(false),
+  isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -105,6 +108,7 @@ export const paymentReminders = pgTable('payment_reminders', {
   status: varchar('status', { length: 20 }).notNull().default('pending'), // pending, sent, failed
   message: text('message'),
   sentAt: timestamp('sent_at'),
+  isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
@@ -122,6 +126,7 @@ export const expenses = pgTable('expenses', {
   isRecurring: boolean('is_recurring').default(false),
   recurringFrequency: varchar('recurring_frequency', { length: 20 }), // monthly, yearly
   notes: text('notes'),
+  isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -145,6 +150,7 @@ export const maintenanceRequests = pgTable('maintenance_requests', {
   actualCost: decimal('actual_cost', { precision: 10, scale: 2 }),
   photos: json('photos'), // Array de URLs de fotos
   notes: text('notes'),
+  isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -178,6 +184,7 @@ export const documents = pgTable('documents', {
   expirationDate: date('expiration_date'), // Para documentos que vencen
   isImportant: boolean('is_important').default(false),
   tags: json('tags'), // Array de tags para categorización
+  isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });

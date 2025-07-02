@@ -17,7 +17,7 @@ export class DrizzlePropertiesRepository implements PropertiesRepository {
     return newProperty;
   }
   async findAll(): Promise<Property[]> {
-    return await db.select().from(properties);
+    return await db.select().from(properties).where(eq(properties.isActive, true));
   }
   
   async findById(id: string): Promise<Property | null> {
@@ -43,6 +43,11 @@ export class DrizzlePropertiesRepository implements PropertiesRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await db.delete(properties).where(eq(properties.id, id));
+    await db.update(properties)
+      .set({
+        isActive: false,
+        updatedAt: new Date(),
+      })
+      .where(eq(properties.id, id));
   }
 }

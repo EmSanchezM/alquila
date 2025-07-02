@@ -17,7 +17,7 @@ export class DrizzleLeasesRepository implements LeasesRepository {
     return newLease;
   }
   async findAll(): Promise<Lease[]> {
-    return await db.select().from(leases);
+    return await db.select().from(leases).where(eq(leases.isActive, true));
   }
   
   async findById(id: string): Promise<Lease | null> {
@@ -43,6 +43,11 @@ export class DrizzleLeasesRepository implements LeasesRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await db.delete(leases).where(eq(leases.id, id));
+    await db.update(leases)
+      .set({
+        isActive: false,
+        updatedAt: new Date(),
+      })
+      .where(eq(leases.id, id));
   }
 }

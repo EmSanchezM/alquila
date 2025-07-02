@@ -17,7 +17,7 @@ export class DrizzleMaintenanceRequestRepository implements MaintenanceRequestRe
     return newMaintenanceRequest;
   }
   async findAll(): Promise<MaintenanceRequest[]> {
-    return await db.select().from(maintenanceRequests);
+    return await db.select().from(maintenanceRequests).where(eq(maintenanceRequests.isActive, true));
   }
   
   async findById(id: string): Promise<MaintenanceRequest | null> {
@@ -43,6 +43,11 @@ export class DrizzleMaintenanceRequestRepository implements MaintenanceRequestRe
   }
 
   async delete(id: string): Promise<void> {
-    await db.delete(maintenanceRequests).where(eq(maintenanceRequests.id, id));
+    await db.update(maintenanceRequests)
+      .set({
+        isActive: false,
+        updatedAt: new Date(),
+      })
+      .where(eq(maintenanceRequests.id, id));
   }
 }

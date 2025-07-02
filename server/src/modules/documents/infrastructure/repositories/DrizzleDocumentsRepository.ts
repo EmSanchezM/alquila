@@ -15,7 +15,7 @@ export class DrizzleDocumentsRepository implements DocumentsRepository {
     return newDocument;
   }
   async findAll(): Promise<Document[]> {
-    return await db.select().from(documents);
+    return await db.select().from(documents).where(eq(documents.isActive, true));
   }
   
   async findById(id: string): Promise<Document | null> {
@@ -41,6 +41,11 @@ export class DrizzleDocumentsRepository implements DocumentsRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await db.delete(documents).where(eq(documents.id, id));
+    await db.update(documents)
+      .set({
+        isActive: false,
+        updatedAt: new Date(),
+      })
+      .where(eq(documents.id, id));
   }
 }

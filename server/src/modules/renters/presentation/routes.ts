@@ -9,7 +9,7 @@ import {
 } from "@server/modules/renters/application/use-cases";
 
 import { zValidator } from "@server/shared/validator-wrapper";
-import { creatRenterSchema, findByIdRentersSchema, updateRenterSchema } from "@server/modules/renters/infrastructure/validations";
+import { createRenterSchema, findByIdRentersSchema, updateRenterSchema } from "@server/modules/renters/infrastructure/validations";
 
 const renterRouter = new Hono();
 const renterRepository = new DrizzleRentersRepository();
@@ -47,7 +47,7 @@ renterRouter
       }, 400)
     }
   })
-  .post("/",  zValidator('json', creatRenterSchema), async (c) => {
+  .post("/",  zValidator('json', createRenterSchema), async (c) => {
     try {
       const body = await c.req.json();
 

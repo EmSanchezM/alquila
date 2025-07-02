@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const creatRenterSchema = z.object({
+export const createRenterSchema = z.object({
   userId: z.string(),
   firstName: z.string(),
   lastName: z.string(),
@@ -50,7 +50,7 @@ export const updateRenterSchema = z.object({
   }),
 });
 
-export type CreateRenter = z.infer<typeof creatRenterSchema>;
+export type CreateRenter = z.infer<typeof createRenterSchema>;
 export type UpdateRenter = z.infer<typeof updateRenterSchema>;
 export type FindAllRenter = z.infer<typeof findAllRenterSchema>;
 export type FindByIdRenter = z.infer<typeof findByIdRentersSchema>;
