@@ -1,4 +1,3 @@
-// file: validator-wrapper.ts
 import { ZodSchema } from 'zod'
 import type { ValidationTargets } from 'hono'
 import { zValidator as zv } from '@hono/zod-validator'
