@@ -9,7 +9,7 @@ export const users = pgTable('users', {
   password: varchar('password', { length: 255 }).notNull(),
   firstName: varchar('first_name', { length: 100 }).notNull(),
   lastName: varchar('last_name', { length: 100 }).notNull(),
-  phone_number: varchar('phone_number', { length: 20 }),
+  phoneNumber: varchar('phone_number', { length: 20 }),
   subscriptionPlan: varchar('subscription_plan', { length: 20 }).notNull().default('basic'), // basic, standard, premium
   subscriptionStatus: varchar('subscription_status', { length: 20 }).notNull().default('active'), // active, canceled, expired
   subscriptionStartDate: timestamp('subscription_start_date').defaultNow(),
