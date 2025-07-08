@@ -15,6 +15,13 @@
       "when": 1749596271350,
       "tag": "0001_redifine",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751987935049,
+      "tag": "0002_uneven_shriek",
+      "breakpoints": true
     }
   ]
 }

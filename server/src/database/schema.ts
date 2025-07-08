@@ -3,21 +3,53 @@ import { relations } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 // Tabla de usuarios/propietarios
-export const users = pgTable('users', {
+export const users = pgTable("users", {
   id: varchar('id', { length: 36 }).primaryKey(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  password: varchar('password', { length: 255 }).notNull(),
-  firstName: varchar('first_name', { length: 100 }).notNull(),
-  lastName: varchar('last_name', { length: 100 }).notNull(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  emailVerified: boolean('email_verified').$defaultFn(() => false).notNull(),
   phoneNumber: varchar('phone_number', { length: 20 }),
-  subscriptionPlan: varchar('subscription_plan', { length: 20 }).notNull().default('basic'), // basic, standard, premium
-  subscriptionStatus: varchar('subscription_status', { length: 20 }).notNull().default('active'), // active, canceled, expired
-  subscriptionStartDate: timestamp('subscription_start_date').defaultNow(),
-  subscriptionEndDate: timestamp('subscription_end_date'),
-  maxProperties: integer('max_properties').notNull().default(3),
+  image: text('image'),
   isActive: boolean('is_active').default(true),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull()
+  createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+  updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull()
+});
+
+export const session = pgTable("session", {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  expiresAt: timestamp('expires_at').notNull(),
+  token: text('token').notNull().unique(),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at').notNull(),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' })
+});
+
+export const account = pgTable("account", {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  accountId: text('account_id').notNull(),
+  providerId: text('provider_id').notNull(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  accessToken: text('access_token'),
+  refreshToken: text('refresh_token'),
+  idToken: text('id_token'),
+  accessTokenExpiresAt: timestamp('access_token_expires_at'),
+  refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+  scope: text('scope'),
+  password: text('password'),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at').notNull()
+});
+
+export const verification = pgTable("verification", {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
+  updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date())
 });
 
 // Tabla de propiedades
@@ -221,12 +253,17 @@ export const communicationTemplates = pgTable('communication_templates', {
 
 // RELACIONES
 export const usersRelations = relations(users, ({ many }) => ({
+  accounts: many(account),
   properties: many(properties),
   renters: many(renters),
   leases: many(leases),
   payments: many(payments),
   expenses: many(expenses),
   documents: many(documents)
+}));
+
+export const accountRelations = relations(account, ({ one }) => ({
+  user: one(users, { fields: [account.userId], references: [users.id] })
 }));
 
 export const propertiesRelations = relations(properties, ({ one, many }) => ({
