@@ -99,21 +99,21 @@ const Header = () => {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
                   <Link
                     to="/dashboard"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                   >
                     <User className="h-4 w-4 mr-2" />
                     Profile
                   </Link>
                   <Link
                     to="/dashboard"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                   >
                     <Settings className="h-4 w-4 mr-2" />
                     Settings
                   </Link>
                   <button
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                    onClick={() => {/* Add logout logic here */}}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                    onClick={() => {/*TODO: Add logout logic here */}}
                   >
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
