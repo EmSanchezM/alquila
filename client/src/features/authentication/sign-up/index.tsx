@@ -2,10 +2,9 @@ import SignUpForm from './components/sign-up-form'
 
 const SignUp = () => {
   return (
-    <>
-      <h2>SignUp</h2>
+    <section className="w-full max-w-sm md:max-w-3xl">
       <SignUpForm />
-    </>
+    </section>
   )
 }
 

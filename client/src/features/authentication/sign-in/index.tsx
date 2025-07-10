@@ -2,10 +2,9 @@ import SignInForm from "./components/sign-in-form"
 
 const SignIn = () => {
   return (
-    <>
-    <h2>SignIn</h2>
-    <SignInForm />
-    </>
+    <section className="w-full max-w-sm md:max-w-3xl">
+      <SignInForm />
+    </section>
   )
 }
 
