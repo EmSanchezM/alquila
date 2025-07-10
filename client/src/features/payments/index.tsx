@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { DollarSign, Search, Plus, Calendar, Download, Send, AlertTriangle, CheckCircle, Clock } from "lucide-react"
+import { DollarSign, Search, Plus, Calendar, Download, Send, AlertTriangle, CheckCircle, Clock, Settings } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Dialog,
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Link } from "@tanstack/react-router"
 
 export default function PaymentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -118,6 +119,12 @@ export default function PaymentsPage() {
               <h1 className="text-2xl font-bold text-gray-900">Payments</h1>
             </div>
             <div className="flex space-x-2">
+              <Button variant="outline" asChild>
+                <Link to="/payments/automation">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Automation
+                </Link>
+              </Button>
               <Button variant="outline">
                 <Download className="h-4 w-4 mr-2" />
                 Export
