@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { DollarSign, Search, Plus, Calendar, Download, Send, AlertTriangle, CheckCircle, Clock, Settings } from "lucide-react"
+import { Search, Plus, Calendar, Download, Send, AlertTriangle, CheckCircle, Clock, Settings, HandCoins } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Dialog,
@@ -115,7 +115,7 @@ export default function PaymentsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
-              <DollarSign className="h-8 w-8 text-green-600" />
+              <HandCoins className="h-8 w-8 text-green-600" />
               <h1 className="text-2xl font-bold text-gray-900">Payments</h1>
             </div>
             <div className="flex space-x-2">
