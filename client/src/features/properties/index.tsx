@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import placeholder from "@/assets/placeholder.svg"
+import { Link } from "@tanstack/react-router"
 
 export default function PropertiesPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -253,7 +254,12 @@ export default function PropertiesPage() {
 
                 <div className="mt-4 flex space-x-2">
                   <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                    View Details
+                    <Link
+                      to="/properties/$propertyId"
+                      params={{
+                        propertyId: property.id.toString(),
+                      }}
+                    >View Details</Link>
                   </Button>
                   <Button size="sm" className="flex-1">
                     {property.status === "vacant" ? "Find Tenant" : "Manage"}

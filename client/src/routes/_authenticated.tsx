@@ -1,3 +1,4 @@
+import Header from "@/components/shared/header";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -18,9 +19,17 @@ export const Route = createFileRoute("/_authenticated")({
     }
   },
   component: () => {
+    const user = { email: "test@test.com" };
     return (
-      <div>
-        <Outlet />
+      <div className="min-h-screen bg-gray-50">
+        {user && (
+          <>
+            <Header />
+          </>
+        )}
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Outlet />
+        </main>
       </div>
     );
   },
