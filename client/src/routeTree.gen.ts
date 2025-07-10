@@ -22,6 +22,7 @@ import { Route as AuthenticatedMaintenanceIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedRentersCommunicationsRouteImport } from './routes/_authenticated/renters/communications'
 import { Route as AuthenticatedRentersRenterIdRouteImport } from './routes/_authenticated/renters/$renterId'
 import { Route as AuthenticatedPropertiesPropertyIdRouteImport } from './routes/_authenticated/properties/$propertyId'
+import { Route as AuthenticatedPaymentsAutomationRouteImport } from './routes/_authenticated/payments/automation'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -94,6 +95,12 @@ const AuthenticatedPropertiesPropertyIdRoute =
     path: '/properties/$propertyId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedPaymentsAutomationRoute =
+  AuthenticatedPaymentsAutomationRouteImport.update({
+    id: '/payments/automation',
+    path: '/payments/automation',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteWithChildren
@@ -101,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/documents': typeof AuthenticatedDocumentsRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
   '/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdRoute
   '/renters/$renterId': typeof AuthenticatedRentersRenterIdRoute
   '/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
   '/documents': typeof AuthenticatedDocumentsRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
   '/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdRoute
   '/renters/$renterId': typeof AuthenticatedRentersRenterIdRoute
   '/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
@@ -131,6 +140,7 @@ export interface FileRoutesById {
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/_authenticated/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
   '/_authenticated/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdRoute
   '/_authenticated/renters/$renterId': typeof AuthenticatedRentersRenterIdRoute
   '/_authenticated/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/payments/automation'
     | '/properties/$propertyId'
     | '/renters/$renterId'
     | '/renters/communications'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/payments/automation'
     | '/properties/$propertyId'
     | '/renters/$renterId'
     | '/renters/communications'
@@ -176,6 +188,7 @@ export interface FileRouteTypes {
     | '/_authenticated/documents'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/_authenticated/payments/automation'
     | '/_authenticated/properties/$propertyId'
     | '/_authenticated/renters/$renterId'
     | '/_authenticated/renters/communications'
@@ -283,12 +296,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPropertiesPropertyIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/payments/automation': {
+      id: '/_authenticated/payments/automation'
+      path: '/payments/automation'
+      fullPath: '/payments/automation'
+      preLoaderRoute: typeof AuthenticatedPaymentsAutomationRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
+  AuthenticatedPaymentsAutomationRoute: typeof AuthenticatedPaymentsAutomationRoute
   AuthenticatedPropertiesPropertyIdRoute: typeof AuthenticatedPropertiesPropertyIdRoute
   AuthenticatedRentersRenterIdRoute: typeof AuthenticatedRentersRenterIdRoute
   AuthenticatedRentersCommunicationsRoute: typeof AuthenticatedRentersCommunicationsRoute
@@ -301,6 +322,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
+  AuthenticatedPaymentsAutomationRoute: AuthenticatedPaymentsAutomationRoute,
   AuthenticatedPropertiesPropertyIdRoute:
     AuthenticatedPropertiesPropertyIdRoute,
   AuthenticatedRentersRenterIdRoute: AuthenticatedRentersRenterIdRoute,

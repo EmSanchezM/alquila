@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { Link } from "@tanstack/react-router"
+import { AlertTriangle, CheckCircle, Clock, FileText, Mail, MapPin, MessageSquare, Phone, Plus, Search, Users } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -7,8 +9,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Link } from "@tanstack/react-router"
-import { AlertTriangle, CheckCircle, Clock, FileText, Mail, MapPin, MessageSquare, Phone, Plus, Search, Users } from "lucide-react"
 
 export default function RentersPage() {
   const [searchTerm, setSearchTerm] = useState("")
