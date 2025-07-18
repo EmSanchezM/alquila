@@ -17,7 +17,14 @@ export class DrizzlePropertiesRepository implements PropertiesRepository {
     return newProperty;
   }
   async findAll(): Promise<Property[]> {
-    return await db.select().from(properties).where(eq(properties.isActive, true));
+    //return await db.select().from(properties).where(eq(properties.isActive, true));
+    try {
+      const results = await db.select().from(properties);
+      return results;
+    } catch (error) {
+      console.error('Error finding all properties:', error);
+      throw error;
+    }
   }
   
   async findById(id: string): Promise<Property | null> {
