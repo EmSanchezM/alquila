@@ -126,6 +126,7 @@ export const payments = pgTable('payments', {
   receiptFile: varchar('receipt_file', { length: 500 }), // URL del comprobante
   notes: text('notes'),
   customFields: json('custom_fields'), // json con campos personalizados de la pasarela de pagos si es necesario
+  isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -352,10 +353,14 @@ export const insertMaintenanceRequestsSchema = createInsertSchema(maintenanceReq
 export const documentsSchema =  createSelectSchema(documents);
 export const insertDocumentsSchema = createInsertSchema(documents);
 
+export const paymentsSchema =  createSelectSchema(payments);
+export const insertPaymentsSchema = createInsertSchema(payments);
+
 export type Property = typeof properties.$inferSelect;
 export type Renter = typeof renters.$inferSelect;
 export type Lease = typeof leases.$inferSelect;
 export type Expense = typeof expenses.$inferSelect;
 export type MaintenanceRequest = typeof maintenanceRequests.$inferSelect;
 export type Document = typeof documents.$inferSelect;
+export type Payment = typeof payments.$inferSelect;
 

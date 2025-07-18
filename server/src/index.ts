@@ -1,15 +1,5 @@
 import app from "@server/app";
-
-import { z } from "zod";
-
-const ServeEnv = z.object({
-  PORT: z
-    .string()
-    .regex(/^\d+$/, "Port must be a numeric string")
-    .default("3000")
-    .transform(Number),
-});
-const ProcessEnv = ServeEnv.parse(process.env);
+import { ProcessEnv } from "./shared/environment";
 
 const server = Bun.serve({
   port: ProcessEnv.PORT,
@@ -17,4 +7,4 @@ const server = Bun.serve({
   fetch: app.fetch,
 });
 
-console.log("server running", server.port);
+console.log(`Server running on http://localhost:${server.port}`);
