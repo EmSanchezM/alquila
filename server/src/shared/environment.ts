@@ -14,5 +14,5 @@ const ServeEnv = z.object({
   GOOGLE_CLIENT_SECRET: z.string(),
 });
 
-export const ProcessEnv = ServeEnv.parse(Bun.env);
+export const ProcessEnv = ServeEnv.parse(process.env);
 
