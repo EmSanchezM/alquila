@@ -17,10 +17,14 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import placeholder from "@/assets/placeholder.svg"
 import { Link } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
+import { getAllPropertiesQueryOptions } from "@/lib/services/properties"
 
 export default function PropertiesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+
+  useQuery(getAllPropertiesQueryOptions);
 
   // Mock data - in real app, this would come from your database
   const properties = [
