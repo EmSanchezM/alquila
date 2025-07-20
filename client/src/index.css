@@ -39,6 +39,13 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* DARK COLORS */
+  --color-dark-200: #0D0F10;
+  --color-dark-300: #131619;
+  --color-dark-400: #1A1D21;
+  --color-dark-500: #363A3D;
+  --color-dark-600: #76828D;
+  --color-dark-700: #ABB8C4;
 }
 
 :root {
@@ -117,4 +124,151 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* ==== FORM */
+  .radio-group {
+    @apply flex h-full flex-1 items-center gap-2 rounded-md border border-dashed border-dark-500 bg-dark-400 p-3;
+  }
+
+  .checkbox-label {
+    @apply cursor-pointer text-sm font-medium text-dark-700 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 md:leading-none;
+  }
+
+  /* ==== File Upload */
+  .file-upload {
+    @apply text-[12px] leading-[16px] font-normal flex cursor-pointer  flex-col items-center justify-center gap-3 rounded-md border border-dashed border-dark-500 bg-dark-400 p-5;
+  }
+
+  .file-upload_label {
+    @apply flex flex-col justify-center gap-2 text-center text-dark-600;
+  }
+
+  /* =====  SHADCN OVERRIDES */
+  .shad-primary-btn {
+    @apply bg-green-500! text-white!;
+  }
+
+  .shad-danger-btn {
+    @apply bg-red-700! text-white!;
+  }
+
+  .shad-gray-btn {
+    @apply border! border-dark-500! cursor-pointer! bg-dark-400! text-white!;
+  }
+
+  .shad-input-label {
+    @apply text-[14px]! leading-[18px]! font-medium! text-dark-700!;
+  }
+
+  .shad-input {
+    @apply bg-dark-400! placeholder:text-dark-600! border-dark-500! h-11! focus-visible:ring-0! focus-visible:ring-offset-0!;
+  }
+
+  .shad-input-icon {
+    @apply bg-dark-400! placeholder:text-dark-600! border-dark-500! h-11! focus-visible:ring-0! focus-visible:ring-offset-0!;
+  }
+
+  .shad-textArea {
+    @apply bg-dark-400! placeholder:text-dark-600! border-dark-500! focus-visible:ring-0! focus-visible:ring-offset-0!;
+  }
+
+  .shad-combobox-item {
+    @apply data-[disabled=true]:pointer-events-none! data-[disabled=true]:opacity-50!;
+  }
+
+  .shad-combobox-trigger {
+    @apply h-11!;
+  }
+
+  .shad-select-trigger {
+    @apply bg-dark-400! placeholder:text-dark-600! border-dark-500! h-11! focus:ring-0 focus:ring-offset-0!;
+  }
+
+  .shad-select-content {
+    @apply bg-dark-400! border-dark-500!;
+  }
+
+  .shad-dialog {
+    @apply bg-dark-400! border-dark-500!;
+  }
+
+  .shad-dialog button {
+    @apply focus:ring-0! focus:ring-offset-0! focus-visible:border-none! focus-visible:outline-none! focus-visible:ring-transparent! focus-visible:ring-offset-0!;
+  }
+
+  .shad-error {
+    @apply text-red-400!;
+  }
+}
+
+/* =====  REACT-DATEPICKER OVERRIDES */
+.react-datepicker-wrapper.date-picker {
+  display: flex;
+  align-items: center;
+}
+
+.react-datepicker,
+.react-datepicker__time,
+.react-datepicker__header,
+.react-datepicker__current-month,
+.react-datepicker__day-name,
+.react-datepicker__day,
+.react-datepicker-time__header {
+  background-color: #1a1d21 !important;
+  border-color: #363a3d !important;
+  color: #abb8c4 !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name,
+.react-datepicker-time__header {
+  color: #ffffff !important;
+}
+
+.react-datepicker__triangle {
+  fill: #1a1d21 !important;
+  color: #1a1d21 !important;
+  stroke: #1a1d21 !important;
+}
+
+.react-datepicker__time-list-item:hover {
+  background-color: #363a3d !important;
+}
+
+.react-datepicker__input-container input {
+  background-color: #1a1d21 !important;
+  width: 100%;
+  outline: none;
+}
+
+.react-datepicker__day--selected {
+  background-color: #24ae7c !important;
+  color: #ffffff !important;
+  border-radius: 4px;
+}
+
+.react-datepicker__time-list-item--selected {
+  background-color: #24ae7c !important;
+}
+
+.react-datepicker__time-container {
+  border-left: 1px solid #363a3d !important;
+}
+
+.react-datepicker__time-list-item {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* =====  REACT PHONE NUMBER INPUT OVERRIDES */
+.PhoneInputInput {
+  outline: none;
+  margin-left: 4px;
+  background: #1a1d21;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.PhoneInputInput::placeholder {
+  color: #1a1d21;
 }
