@@ -1,20 +1,10 @@
-import { z } from "zod";
+import { createPropertySchema } from "shared";
 
-export const amenitiesSchema = z.array(z.string()).optional();
-export const imagesSchema = z.array(z.string()).optional();
-
-export const CreatePropertyFormValidation = z.object({
-  name: z.string(),
-  address: z.string(),
-  city: z.string(),
-  state: z.string(),
-  zipCode: z.string(),
-  country: z.string(),
-  propertyType: z.string(),
-  bedrooms: z.number(),
-  bathrooms: z.number(),
-  squareMeters: z.number(),
-  description: z.string(),
-  amenities: amenitiesSchema,
-  images: imagesSchema,
+// Client-side form validation schema based on server schema
+// Omits server-only fields like userId and isActive
+export const CreatePropertyFormValidation = createPropertySchema.omit({
+  userId: true,
 });
+
+// Re-export server validation types for consistency
+export type { CreateProperty, UpdateProperty } from "shared";

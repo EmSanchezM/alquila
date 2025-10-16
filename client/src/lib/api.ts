@@ -1,4 +1,9 @@
 import { hc } from "hono/client";
-import { type ApiRoutes } from "@server/app";
+// TODO: Move ApiRoutes type to shared package
+import type { ApiRoutes } from "server";
 
-export const api = hc<ApiRoutes>("/api");
+/**
+ * Typed API client for server communication
+ * Provides full TypeScript autocompletion for all API endpoints
+ */
+export const api = hc<ApiRoutes>("/");

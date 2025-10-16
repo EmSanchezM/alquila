@@ -8,7 +8,7 @@ import {
   UpdateMaintenanceRequestUseCase,
 } from "@server/modules/maintenance-request/application/use-cases";
 
-import { zValidator } from "@server/shared/validator-wrapper";
+import { zValidator } from "@hono/zod-validator";
 import { createMaintenanceRequestSchema, findByIdMaintenanceRequestsSchema, updateMaintenanceRequestsSchema } from "@server/modules/maintenance-request/infrastructure/validations";
 
 const maintenanceRequestRouter = new Hono();
@@ -31,7 +31,7 @@ maintenanceRequestRouter
       }, 400)
     }
   })
-  .get("/:id", zValidator('param', findByIdMaintenanceRequestsSchema), async (c) => {
+  .get("/:id", async (c) => {
     try {
       const findByIdMaintenanceRequest = new FindByIdMaintenanceRequestsUseCase(maintenanceRequestRepository);
       const maintenanceRequest = await findByIdMaintenanceRequest.execute(c.req.param("id"));
@@ -47,7 +47,7 @@ maintenanceRequestRouter
       }, 400)
     }
   })
-  .post("/",  zValidator('json', createMaintenanceRequestSchema), async (c) => {
+  .post("/",  async (c) => {
     try {
       const body = await c.req.json();
 
@@ -65,7 +65,7 @@ maintenanceRequestRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updateMaintenanceRequestsSchema), async (c) => {
+  .put("/:id", async (c) => {
     try {
       const body = await c.req.json();
       const updateMaintenanceRequest = new UpdateMaintenanceRequestUseCase(maintenanceRequestRepository);
@@ -82,7 +82,7 @@ maintenanceRequestRouter
       }, 400)
     }
   })
-  .delete("/:id", zValidator('param', findByIdMaintenanceRequestsSchema), async (c) => {
+  .delete("/:id", async (c) => {
     try {
       const deleteMaintenanceRequest = new DeleteMaintenanceRequestUseCase(maintenanceRequestRepository);
       await deleteMaintenanceRequest.execute(c.req.param("id"));

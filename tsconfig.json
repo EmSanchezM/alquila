@@ -13,7 +13,9 @@
     "paths": {
       "@server/*": ["./server/src/*"],
       "@client/*": ["./client/src/*"],
-      "@shared/*": ["./shared/src/*"]
+      "@shared/*": ["./shared/src/*"],
+      "server": ["./server/src/index.ts"],
+      "shared": ["./shared/src/index.ts"]
     },
 
     // Module resolution
@@ -31,10 +33,18 @@
 
     // Output control
     "skipLibCheck": true,
+    "declaration": true,
+    "composite": true,
 
     // Optional strict flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
-  }
+  },
+  "references": [
+    { "path": "./shared" },
+    { "path": "./server" },
+    { "path": "./client" }
+  ],
+  "files": []
 }

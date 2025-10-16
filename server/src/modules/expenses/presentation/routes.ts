@@ -8,7 +8,7 @@ import {
   UpdateExpenseUseCase,
 } from "@server/modules/expenses/application/use-cases";
 
-import { zValidator } from "@server/shared/validator-wrapper";
+import { zValidator } from "@hono/zod-validator";
 import { createExpenseSchema, findByIdExpensesSchema, updateExpensesSchema } from "@server/modules/expenses/infrastructure/validations";
 
 const expenseRouter = new Hono();
@@ -31,7 +31,7 @@ expenseRouter
       }, 400)
     }
   })
-  .get("/:id", zValidator('param', findByIdExpensesSchema), async (c) => {
+  .get("/:id", async (c) => {
     try {
       const findByIdExpense = new FindByIdExpensesUseCase(expenseRepository);
       const expense = await findByIdExpense.execute(c.req.param("id"));
@@ -47,7 +47,7 @@ expenseRouter
       }, 400)
     }
   })
-  .post("/",  zValidator('json', createExpenseSchema), async (c) => {
+  .post("/",  async (c) => {
     try {
       const body = await c.req.json();
 
@@ -65,7 +65,7 @@ expenseRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updateExpensesSchema), async (c) => {
+  .put("/:id", async (c) => {
     try {
       const body = await c.req.json();
       const updateExpense = new UpdateExpenseUseCase(expenseRepository);
@@ -82,7 +82,7 @@ expenseRouter
       }, 400)
     }
   })
-  .delete("/:id", zValidator('param', findByIdExpensesSchema), async (c) => {
+  .delete("/:id", async (c) => {
     try {
       const deleteExpense = new DeleteExpenseUseCase(expenseRepository);
       await deleteExpense.execute(c.req.param("id"));

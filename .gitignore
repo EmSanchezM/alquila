@@ -39,3 +39,8 @@ pnpm-debug.log*
 
 # Bun
 bun.lockb
+
+# Agents
+.cursor
+.kiro
+.windsurf

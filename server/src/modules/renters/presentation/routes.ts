@@ -8,7 +8,7 @@ import {
   UpdateRenterUseCase,
 } from "@server/modules/renters/application/use-cases";
 
-import { zValidator } from "@server/shared/validator-wrapper";
+import { zValidator } from "@hono/zod-validator";
 import { createRenterSchema, findByIdRentersSchema, updateRenterSchema } from "@server/modules/renters/infrastructure/validations";
 
 const renterRouter = new Hono();
@@ -31,7 +31,7 @@ renterRouter
       }, 400)
     }
   })
-  .get("/:id", zValidator('param', findByIdRentersSchema), async (c) => {
+  .get("/:id", async (c) => {
     try {
       const findByIdRenters = new FindByIdRentersUseCase(renterRepository);
       const renter = await findByIdRenters.execute(c.req.param("id"));
@@ -47,7 +47,7 @@ renterRouter
       }, 400)
     }
   })
-  .post("/",  zValidator('json', createRenterSchema), async (c) => {
+  .post("/", async (c) => {
     try {
       const body = await c.req.json();
 
@@ -65,7 +65,7 @@ renterRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updateRenterSchema), async (c) => {
+  .put("/:id", async (c) => {
     try {
       const body = await c.req.json();
       const updateRenter = new UpdateRenterUseCase(renterRepository);
@@ -82,7 +82,7 @@ renterRouter
       }, 400)
     }
   })
-  .delete("/:id", zValidator('param', findByIdRentersSchema), async (c) => {
+  .delete("/:id", async (c) => {
     try {
       const deleteRenter = new DeleteRenterUseCase(renterRepository);
       await deleteRenter.execute(c.req.param("id"));

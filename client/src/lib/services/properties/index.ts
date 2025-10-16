@@ -1,18 +1,25 @@
-import { api } from "@/lib/api";
 import { queryOptions } from "@tanstack/react-query";
+import type { Property } from "shared";
 
-export const getAllProperties = async () => {
+// Extended property type for frontend display
+export interface PropertyWithDetails extends Property {
+  status?: "occupied" | "vacant" | "maintenance";
+  monthlyRent?: number;
+  tenant?: string | null;
+}
+
+export const getAllProperties = async (): Promise<PropertyWithDetails[]> => {
   try {
-    const response = await api.properties.$get({});
-    
-    if (!response.ok) {
-      const error = await response.json();
-      const message = error instanceof Error ? error.message : "Server error";
-      throw new Error(message);
-    }
-    const { data } = await response.json();
+    // Use fetch directly for now until we fix the typing issue
+    const response = await fetch("/api/properties");
 
-    return data;
+    if (!response.ok) {
+      throw new Error("Failed to fetch properties");
+    }
+
+    const result: { success: boolean; data: Property[] } = await response.json();
+    console.log({ result });
+    return result.data || [];
   } catch (error) {
     console.error('Failed to fetch properties:', error);
     throw error;

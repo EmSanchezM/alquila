@@ -27,10 +27,35 @@ const api = new Hono()
   .route("/documents", documentRouter)
   .route("/payments", paymentRouter);
 
-app.route("/api", api);
+const routes = app.route("/api", api);
 
 app.get("*", serveStatic({ root: "./client/dist" }))
 app.get("*", serveStatic({ path: "./client/dist/index.html" }))
 
 export default app;
-export type ApiRoutes = typeof api;
+
+/**
+ * API Routes type definition for client consumption
+ * 
+ * This type represents all available API endpoints and their signatures,
+ * enabling full TypeScript autocompletion and type safety in the client.
+ * 
+ * Includes routes for:
+ * - Properties management
+ * - Renter management  
+ * - Lease management
+ * - Expense tracking
+ * - Maintenance requests
+ * - Document management
+ * - Payment processing
+ * 
+ * @example
+ * ```typescript
+ * import { hc } from "hono/client";
+ * import type { ApiRoutes } from "server";
+ * 
+ * const api = hc<ApiRoutes>("/api");
+ * const properties = await api.properties.$get();
+ * ```
+ */
+export type ApiRoutes = typeof routes;

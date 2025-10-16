@@ -18,61 +18,91 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import placeholder from "@/assets/placeholder.svg"
 import { Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
-import { getAllPropertiesQueryOptions } from "@/lib/services/properties"
+import { getAllPropertiesQueryOptions, type PropertyWithDetails } from "@/lib/services/properties"
 
 export default function PropertiesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 
-  useQuery(getAllPropertiesQueryOptions);
+  const { data: properties = [], isLoading, error } = useQuery(getAllPropertiesQueryOptions);
 
-  // Mock data - in real app, this would come from your database
-  const properties = [
+  // Fallback mock data for development
+  const mockProperties: PropertyWithDetails[] = [
     {
-      id: 1,
+      id: "1",
+      userId: "mock-user-1",
       name: "Sunset Apartments",
       address: "123 Main St, Downtown",
       city: "Miami",
+      state: "FL",
+      zipCode: "33101",
+      country: "USA",
       propertyType: "apartment",
       bedrooms: 2,
       bathrooms: 2,
-      squareMeters: 85,
+      squareMeters: "85.00",
+      description: "Beautiful apartment in downtown Miami",
+      amenities: ["pool", "gym", "parking"],
+      images: [placeholder],
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       monthlyRent: 1200,
       status: "occupied",
       tenant: "María García",
-      images: [placeholder],
     },
     {
-      id: 2,
+      id: "2",
+      userId: "mock-user-1",
       name: "Ocean View Condo",
       address: "456 Beach Ave, Oceanfront",
       city: "Miami",
+      state: "FL",
+      zipCode: "33139",
+      country: "USA",
       propertyType: "apartment",
       bedrooms: 3,
       bathrooms: 2,
-      squareMeters: 120,
+      squareMeters: "120.00",
+      description: "Stunning ocean view condo",
+      amenities: ["ocean_view", "balcony", "parking"],
+      images: [placeholder],
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       monthlyRent: 1800,
       status: "vacant",
       tenant: null,
-      images: [placeholder],
     },
     {
-      id: 3,
+      id: "3",
+      userId: "mock-user-1",
       name: "Downtown Loft",
       address: "789 Urban St, City Center",
       city: "Miami",
+      state: "FL",
+      zipCode: "33130",
+      country: "USA",
       propertyType: "apartment",
       bedrooms: 1,
       bathrooms: 1,
-      squareMeters: 65,
+      squareMeters: "65.00",
+      description: "Modern loft in the heart of the city",
+      amenities: ["modern", "city_view"],
+      images: [placeholder],
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       monthlyRent: 1500,
       status: "maintenance",
       tenant: null,
-      images: [placeholder],
     },
   ]
 
-  const filteredProperties = properties.filter(
+  // Use API data if available, otherwise fall back to mock data
+  const displayProperties = properties.length > 0 ? properties : mockProperties;
+
+  const filteredProperties = displayProperties.filter(
     (property) =>
       property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       property.address.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -184,6 +214,20 @@ export default function PropertiesPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Error State */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-800">Failed to load properties. Using mock data for demonstration.</p>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-blue-800">Loading properties...</p>
+          </div>
+        )}
+
         {/* Search and Filters */}
         <div className="mb-6">
           <div className="relative">
@@ -203,15 +247,17 @@ export default function PropertiesPage() {
             <Card key={property.id} className="overflow-hidden">
               <div className="aspect-video relative">
                 <img
-                  src={property.images[0] || placeholder}
+                  src={(Array.isArray(property.images) ? property.images[0] : null) || placeholder}
                   alt={property.name}
                   className="w-full h-full object-cover"
                   width={300}
                   height={200}
                 />
-                <Badge className="absolute top-2 right-2" variant={getStatusColor(property.status)}>
-                  {property.status}
-                </Badge>
+                {property.status && (
+                  <Badge className="absolute top-2 right-2" variant={getStatusColor(property.status)}>
+                    {property.status}
+                  </Badge>
+                )}
               </div>
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -244,10 +290,12 @@ export default function PropertiesPage() {
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-1">
-                    <DollarSign className="h-4 w-4 text-green-600" />
-                    <span className="font-semibold text-green-600">${property.monthlyRent}/month</span>
-                  </div>
+                  {property.monthlyRent && (
+                    <div className="flex items-center space-x-1">
+                      <DollarSign className="h-4 w-4 text-green-600" />
+                      <span className="font-semibold text-green-600">${property.monthlyRent}/month</span>
+                    </div>
+                  )}
                   {property.tenant && (
                     <div className="flex items-center space-x-1">
                       <Users className="h-4 w-4 text-blue-600" />

@@ -49,7 +49,7 @@ const RenderField: FC<RenderFieldProps> = ({ field, props }) => {
   switch (props.fieldType) {
     case FormFieldsTypes.INPUT:
       return (
-        <div className="flex rounded-md border border-dark-500 bg-dark-400">
+        <div className="flex">
           {
             props.iconSrc && (
               <img
@@ -65,7 +65,7 @@ const RenderField: FC<RenderFieldProps> = ({ field, props }) => {
             <Input
               placeholder={props.placeholder}
               {...field}
-              className="shad-input border-0"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
             />
           </FormControl>
         </div>
@@ -76,7 +76,7 @@ const RenderField: FC<RenderFieldProps> = ({ field, props }) => {
             <Textarea
               placeholder={props.placeholder}
               {...field}
-              className="shad-textArea"
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
               disabled={props.disabled}
             />
           </FormControl>
@@ -105,11 +105,11 @@ const RenderField: FC<RenderFieldProps> = ({ field, props }) => {
             onValueChange={field.onChange}
           >
             <FormControl>
-              <SelectTrigger className="shad-select-trigger">
+              <SelectTrigger className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring-1 focus:ring-primary">
                 <SelectValue placeholder={props.placeholder} />
               </SelectTrigger>
             </FormControl>
-            <SelectContent className="shad-select-content">
+            <SelectContent className="rounded-md border border-gray-300 bg-white shadow-md">
               {props.children}
             </SelectContent>
           </Select>
@@ -129,7 +129,7 @@ const RenderField: FC<RenderFieldProps> = ({ field, props }) => {
       )
     case FormFieldsTypes.DATE_PICKER:
       return (
-        <div className="flex rounded-md border border-dark-500 bg-dark-400">
+        <div className="flex rounded-md border">
           <img 
             src=""
             alt="calendar"

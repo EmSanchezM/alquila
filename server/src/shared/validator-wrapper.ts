@@ -6,8 +6,4 @@ export const zValidator = <T extends ZodSchema, Target extends keyof ValidationT
   target: Target,
   schema: T
 ) =>
-  zv(target, schema, (result, c) => {
-    if (!result.success) {
-      throw new Error("Validation fields failed: " + result.error.issues.map(e => e.message).join(', '), { cause: result.error })
-    }
-  })
+  zv(target, schema)

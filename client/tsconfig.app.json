@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -16,19 +17,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
-      "paths": {
-        "@/*": [
-          "./src/*"
-        ],
-        "@server/*": [
-          "../server/*"
-        ],
-        "@shared/*": [
-          "../shared/*"
-        ]
-      }
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["./client/src/*"],
+      "server": ["./server/src/index.ts"]
+    }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../server" },
+    { "path": "../shared" }
+  ]
 }

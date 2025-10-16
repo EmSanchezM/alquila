@@ -8,7 +8,7 @@ import {
   UpdateLeaseUseCase,
 } from "@server/modules/leases/application/use-cases";
 
-import { zValidator } from "@server/shared/validator-wrapper";
+import { zValidator } from "@hono/zod-validator";
 import { creatLeaseSchema, findByIdLeasesSchema, updateLeaseSchema } from "@server/modules/leases/infrastructure/validations";
 
 const leaseRouter = new Hono();
@@ -31,7 +31,7 @@ leaseRouter
       }, 400)
     }
   })
-  .get("/:id", zValidator('param', findByIdLeasesSchema), async (c) => {
+  .get("/:id", async (c) => {
     try {
       const findByIdLeases = new FindByIdLeasesUseCase(leaseRepository);
       const lease = await findByIdLeases.execute(c.req.param("id"));
@@ -47,7 +47,7 @@ leaseRouter
       }, 400)
     }
   })
-  .post("/",  zValidator('json', creatLeaseSchema), async (c) => {
+  .post("/",  async (c) => {
     try {
       const body = await c.req.json();
 
@@ -65,7 +65,7 @@ leaseRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updateLeaseSchema), async (c) => {
+  .put("/:id", async (c) => {
     try {
       const body = await c.req.json();
       const updateLease = new UpdateLeaseUseCase(leaseRepository);
@@ -82,7 +82,7 @@ leaseRouter
       }, 400)
     }
   })
-  .delete("/:id", zValidator('param', findByIdLeasesSchema), async (c) => {
+  .delete("/:id", async (c) => {
     try {
       const deleteLease = new DeleteLeaseUseCase(leaseRepository);
       await deleteLease.execute(c.req.param("id"));
