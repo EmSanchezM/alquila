@@ -13,7 +13,7 @@ Plataforma sass para la gestión de alquileres
 
 ### Environment
 
-The server reads these variables (see `.env.example`):
+The server reads these variables (see `server/.env.example`):
 
 | Variable | Required | Description |
 |---|---|---|
