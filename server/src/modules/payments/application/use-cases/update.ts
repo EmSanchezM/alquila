@@ -1,3 +1,4 @@
+import { NotFoundError } from "@server/shared/errors";
 import type { Payment } from "@server/database/schema";
 import type { PaymentsRepository } from "@server/modules/payments/domain/repositories/payments.repository";
 
@@ -7,7 +8,7 @@ export class UpdatePaymentUseCase {
   async execute(id: string, payload: Partial<Omit<Payment, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Payment> {
     const updatedPayment = await this.repository.update(id, payload);
 
-    if (!updatedPayment) throw new Error('Payment not updated');
+    if (!updatedPayment) throw new NotFoundError('Payment not found');
 
     return updatedPayment;
   }

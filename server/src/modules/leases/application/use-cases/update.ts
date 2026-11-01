@@ -1,3 +1,4 @@
+import { NotFoundError } from "@server/shared/errors";
 import type { Lease } from "@server/database/schema";
 import type { LeasesRepository } from "@server/modules/leases/domain/repositories/leases.repository";
 
@@ -7,7 +8,7 @@ export class UpdateLeaseUseCase {
   async execute(id: string, payload: Partial<Omit<Lease, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Lease> {
     const updatedLease = await this.repository.update(id, payload);
 
-    if (!updatedLease) throw new Error('Lease not updated');
+    if (!updatedLease) throw new NotFoundError('Lease not found');
 
     return updatedLease;
   }

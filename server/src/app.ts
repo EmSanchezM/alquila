@@ -2,6 +2,9 @@ import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { serveStatic } from "hono/bun";
 import { cors } from "hono/cors"
+import { HTTPException } from "hono/http-exception";
+
+import { AppError } from "./shared/errors";
 
 import propertyRouter from "./modules/properties/presentation/routes";
 import renterRouter from "./modules/renters/presentation/routes";
@@ -28,6 +31,18 @@ const api = new Hono()
   .route("/payments", paymentRouter);
 
 const routes = app.route("/api", api);
+
+app.onError((error, c) => {
+  if (error instanceof AppError) {
+    return c.json({ success: false, message: error.message }, error.status);
+  }
+  if (error instanceof HTTPException) {
+    return error.getResponse();
+  }
+
+  console.error(error);
+  return c.json({ success: false, message: "Internal server error" }, 500);
+});
 
 app.get("*", serveStatic({ root: "./client/dist" }))
 app.get("*", serveStatic({ path: "./client/dist/index.html" }))

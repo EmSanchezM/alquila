@@ -16,86 +16,51 @@ const maintenanceRequestRepository = new DrizzleMaintenanceRequestRepository();
 
 maintenanceRequestRouter
   .get("/", async (c) => {
-    try {
-      const findAllMaintenanceRequest = new FindAllMaintenanceRequestsUseCase(maintenanceRequestRepository);
-      const maintenanceRequests = await findAllMaintenanceRequest.execute();
+    const findAllMaintenanceRequest = new FindAllMaintenanceRequestsUseCase(maintenanceRequestRepository);
+    const maintenanceRequests = await findAllMaintenanceRequest.execute();
 
-      return c.json({
-        success: true,
-        data: maintenanceRequests,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: maintenanceRequests,
+    });
   })
   .get("/:id", zValidator('param', findByIdMaintenanceRequestsSchema), async (c) => {
-    try {
-      const findByIdMaintenanceRequest = new FindByIdMaintenanceRequestsUseCase(maintenanceRequestRepository);
-      const maintenanceRequest = await findByIdMaintenanceRequest.execute(c.req.param("id"));
+    const findByIdMaintenanceRequest = new FindByIdMaintenanceRequestsUseCase(maintenanceRequestRepository);
+    const maintenanceRequest = await findByIdMaintenanceRequest.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        data: maintenanceRequest,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: maintenanceRequest,
+    });
   })
   .post("/",  zValidator('json', createMaintenanceRequestSchema), async (c) => {
-    try {
-      const body = c.req.valid('json');
+    const body = c.req.valid('json');
 
-      const createMaintenanceRequest = new CreateMaintenanceRequestUseCase(maintenanceRequestRepository);
-      const maintenanceRequest = await createMaintenanceRequest.execute(body);
+    const createMaintenanceRequest = new CreateMaintenanceRequestUseCase(maintenanceRequestRepository);
+    const maintenanceRequest = await createMaintenanceRequest.execute(body);
 
-      return c.json({
-        success: true,
-        data: maintenanceRequest,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: maintenanceRequest,
+    });
   })
   .put("/:id", zValidator('param', updateMaintenanceRequestsSchema.shape.param), zValidator('json', updateMaintenanceRequestsSchema.shape.body), async (c) => {
-    try {
-      const body = c.req.valid('json');
-      const updateMaintenanceRequest = new UpdateMaintenanceRequestUseCase(maintenanceRequestRepository);
-      const maintenanceRequest = await updateMaintenanceRequest.execute(c.req.param("id"), body);
+    const body = c.req.valid('json');
+    const updateMaintenanceRequest = new UpdateMaintenanceRequestUseCase(maintenanceRequestRepository);
+    const maintenanceRequest = await updateMaintenanceRequest.execute(c.req.param("id"), body);
 
-      return c.json({
-        success: true,
-        data: maintenanceRequest,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: maintenanceRequest,
+    });
   })
   .delete("/:id", zValidator('param', findByIdMaintenanceRequestsSchema), async (c) => {
-    try {
-      const deleteMaintenanceRequest = new DeleteMaintenanceRequestUseCase(maintenanceRequestRepository);
-      await deleteMaintenanceRequest.execute(c.req.param("id"));
+    const deleteMaintenanceRequest = new DeleteMaintenanceRequestUseCase(maintenanceRequestRepository);
+    await deleteMaintenanceRequest.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        message: "Maintenance request deleted successfully",
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      message: "Maintenance request deleted successfully",
+    });
   });
 export default maintenanceRequestRouter;

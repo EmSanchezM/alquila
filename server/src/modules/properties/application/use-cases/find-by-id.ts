@@ -1,3 +1,4 @@
+import { NotFoundError } from "@server/shared/errors";
 import type { Property } from "@server/database/schema";
 import type { PropertiesRepository } from "@server/modules/properties/domain/repositories/properties.repository";
 
@@ -7,7 +8,7 @@ export class FindByIdPropertiesUseCase {
   async execute(id: string): Promise<Property> {
     const property = await this.repository.findById(id);
     
-    if (!property) throw new Error('Property not found');
+    if (!property) throw new NotFoundError('Property not found');
     
     return property;
 

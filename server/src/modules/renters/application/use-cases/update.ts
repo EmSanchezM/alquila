@@ -1,3 +1,4 @@
+import { NotFoundError } from "@server/shared/errors";
 import type { Renter } from "@server/database/schema";
 import type { RentersRepository } from "@server/modules/renters/domain/repositories/renters.repository";
 
@@ -7,7 +8,7 @@ export class UpdateRenterUseCase {
   async execute(id: string, payload: Partial<Omit<Renter, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Renter> {
     const updatedRenter = await this.repository.update(id, payload);
 
-    if (!updatedRenter) throw new Error('Renter not updated');
+    if (!updatedRenter) throw new NotFoundError('Renter not found');
 
     return updatedRenter;
   }

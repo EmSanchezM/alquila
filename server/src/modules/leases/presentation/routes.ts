@@ -16,86 +16,51 @@ const leaseRepository = new DrizzleLeasesRepository();
 
 leaseRouter
   .get("/", async (c) => {
-    try {
-      const findAllLeases = new FindAllLeasesUseCase(leaseRepository);
-      const leases = await findAllLeases.execute();
+    const findAllLeases = new FindAllLeasesUseCase(leaseRepository);
+    const leases = await findAllLeases.execute();
 
-      return c.json({
-        success: true,
-        data: leases,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: leases,
+    });
   })
   .get("/:id", zValidator('param', findByIdLeasesSchema), async (c) => {
-    try {
-      const findByIdLeases = new FindByIdLeasesUseCase(leaseRepository);
-      const lease = await findByIdLeases.execute(c.req.param("id"));
+    const findByIdLeases = new FindByIdLeasesUseCase(leaseRepository);
+    const lease = await findByIdLeases.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        data: lease,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: lease,
+    });
   })
   .post("/",  zValidator('json', creatLeaseSchema), async (c) => {
-    try {
-      const body = c.req.valid('json');
+    const body = c.req.valid('json');
 
-      const createLease = new CreateLeaseUseCase(leaseRepository);
-      const lease = await createLease.execute(body);
+    const createLease = new CreateLeaseUseCase(leaseRepository);
+    const lease = await createLease.execute(body);
 
-      return c.json({
-        success: true,
-        data: lease,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: lease,
+    });
   })
   .put("/:id", zValidator('param', updateLeaseSchema.shape.param), zValidator('json', updateLeaseSchema.shape.body), async (c) => {
-    try {
-      const body = c.req.valid('json');
-      const updateLease = new UpdateLeaseUseCase(leaseRepository);
-      const lease = await updateLease.execute(c.req.param("id"), body);
+    const body = c.req.valid('json');
+    const updateLease = new UpdateLeaseUseCase(leaseRepository);
+    const lease = await updateLease.execute(c.req.param("id"), body);
 
-      return c.json({
-        success: true,
-        data: lease,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: lease,
+    });
   })
   .delete("/:id", zValidator('param', findByIdLeasesSchema), async (c) => {
-    try {
-      const deleteLease = new DeleteLeaseUseCase(leaseRepository);
-      await deleteLease.execute(c.req.param("id"));
+    const deleteLease = new DeleteLeaseUseCase(leaseRepository);
+    await deleteLease.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        message: "Lease deleted successfully",
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      message: "Lease deleted successfully",
+    });
   });
 export default leaseRouter;
