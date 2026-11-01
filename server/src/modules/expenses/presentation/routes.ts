@@ -65,9 +65,9 @@ expenseRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updateExpensesSchema), async (c) => {
+  .put("/:id", zValidator('param', updateExpensesSchema.shape.param), zValidator('json', updateExpensesSchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updateExpense = new UpdateExpenseUseCase(expenseRepository);
       const expense = await updateExpense.execute(c.req.param("id"), body);
 

@@ -65,9 +65,9 @@ paymentRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updatePaymentsSchema), async (c) => {
+  .put("/:id", zValidator('param', updatePaymentsSchema.shape.param), zValidator('json', updatePaymentsSchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updatePayment = new UpdatePaymentUseCase(paymentRepository);
       const payment = await updatePayment.execute(c.req.param("id"), body);
 

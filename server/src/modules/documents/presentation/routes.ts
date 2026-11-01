@@ -65,9 +65,9 @@ documentRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updateDocumentsSchema), async (c) => {
+  .put("/:id", zValidator('param', updateDocumentsSchema.shape.param), zValidator('json', updateDocumentsSchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updateDocument = new UpdateDocumentUseCase(documentRepository);
       const document = await updateDocument.execute(c.req.param("id"), body);
 

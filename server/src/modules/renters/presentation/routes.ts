@@ -65,9 +65,9 @@ renterRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updateRenterSchema), async (c) => {
+  .put("/:id", zValidator('param', updateRenterSchema.shape.param), zValidator('json', updateRenterSchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updateRenter = new UpdateRenterUseCase(renterRepository);
       const renter = await updateRenter.execute(c.req.param("id"), body);
 

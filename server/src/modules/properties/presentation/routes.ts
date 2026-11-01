@@ -65,9 +65,9 @@ propertyRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updatePropertySchema), async (c) => {
+  .put("/:id", zValidator('param', updatePropertySchema.shape.param), zValidator('json', updatePropertySchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updateProperty = new UpdatePropertyUseCase(propertyRepository);
       const property = await updateProperty.execute(c.req.param("id"), body);
 

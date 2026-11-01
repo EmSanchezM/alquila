@@ -36,7 +36,7 @@ export const updateExpensesSchema = z.object({
     propertyId: z.string().optional(),
     category: z.string().optional(),
     description: z.string().optional(),
-    amount: z.number().optional(),
+    amount: z.number().transform(String).optional(),
     expenseDate: z.string().optional(),
     receiptFile: z.string().optional(),
     vendor: z.string().optional(),

@@ -65,9 +65,9 @@ leaseRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updateLeaseSchema), async (c) => {
+  .put("/:id", zValidator('param', updateLeaseSchema.shape.param), zValidator('json', updateLeaseSchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updateLease = new UpdateLeaseUseCase(leaseRepository);
       const lease = await updateLease.execute(c.req.param("id"), body);
 

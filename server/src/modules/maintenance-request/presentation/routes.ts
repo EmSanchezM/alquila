@@ -65,9 +65,9 @@ maintenanceRequestRouter
       }, 400)
     }
   })
-  .put("/:id", zValidator('json', updateMaintenanceRequestsSchema), async (c) => {
+  .put("/:id", zValidator('param', updateMaintenanceRequestsSchema.shape.param), zValidator('json', updateMaintenanceRequestsSchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updateMaintenanceRequest = new UpdateMaintenanceRequestUseCase(maintenanceRequestRepository);
       const maintenanceRequest = await updateMaintenanceRequest.execute(c.req.param("id"), body);
 
