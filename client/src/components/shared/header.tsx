@@ -1,13 +1,28 @@
 import { useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import { Building2, User, LogOut, Settings } from 'lucide-react'
 import USAFlag from '@/assets/languages/united-states-of-america-flag.svg'
 import SpainFlag from '@/assets/languages/spain-flag.svg'
+import { authClient, type SessionUser } from '@/lib/auth-client'
 
-const Header = () => {
+interface Props {
+  user: SessionUser
+}
+
+const Header = ({ user }: Props) => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
   const [currentLanguage, setCurrentLanguage] = useState('es')
+
+  async function handleLogout() {
+    setIsProfileMenuOpen(false)
+    await authClient.signOut()
+    queryClient.clear()
+    await navigate({ to: '/auth/sign-in' })
+  }
 
   return (
     <header className="bg-white shadow-sm border-b">
@@ -55,7 +70,7 @@ const Header = () => {
               </button>
 
               {isLanguageMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                <div className="absolute right-0 z-50 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
                   <button
                     onClick={() => {
                       setCurrentLanguage('es')
@@ -88,15 +103,21 @@ const Header = () => {
             <div className="relative">
               <button 
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center focus:outline-none"
+                className="flex items-center gap-2 focus:outline-none"
+                aria-expanded={isProfileMenuOpen}
               >
                 <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
                   <User className="h-5 w-5 text-gray-600" />
                 </div>
+                <span className="hidden sm:inline text-sm font-medium text-gray-700">{user.firstName}</span>
               </button>
 
               {isProfileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                <div className="absolute right-0 z-50 mt-2 w-56 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                  <div className="px-4 py-2 border-b">
+                    <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  </div>
                   <Link
                     to="/dashboard"
                     className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
@@ -113,7 +134,7 @@ const Header = () => {
                   </Link>
                   <button
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                    onClick={() => {/*TODO: Add logout logic here */}}
+                    onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
