@@ -1,10 +1,10 @@
-import type { Expense } from "@server/database/schema";
+import type { Expense, NewExpense } from "@server/database/schema";
 import type { ExpensesRepository } from "@server/modules/expenses/domain/repositories/expenses.repository";
 import { generateUuid } from "@server/shared/generate-uuid";
 
 export class CreateExpenseUseCase {
   constructor(private readonly repository: ExpensesRepository) {}
-  async execute(payload: Omit<Expense, 'createdAt' | 'updatedAt'>): Promise<Expense> {
+  async execute(payload: Omit<NewExpense, 'id' | 'createdAt' | 'updatedAt'>): Promise<Expense> {
     const data = {
       ...payload,
       id: generateUuid(),

@@ -14,7 +14,7 @@ export const createPropertySchema = z.object({
   propertyType: z.string(),
   bedrooms: z.number(),
   bathrooms: z.number(),
-  squareMeters: z.number(),
+  squareMeters: z.number().transform(String),
   description: z.string(),
   amenities: amenitiesSchema,
   images: imagesSchema,

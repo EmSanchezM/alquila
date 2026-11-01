@@ -2,15 +2,15 @@ import { eq } from "drizzle-orm";
 import type { MaintenanceRequestRepository } from "@server/modules/maintenance-request/domain/repositories/maintenance-request.repository";
 
 import { db } from "@server/database";
-import { maintenanceRequests, type MaintenanceRequest } from "@server/database/schema";
+import { maintenanceRequests, type MaintenanceRequest, type NewMaintenanceRequest } from "@server/database/schema";
 
 export class DrizzleMaintenanceRequestRepository implements MaintenanceRequestRepository {
-  async create(maintenanceRequest: Omit<MaintenanceRequest, 'createdAt' | 'updatedAt'>): Promise<MaintenanceRequest | null> {
+  async create(maintenanceRequest: Omit<NewMaintenanceRequest, 'createdAt' | 'updatedAt'>): Promise<MaintenanceRequest | null> {
     const [newMaintenanceRequest] = await db.insert(maintenanceRequests).values({
       ...maintenanceRequest,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning();
 
     if(!newMaintenanceRequest) return null;
 

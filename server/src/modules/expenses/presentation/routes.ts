@@ -49,7 +49,7 @@ expenseRouter
   })
   .post("/",  zValidator('json', createExpenseSchema), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
 
       const createExpense = new CreateExpenseUseCase(expenseRepository);
       const expense = await createExpense.execute(body);

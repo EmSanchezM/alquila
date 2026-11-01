@@ -2,13 +2,13 @@ import { eq } from "drizzle-orm";
 import type { DocumentsRepository } from "@server/modules/documents/domain/repositories/documents.repository";
 
 import { db } from "@server/database";
-import { documents, type Document } from "@server/database/schema";
+import { documents, type Document, type NewDocument } from "@server/database/schema";
 
 export class DrizzleDocumentsRepository implements DocumentsRepository {
-  async create(document: Omit<Document, 'createdAt' | 'updatedAt'>): Promise<Document | null> {
+  async create(document: Omit<NewDocument, 'createdAt' | 'updatedAt'>): Promise<Document | null> {
     const [newDocument] = await db.insert(documents).values({
       ...document,
-    });
+    }).returning();
 
     if(!newDocument) return null;
 

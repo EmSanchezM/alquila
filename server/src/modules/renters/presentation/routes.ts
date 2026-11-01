@@ -49,7 +49,7 @@ renterRouter
   })
   .post("/",  zValidator('json', createRenterSchema), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
 
       const createRenter = new CreateRenterUseCase(renterRepository);
       const renter = await createRenter.execute(body);

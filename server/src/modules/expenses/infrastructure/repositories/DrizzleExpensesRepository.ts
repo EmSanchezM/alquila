@@ -2,15 +2,15 @@ import { eq } from "drizzle-orm";
 import type { ExpensesRepository } from "@server/modules/expenses/domain/repositories/expenses.repository";
 
 import { db } from "@server/database";
-import { expenses, type Expense } from "@server/database/schema";
+import { expenses, type Expense, type NewExpense } from "@server/database/schema";
 
 export class DrizzleExpensesRepository implements ExpensesRepository {
-  async create(expense: Omit<Expense, 'createdAt' | 'updatedAt'>): Promise<Expense | null> {
+  async create(expense: Omit<NewExpense, 'createdAt' | 'updatedAt'>): Promise<Expense | null> {
     const [newExpense] = await db.insert(expenses).values({
       ...expense,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning();
 
     if(!newExpense) return null;
 

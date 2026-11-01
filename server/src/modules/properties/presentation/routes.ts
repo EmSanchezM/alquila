@@ -49,7 +49,7 @@ propertyRouter
   })
   .post("/",  zValidator('json', createPropertySchema), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
 
       const createProperty = new CreatePropertyUseCase(propertyRepository);
       const property = await createProperty.execute(body);

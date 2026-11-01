@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const ServeEnv = z.object({
-  NODE_ENV: z.enum(["development", "qa", "production"]),
+  NODE_ENV: z.enum(["development", "test", "qa", "production"]),
   PORT: z
     .string()
     .regex(/^\d+$/, "Port must be a numeric string")

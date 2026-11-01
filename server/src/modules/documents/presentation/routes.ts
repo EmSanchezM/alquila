@@ -49,7 +49,7 @@ documentRouter
   })
   .post("/",  zValidator('json', createDocumentSchema), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
 
       const createDocument = new CreateDocumentUseCase(documentRepository);
       const document = await createDocument.execute(body);

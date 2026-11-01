@@ -49,7 +49,7 @@ paymentRouter
   })
   .post("/",  zValidator('json', createPaymentSchema), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
 
       const createPayment = new CreatePaymentUseCase(paymentRepository);
       const payment = await createPayment.execute(body);

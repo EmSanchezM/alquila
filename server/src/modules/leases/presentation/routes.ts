@@ -49,7 +49,7 @@ leaseRouter
   })
   .post("/",  zValidator('json', creatLeaseSchema), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
 
       const createLease = new CreateLeaseUseCase(leaseRepository);
       const lease = await createLease.execute(body);
