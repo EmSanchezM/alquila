@@ -5,5 +5,5 @@ export interface DocumentsRepository {
   findAll(): Promise<Document[]>;
   findById(id: string): Promise<Document | null>;
   update(id: string, document: Partial<Document>): Promise<Document | null>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<boolean>;
 }

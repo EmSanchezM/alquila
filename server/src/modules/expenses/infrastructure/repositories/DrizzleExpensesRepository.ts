@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { ExpensesRepository } from "@server/modules/expenses/domain/repositories/expenses.repository";
 
 import { db } from "@server/database";
@@ -21,7 +21,7 @@ export class DrizzleExpensesRepository implements ExpensesRepository {
   }
   
   async findById(id: string): Promise<Expense | null> {
-    const [result] = await db.select().from(expenses).where(eq(expenses.id, id));
+    const [result] = await db.select().from(expenses).where(and(eq(expenses.id, id), eq(expenses.isActive, true)));
 
     if(!result) return null;
 
@@ -34,7 +34,7 @@ export class DrizzleExpensesRepository implements ExpensesRepository {
         ...expense,
         updatedAt: new Date(),
       })
-      .where(eq(expenses.id, id))
+      .where(and(eq(expenses.id, id), eq(expenses.isActive, true)))
       .returning();
 
     if(!updatedExpense) return null;
@@ -42,12 +42,15 @@ export class DrizzleExpensesRepository implements ExpensesRepository {
     return updatedExpense;
   }
 
-  async delete(id: string): Promise<void> {
-    await db.update(expenses)
+  async delete(id: string): Promise<boolean> {
+    const deleted = await db.update(expenses)
       .set({
         isActive: false,
         updatedAt: new Date(),
       })
-      .where(eq(expenses.id, id));
+      .where(and(eq(expenses.id, id), eq(expenses.isActive, true)))
+      .returning({ id: expenses.id });
+
+    return deleted.length > 0;
   }
 }

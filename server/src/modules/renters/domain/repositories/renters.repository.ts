@@ -5,5 +5,6 @@ export interface RentersRepository {
   findAll(): Promise<Renter[]>;
   findById(id: string): Promise<Renter | null>;
   update(id: string, renter: Partial<Renter>): Promise<Renter | null>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<boolean>;
+  hasActiveLeases(id: string): Promise<boolean>;
 }

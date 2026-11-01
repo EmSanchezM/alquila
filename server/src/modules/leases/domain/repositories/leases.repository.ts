@@ -5,5 +5,5 @@ export interface LeasesRepository {
   findAll(): Promise<Lease[]>;
   findById(id: string): Promise<Lease | null>;
   update(id: string, lease: Partial<Lease>): Promise<Lease | null>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<boolean>;
 }

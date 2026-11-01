@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { DocumentsRepository } from "@server/modules/documents/domain/repositories/documents.repository";
 
 import { db } from "@server/database";
@@ -19,7 +19,7 @@ export class DrizzleDocumentsRepository implements DocumentsRepository {
   }
   
   async findById(id: string): Promise<Document | null> {
-    const [result] = await db.select().from(documents).where(eq(documents.id, id));
+    const [result] = await db.select().from(documents).where(and(eq(documents.id, id), eq(documents.isActive, true)));
 
     if(!result) return null;
 
@@ -32,7 +32,7 @@ export class DrizzleDocumentsRepository implements DocumentsRepository {
         ...document,
         updatedAt: new Date(),
       })
-      .where(eq(documents.id, id))
+      .where(and(eq(documents.id, id), eq(documents.isActive, true)))
       .returning();
 
     if(!updatedDocument) return null;
@@ -40,12 +40,15 @@ export class DrizzleDocumentsRepository implements DocumentsRepository {
     return updatedDocument;
   }
 
-  async delete(id: string): Promise<void> {
-    await db.update(documents)
+  async delete(id: string): Promise<boolean> {
+    const deleted = await db.update(documents)
       .set({
         isActive: false,
         updatedAt: new Date(),
       })
-      .where(eq(documents.id, id));
+      .where(and(eq(documents.id, id), eq(documents.isActive, true)))
+      .returning({ id: documents.id });
+
+    return deleted.length > 0;
   }
 }
