@@ -35,7 +35,7 @@ export const updatePaymentsSchema = z.object({
   body: z.object({
     leaseId: z.string().optional(),
     userId: z.string().optional(),
-    amount: z.number().optional(),
+    amount: z.number().transform(String).optional(),
     dueDate: z.string().optional(),
     paidDate: z.string().optional(),
     paymentMethod: z.string().optional(),

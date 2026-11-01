@@ -4,7 +4,7 @@ import type { MaintenanceRequestRepository } from "@server/modules/maintenance-r
 export class UpdateMaintenanceRequestUseCase {
   constructor(private readonly repository: MaintenanceRequestRepository) {}
 
-  async execute(id: string, payload: Omit<MaintenanceRequest, 'id' | 'createdAt' | 'updatedAt'>): Promise<MaintenanceRequest> {
+  async execute(id: string, payload: Partial<Omit<MaintenanceRequest, 'id' | 'createdAt' | 'updatedAt'>>): Promise<MaintenanceRequest> {
     const updatedMaintenanceRequest = await this.repository.update(id, payload);
 
     if (!updatedMaintenanceRequest) throw new Error('Maintenance request not updated');

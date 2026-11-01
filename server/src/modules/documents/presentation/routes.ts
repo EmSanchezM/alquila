@@ -8,7 +8,7 @@ import {
   UpdateDocumentUseCase,
 } from "@server/modules/documents/application/use-cases";
 
-import { zValidator } from "@hono/zod-validator";
+import { zValidator } from "@server/shared/validator-wrapper";
 import { createDocumentSchema, findByIdDocumentsSchema, updateDocumentsSchema } from "@server/modules/documents/infrastructure/validations";
 
 const documentRouter = new Hono();
@@ -31,7 +31,7 @@ documentRouter
       }, 400)
     }
   })
-  .get("/:id", async (c) => {
+  .get("/:id", zValidator('param', findByIdDocumentsSchema), async (c) => {
     try {
       const findByIdDocument = new FindByIdDocumentUseCase(documentRepository);
       const document = await findByIdDocument.execute(c.req.param("id"));
@@ -47,7 +47,7 @@ documentRouter
       }, 400)
     }
   })
-  .post("/",  async (c) => {
+  .post("/",  zValidator('json', createDocumentSchema), async (c) => {
     try {
       const body = await c.req.json();
 
@@ -65,9 +65,9 @@ documentRouter
       }, 400)
     }
   })
-  .put("/:id", async (c) => {
+  .put("/:id", zValidator('param', updateDocumentsSchema.shape.param), zValidator('json', updateDocumentsSchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updateDocument = new UpdateDocumentUseCase(documentRepository);
       const document = await updateDocument.execute(c.req.param("id"), body);
 
@@ -82,7 +82,7 @@ documentRouter
       }, 400)
     }
   })
-  .delete("/:id", async (c) => {
+  .delete("/:id", zValidator('param', findByIdDocumentsSchema), async (c) => {
     try {
       const deleteDocument = new DeleteDocumentUseCase(documentRepository);
       await deleteDocument.execute(c.req.param("id"));

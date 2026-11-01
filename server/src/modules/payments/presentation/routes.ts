@@ -8,7 +8,7 @@ import {
   UpdatePaymentUseCase,
 } from "@server/modules/payments/application/use-cases";
 
-import { zValidator } from "@hono/zod-validator";
+import { zValidator } from "@server/shared/validator-wrapper";
 import { createPaymentSchema, findByIdPaymentsSchema, updatePaymentsSchema } from "@server/modules/payments/infrastructure/validations";
 
 const paymentRouter = new Hono();
@@ -31,7 +31,7 @@ paymentRouter
       }, 400)
     }
   })
-  .get("/:id", async (c) => {
+  .get("/:id", zValidator('param', findByIdPaymentsSchema), async (c) => {
     try {
       const findByIdPayment = new FindByIdPaymentUseCase(paymentRepository);
       const payment = await findByIdPayment.execute(c.req.param("id"));
@@ -47,7 +47,7 @@ paymentRouter
       }, 400)
     }
   })
-  .post("/",  async (c) => {
+  .post("/",  zValidator('json', createPaymentSchema), async (c) => {
     try {
       const body = await c.req.json();
 
@@ -65,9 +65,9 @@ paymentRouter
       }, 400)
     }
   })
-  .put("/:id", async (c) => {
+  .put("/:id", zValidator('param', updatePaymentsSchema.shape.param), zValidator('json', updatePaymentsSchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updatePayment = new UpdatePaymentUseCase(paymentRepository);
       const payment = await updatePayment.execute(c.req.param("id"), body);
 
@@ -82,7 +82,7 @@ paymentRouter
       }, 400)
     }
   })
-  .delete("/:id", async (c) => {
+  .delete("/:id", zValidator('param', findByIdPaymentsSchema), async (c) => {
     try {
       const deletePayment = new DeletePaymentUseCase(paymentRepository);
       await deletePayment.execute(c.req.param("id"));

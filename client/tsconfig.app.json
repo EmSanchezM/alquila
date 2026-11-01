@@ -17,10 +17,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "..",
     "paths": {
-      "@/*": ["./client/src/*"],
-      "server": ["./server/src/index.ts"]
+      "@/*": ["./src/*"],
+      "server": ["../server/src/index.ts"]
     }
   },
   "include": ["src"],

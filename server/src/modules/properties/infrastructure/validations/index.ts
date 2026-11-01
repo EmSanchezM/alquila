@@ -49,7 +49,7 @@ export const updatePropertySchema = z.object({
     propertyType: z.string().optional(),
     bedrooms: z.number().optional(),
     bathrooms: z.number().optional(),
-    squareMeters: z.number().optional(),
+    squareMeters: z.number().transform(String).optional(),
     description: z.string().optional(),
     amenities: amenitiesSchema.optional(),
     images: imagesSchema.optional(),

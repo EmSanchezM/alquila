@@ -36,8 +36,8 @@ export const updateLeaseSchema = z.object({
   body: z.object({
     startDate: z.string().optional(),
     endDate: z.string().optional(),
-    monthlyRent: z.number().optional(),
-    securityDeposit: z.number().optional(),
+    monthlyRent: z.number().transform(String).optional(),
+    securityDeposit: z.number().transform(String).optional(),
     paymentDueDay: z.number().optional(),
     status: z.string().optional(),
     contractFile: z.string().optional(),

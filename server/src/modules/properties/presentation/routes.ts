@@ -8,7 +8,7 @@ import {
   DeletePropertyUseCase,
 } from "@server/modules/properties/application/use-cases";
 
-import { zValidator } from "@hono/zod-validator";
+import { zValidator } from "@server/shared/validator-wrapper";
 import { createPropertySchema, findByIdPropertiesSchema, updatePropertySchema } from "@server/modules/properties/infrastructure/validations";
 
 const propertyRouter = new Hono();
@@ -31,7 +31,7 @@ propertyRouter
       }, 400)
     }
   })
-  .get("/:id", async (c) => {
+  .get("/:id", zValidator('param', findByIdPropertiesSchema), async (c) => {
     try {
       const findByIdProperties = new FindByIdPropertiesUseCase(propertyRepository);
       const property = await findByIdProperties.execute(c.req.param("id"));
@@ -47,7 +47,7 @@ propertyRouter
       }, 400)
     }
   })
-  .post("/", async (c) => {
+  .post("/",  zValidator('json', createPropertySchema), async (c) => {
     try {
       const body = await c.req.json();
 
@@ -65,9 +65,9 @@ propertyRouter
       }, 400)
     }
   })
-  .put("/:id", async (c) => {
+  .put("/:id", zValidator('param', updatePropertySchema.shape.param), zValidator('json', updatePropertySchema.shape.body), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
       const updateProperty = new UpdatePropertyUseCase(propertyRepository);
       const property = await updateProperty.execute(c.req.param("id"), body);
 
@@ -82,7 +82,7 @@ propertyRouter
       }, 400)
     }
   })
-  .delete("/:id", async (c) => {
+  .delete("/:id", zValidator('param', findByIdPropertiesSchema), async (c) => {
     try {
       const deleteProperty = new DeletePropertyUseCase(propertyRepository);
       await deleteProperty.execute(c.req.param("id"));

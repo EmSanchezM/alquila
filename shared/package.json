@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "dist/index.js",
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "typescript": "^6.0.3"
   },
   "scripts": {
     "build": "tsc",
@@ -11,6 +11,6 @@
   },
   "types": "dist/index.d.ts",
   "dependencies": {
-    "zod": "^3.25.62"
+    "zod": "^4.6.7"
   }
 }

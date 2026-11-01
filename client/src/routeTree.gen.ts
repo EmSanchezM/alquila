@@ -9,61 +9,55 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
-import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
-import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedRentersIndexRouteImport } from './routes/_authenticated/renters/index'
-import { Route as AuthenticatedPropertiesIndexRouteImport } from './routes/_authenticated/properties/index'
-import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authenticated/payments/index'
+import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
+import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
+import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthenticatedMaintenanceIndexRouteImport } from './routes/_authenticated/maintenance/index'
-import { Route as AuthenticatedRentersCommunicationsRouteImport } from './routes/_authenticated/renters/communications'
-import { Route as AuthenticatedRentersRenterIdRouteImport } from './routes/_authenticated/renters/$renterId'
-import { Route as AuthenticatedPropertiesCreateRouteImport } from './routes/_authenticated/properties/create'
-import { Route as AuthenticatedPropertiesPropertyIdRouteImport } from './routes/_authenticated/properties/$propertyId'
+import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authenticated/payments/index'
 import { Route as AuthenticatedPaymentsAutomationRouteImport } from './routes/_authenticated/payments/automation'
+import { Route as AuthenticatedPropertiesIndexRouteImport } from './routes/_authenticated/properties/index'
+import { Route as AuthenticatedPropertiesPropertyIdRouteImport } from './routes/_authenticated/properties/$propertyId'
+import { Route as AuthenticatedPropertiesCreateRouteImport } from './routes/_authenticated/properties/create'
+import { Route as AuthenticatedRentersIndexRouteImport } from './routes/_authenticated/renters/index'
+import { Route as AuthenticatedRentersRenterIdRouteImport } from './routes/_authenticated/renters/$renterId'
+import { Route as AuthenticatedRentersCommunicationsRouteImport } from './routes/_authenticated/renters/communications'
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthSignUpRoute = AuthSignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => AuthRoute,
-} as any)
-const AuthSignInRoute = AuthSignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
-  getParentRoute: () => AuthRoute,
-} as any)
-const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
-  id: '/documents',
-  path: '/documents',
-  getParentRoute: () => AuthenticatedRoute,
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedRentersIndexRoute =
-  AuthenticatedRentersIndexRouteImport.update({
-    id: '/renters/',
-    path: '/renters/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedPropertiesIndexRoute =
-  AuthenticatedPropertiesIndexRouteImport.update({
-    id: '/properties/',
-    path: '/properties/',
+const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthenticatedMaintenanceIndexRoute =
+  AuthenticatedMaintenanceIndexRouteImport.update({
+    id: '/maintenance/',
+    path: '/maintenance/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedPaymentsIndexRoute =
@@ -72,28 +66,16 @@ const AuthenticatedPaymentsIndexRoute =
     path: '/payments/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedMaintenanceIndexRoute =
-  AuthenticatedMaintenanceIndexRouteImport.update({
-    id: '/maintenance/',
-    path: '/maintenance/',
+const AuthenticatedPaymentsAutomationRoute =
+  AuthenticatedPaymentsAutomationRouteImport.update({
+    id: '/payments/automation',
+    path: '/payments/automation',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedRentersCommunicationsRoute =
-  AuthenticatedRentersCommunicationsRouteImport.update({
-    id: '/renters/communications',
-    path: '/renters/communications',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedRentersRenterIdRoute =
-  AuthenticatedRentersRenterIdRouteImport.update({
-    id: '/renters/$renterId',
-    path: '/renters/$renterId',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedPropertiesCreateRoute =
-  AuthenticatedPropertiesCreateRouteImport.update({
-    id: '/properties/create',
-    path: '/properties/create',
+const AuthenticatedPropertiesIndexRoute =
+  AuthenticatedPropertiesIndexRouteImport.update({
+    id: '/properties/',
+    path: '/properties/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedPropertiesPropertyIdRoute =
@@ -102,14 +84,33 @@ const AuthenticatedPropertiesPropertyIdRoute =
     path: '/properties/$propertyId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedPaymentsAutomationRoute =
-  AuthenticatedPaymentsAutomationRouteImport.update({
-    id: '/payments/automation',
-    path: '/payments/automation',
+const AuthenticatedPropertiesCreateRoute =
+  AuthenticatedPropertiesCreateRouteImport.update({
+    id: '/properties/create',
+    path: '/properties/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRentersIndexRoute =
+  AuthenticatedRentersIndexRouteImport.update({
+    id: '/renters/',
+    path: '/renters/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRentersRenterIdRoute =
+  AuthenticatedRentersRenterIdRouteImport.update({
+    id: '/renters/$renterId',
+    path: '/renters/$renterId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRentersCommunicationsRoute =
+  AuthenticatedRentersCommunicationsRouteImport.update({
+    id: '/renters/communications',
+    path: '/renters/communications',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
@@ -120,12 +121,13 @@ export interface FileRoutesByFullPath {
   '/properties/create': typeof AuthenticatedPropertiesCreateRoute
   '/renters/$renterId': typeof AuthenticatedRentersRenterIdRoute
   '/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
-  '/maintenance': typeof AuthenticatedMaintenanceIndexRoute
-  '/payments': typeof AuthenticatedPaymentsIndexRoute
-  '/properties': typeof AuthenticatedPropertiesIndexRoute
-  '/renters': typeof AuthenticatedRentersIndexRoute
+  '/maintenance/': typeof AuthenticatedMaintenanceIndexRoute
+  '/payments/': typeof AuthenticatedPaymentsIndexRoute
+  '/properties/': typeof AuthenticatedPropertiesIndexRoute
+  '/renters/': typeof AuthenticatedRentersIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
@@ -162,6 +164,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/auth'
     | '/dashboard'
     | '/documents'
@@ -172,12 +175,13 @@ export interface FileRouteTypes {
     | '/properties/create'
     | '/renters/$renterId'
     | '/renters/communications'
-    | '/maintenance'
-    | '/payments'
-    | '/properties'
-    | '/renters'
+    | '/maintenance/'
+    | '/payments/'
+    | '/properties/'
+    | '/renters/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/auth'
     | '/dashboard'
     | '/documents'
@@ -218,40 +222,19 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthenticatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/sign-up': {
-      id: '/auth/sign-up'
-      path: '/sign-up'
-      fullPath: '/auth/sign-up'
-      preLoaderRoute: typeof AuthSignUpRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/auth/sign-in': {
-      id: '/auth/sign-in'
-      path: '/sign-in'
-      fullPath: '/auth/sign-in'
-      preLoaderRoute: typeof AuthSignInRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/_authenticated/documents': {
-      id: '/_authenticated/documents'
-      path: '/documents'
-      fullPath: '/documents'
-      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
-      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
@@ -260,53 +243,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/renters/': {
-      id: '/_authenticated/renters/'
-      path: '/renters'
-      fullPath: '/renters'
-      preLoaderRoute: typeof AuthenticatedRentersIndexRouteImport
+    '/_authenticated/documents': {
+      id: '/_authenticated/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/properties/': {
-      id: '/_authenticated/properties/'
-      path: '/properties'
-      fullPath: '/properties'
-      preLoaderRoute: typeof AuthenticatedPropertiesIndexRouteImport
+    '/auth/sign-in': {
+      id: '/auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_authenticated/maintenance/': {
+      id: '/_authenticated/maintenance/'
+      path: '/maintenance'
+      fullPath: '/maintenance/'
+      preLoaderRoute: typeof AuthenticatedMaintenanceIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/payments/': {
       id: '/_authenticated/payments/'
       path: '/payments'
-      fullPath: '/payments'
+      fullPath: '/payments/'
       preLoaderRoute: typeof AuthenticatedPaymentsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/maintenance/': {
-      id: '/_authenticated/maintenance/'
-      path: '/maintenance'
-      fullPath: '/maintenance'
-      preLoaderRoute: typeof AuthenticatedMaintenanceIndexRouteImport
+    '/_authenticated/payments/automation': {
+      id: '/_authenticated/payments/automation'
+      path: '/payments/automation'
+      fullPath: '/payments/automation'
+      preLoaderRoute: typeof AuthenticatedPaymentsAutomationRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/renters/communications': {
-      id: '/_authenticated/renters/communications'
-      path: '/renters/communications'
-      fullPath: '/renters/communications'
-      preLoaderRoute: typeof AuthenticatedRentersCommunicationsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/renters/$renterId': {
-      id: '/_authenticated/renters/$renterId'
-      path: '/renters/$renterId'
-      fullPath: '/renters/$renterId'
-      preLoaderRoute: typeof AuthenticatedRentersRenterIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/properties/create': {
-      id: '/_authenticated/properties/create'
-      path: '/properties/create'
-      fullPath: '/properties/create'
-      preLoaderRoute: typeof AuthenticatedPropertiesCreateRouteImport
+    '/_authenticated/properties/': {
+      id: '/_authenticated/properties/'
+      path: '/properties'
+      fullPath: '/properties/'
+      preLoaderRoute: typeof AuthenticatedPropertiesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/properties/$propertyId': {
@@ -316,11 +299,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPropertiesPropertyIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/payments/automation': {
-      id: '/_authenticated/payments/automation'
-      path: '/payments/automation'
-      fullPath: '/payments/automation'
-      preLoaderRoute: typeof AuthenticatedPaymentsAutomationRouteImport
+    '/_authenticated/properties/create': {
+      id: '/_authenticated/properties/create'
+      path: '/properties/create'
+      fullPath: '/properties/create'
+      preLoaderRoute: typeof AuthenticatedPropertiesCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/renters/': {
+      id: '/_authenticated/renters/'
+      path: '/renters'
+      fullPath: '/renters/'
+      preLoaderRoute: typeof AuthenticatedRentersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/renters/$renterId': {
+      id: '/_authenticated/renters/$renterId'
+      path: '/renters/$renterId'
+      fullPath: '/renters/$renterId'
+      preLoaderRoute: typeof AuthenticatedRentersRenterIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/renters/communications': {
+      id: '/_authenticated/renters/communications'
+      path: '/renters/communications'
+      fullPath: '/renters/communications'
+      preLoaderRoute: typeof AuthenticatedRentersCommunicationsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }

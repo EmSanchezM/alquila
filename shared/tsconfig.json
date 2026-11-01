@@ -24,7 +24,6 @@
 
     // Module resolution
     "moduleResolution": "bundler",
-    "baseUrl": ".",
     "paths": {
       "@shared/*": ["./src/*"]
     }

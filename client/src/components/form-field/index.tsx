@@ -140,7 +140,7 @@ const RenderField: FC<RenderFieldProps> = ({ field, props }) => {
           <FormControl>
             <DatePicker 
               selected={field.value}
-              onChange={(date) => field.onChange(date)}
+              onChange={(date: Date | null) => field.onChange(date)}
               showTimeSelect={props.showTimeSelect ?? false}
               dateFormat={props.dateFormat ?? 'dd/MM/yyyy'}
               timeInputLabel="Time:"

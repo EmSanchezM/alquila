@@ -4,7 +4,7 @@ import type { RentersRepository } from "@server/modules/renters/domain/repositor
 export class UpdateRenterUseCase {
   constructor(private readonly repository: RentersRepository) {}
 
-  async execute(id: string, payload: Omit<Renter, 'id' | 'createdAt' | 'updatedAt'>): Promise<Renter> {
+  async execute(id: string, payload: Partial<Omit<Renter, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Renter> {
     const updatedRenter = await this.repository.update(id, payload);
 
     if (!updatedRenter) throw new Error('Renter not updated');
