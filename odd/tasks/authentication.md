@@ -24,8 +24,8 @@ Assumptions (not asked explicitly):
 |---|---|---|---|---|
 | T1 | S1, S2, S8 | inline | done | RED: auth.test.ts failed (no `account` table). GREEN: 54/54. Migration 0002→0003 with an existing user keeps password, names, max_properties and properties; name backfilled. HTTP: HttpOnly cookie, untrusted origin 403, no CORS header for it. Independent verifier: no blockers (S1, S2, S8 PASS; 95-request regression diff vs 66abff0 clean). |
 | T2 | S3, S4, S5, S6 | inline | done | `59efded` (S3–S5): RED 17 new failures + S4 body failures, GREEN 72/72. `3ceb715` (S6): RED 16 cross-user references accepted, GREEN 89/89. Independent verifier: no blockers (S3–S6 PASS; 267 isolation probes; 114-request same-user regression vs ae217db: 0 differences). |
-| T3 | S7 | inline | pending | |
-| T4 | docs (README env vars, test database) | inline | pending | |
+| T3 | S7 | inline | done | `69d487f`. No client test runner; verified with a Playwright e2e against the real server (scratch, not committed): RED (no first/last name fields, fake guard), GREEN 15/15 in 3 consecutive runs. Server suite 89/89. Independent verifier: no blockers (guard on 11 routes, 13 redirect probes, two-user cache isolation, header at 1280/390px). |
+| T4 | docs (README env vars, test database) | inline | done | README: Environment section and test database steps. |
 
 Route evidence: tasks depend on each other in order (T2 needs T1's session, T3 needs T1's endpoints), so there is no parallel-writer reason; all inline.
 
@@ -43,4 +43,7 @@ Route evidence: tasks depend on each other in order (T2 needs T1's session, T3 n
 - **L9 (2026-11-01):** T1 merged as #13 (`ae217db`). T2 on a new branch `feat/auth-isolation` from `develop` to avoid squash history noise.
 - **L10 (2026-11-01):** T2 design: `requireAuth` middleware on the `/api` router (`/api/auth/*` mounted before it, stays public); every repository method takes `userId`; `OwnershipGuard` (`server/src/shared/ownership.ts`) reuses each module's user-scoped `findById` for references, injected into 9 create/update use cases. References to deleted records are rejected too. The `api-errors` 500 test now forces a DB error with a 300-char property name (varchar(200)).
 - **L11 (2026-11-01):** T2 verifier advisories, not fixed: (1) ownership check and insert are not in one transaction (a user's own record could be soft-deleted in between; no cross-user leak); (2) zod 400 responses echo the full issue list (pre-existing).
-- Next step: T2 PR, then T3 (client).
+- **L12 (2026-11-01):** T2 merged as #14 (`1b8a690`). T3 on new branch `feat/auth-client`.
+- **L13 (2026-11-01):** T3 findings fixed: (1) profile dropdown had no z-index; on /properties the search input covered it and swallowed clicks on Logout (`z-50` on both header dropdowns); (2) `router.invalidate()` while still on /auth/sign-in re-ran the /auth guard and could redirect to /dashboard instead of `?redirect=`; removed, navigating already re-runs the target guard. Sign-up limits names to 100 chars (fixes T1 advisory 2). Known: properties list still falls back to mock data when empty (phase 2).
+- **L14 (2026-11-01):** T3 verifier advisories, not fixed: (1) odd paths like `/%5C...` pass `safeRedirect`; harmless in-app, but the Google callback gets 403 instead of falling back; (2) `handleLogout` ignores a failed `signOut()` (no message, user stays signed in); (3) a previous sign-in error stays visible during later validation-only attempts; (4) first name hidden in the header below `sm`; (5) `server/.env.example` does not list `TRUSTED_ORIGINS` (file is blocked for reading in this session). README path to `server/.env.example` fixed.
+- Next step: T3 PR. Then phase 2 (properties end to end).
