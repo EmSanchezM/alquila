@@ -50,7 +50,7 @@ export function createFixtures() {
   };
 
   async function seed() {
-    await db.insert(users).values({ id: ids.userId, email: `${tag}@test.com`, password: "x", firstName: "Test", lastName: "User" });
+    await db.insert(users).values({ id: ids.userId, email: `${tag}@test.com`, password: "x", name: "Test User", firstName: "Test", lastName: "User" });
     await db.insert(properties).values({ id: ids.propertyId, userId: ids.userId, name: "Fixture", address: "A", city: "C", country: "CR", propertyType: "house" });
     await db.insert(renters).values({ id: ids.renterId, userId: ids.userId, firstName: "Fixture", lastName: "Renter" });
     await db.insert(leases).values({ id: ids.leaseId, propertyId: ids.propertyId, renterId: ids.renterId, userId: ids.userId, startDate: "2026-01-01", endDate: "2026-12-31", monthlyRent: "500" });
