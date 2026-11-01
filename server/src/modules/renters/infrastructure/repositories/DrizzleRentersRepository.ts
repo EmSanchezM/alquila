@@ -2,10 +2,10 @@ import { eq } from "drizzle-orm";
 import type { RentersRepository } from "@server/modules/renters/domain/repositories/renters.repository";
 
 import { db } from "@server/database";
-import { renters, type Renter } from "@server/database/schema";
+import { renters, type Renter, type NewRenter } from "@server/database/schema";
 
 export class DrizzleRentersRepository implements RentersRepository {
-  async create(renter: Omit<Renter, 'createdAt' | 'updatedAt'>): Promise<Renter | null> {
+  async create(renter: Omit<NewRenter, 'createdAt' | 'updatedAt'>): Promise<Renter | null> {
     const [newRenter] = await db.insert(renters).values({
       ...renter,
       createdAt: new Date(),

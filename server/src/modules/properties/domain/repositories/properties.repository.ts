@@ -1,7 +1,7 @@
-import type { Property } from "@server/database/schema";
+import type { Property, NewProperty } from "@server/database/schema";
 
 export interface PropertiesRepository {
-  create(property: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>): Promise<Property | null>;
+  create(property: Omit<NewProperty, 'createdAt' | 'updatedAt'>): Promise<Property | null>;
   findAll(): Promise<Property[]>;
   findById(id: string): Promise<Property | null>;
   update(id: string, property: Partial<Property>): Promise<Property | null>;

@@ -327,3 +327,11 @@ export type MaintenanceRequest = typeof maintenanceRequests.$inferSelect;
 export type Document = typeof documents.$inferSelect;
 export type Payment = typeof payments.$inferSelect;
 
+
+export type NewProperty = typeof properties.$inferInsert;
+export type NewRenter = typeof renters.$inferInsert;
+export type NewLease = typeof leases.$inferInsert;
+export type NewExpense = typeof expenses.$inferInsert;
+export type NewMaintenanceRequest = typeof maintenanceRequests.$inferInsert;
+export type NewDocument = typeof documents.$inferInsert;
+export type NewPayment = typeof payments.$inferInsert;
