@@ -29,20 +29,20 @@
     "monorepo"
   ],
   "devDependencies": {
-    "bun-types": "latest",
-    "concurrently": "^9.2.5",
-    "tsx": "^4.23.15",
     "@types/bun": "latest",
     "@types/pg": "^8.23.1",
-    "drizzle-kit": "^0.31.11"
+    "bun-types": "latest",
+    "concurrently": "^10.0.6",
+    "drizzle-kit": "^0.31.11",
+    "tsx": "^4.23.15"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "drizzle-orm": "^0.44.2",
+    "drizzle-orm": "^0.45.4",
     "hono": "^4.13.16",
     "pg": "^8.23.1",
-    "postgres": "^3.4.9"
+    "postgres": "^4.0.0"
   }
 }
