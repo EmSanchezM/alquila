@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { AuthEnv } from "@server/shared/require-auth";
+import { ownershipGuard } from "@server/shared/ownership-guard";
 import { DrizzleLeasesRepository } from "@server/modules/leases/infrastructure/repositories/DrizzleLeasesRepository";
 import {
   CreateLeaseUseCase,
@@ -37,7 +38,7 @@ leaseRouter
   .post("/",  zValidator('json', creatLeaseSchema), async (c) => {
     const body = c.req.valid('json');
 
-    const createLease = new CreateLeaseUseCase(leaseRepository);
+    const createLease = new CreateLeaseUseCase(leaseRepository, ownershipGuard);
     const lease = await createLease.execute(body, c.get("user").id);
 
     return c.json({

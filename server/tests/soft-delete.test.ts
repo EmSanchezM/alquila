@@ -86,8 +86,10 @@ describe("records with active leases cannot be deleted", () => {
   test("renter: 409 while a lease is active", async () => {
     const renterCase = moduleCases(f).find((c) => c.name === "renters")!;
     const renterId = await create(renterCase);
+    // The fixture property is deleted by the previous test, so lease a fresh one.
+    const propertyId = await create(moduleCases(f).find((c) => c.name === "properties")!);
     const leaseCase = moduleCases(f).find((c) => c.name === "leases")!;
-    const lease = await f.request("POST", "/leases", { ...leaseCase.body(), renterId });
+    const lease = await f.request("POST", "/leases", { ...leaseCase.body(), propertyId, renterId });
     f.created.leases.push(lease.json.data.id);
 
     const blocked = await f.request("DELETE", `/renters/${renterId}`);

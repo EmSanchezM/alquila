@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { AuthEnv } from "@server/shared/require-auth";
+import { ownershipGuard } from "@server/shared/ownership-guard";
 import { DrizzlePaymentsRepository } from "@server/modules/payments/infrastructure/repositories/DrizzlePaymentsRepository";
 import {
   CreatePaymentUseCase,
@@ -37,7 +38,7 @@ paymentRouter
   .post("/",  zValidator('json', createPaymentSchema), async (c) => {
     const body = c.req.valid('json');
 
-    const createPayment = new CreatePaymentUseCase(paymentRepository);
+    const createPayment = new CreatePaymentUseCase(paymentRepository, ownershipGuard);
     const payment = await createPayment.execute(body, c.get("user").id);
 
     return c.json({
@@ -47,7 +48,7 @@ paymentRouter
   })
   .put("/:id", zValidator('param', updatePaymentsSchema.shape.param), zValidator('json', updatePaymentsSchema.shape.body), async (c) => {
     const body = c.req.valid('json');
-    const updatePayment = new UpdatePaymentUseCase(paymentRepository);
+    const updatePayment = new UpdatePaymentUseCase(paymentRepository, ownershipGuard);
     const payment = await updatePayment.execute(c.req.param("id"), body, c.get("user").id);
 
     return c.json({

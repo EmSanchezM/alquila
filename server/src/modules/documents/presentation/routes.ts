@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { AuthEnv } from "@server/shared/require-auth";
+import { ownershipGuard } from "@server/shared/ownership-guard";
 import { DrizzleDocumentsRepository } from "@server/modules/documents/infrastructure/repositories/DrizzleDocumentsRepository";
 import {
   CreateDocumentUseCase,
@@ -37,7 +38,7 @@ documentRouter
   .post("/",  zValidator('json', createDocumentSchema), async (c) => {
     const body = c.req.valid('json');
 
-    const createDocument = new CreateDocumentUseCase(documentRepository);
+    const createDocument = new CreateDocumentUseCase(documentRepository, ownershipGuard);
     const document = await createDocument.execute(body, c.get("user").id);
 
     return c.json({
@@ -47,7 +48,7 @@ documentRouter
   })
   .put("/:id", zValidator('param', updateDocumentsSchema.shape.param), zValidator('json', updateDocumentsSchema.shape.body), async (c) => {
     const body = c.req.valid('json');
-    const updateDocument = new UpdateDocumentUseCase(documentRepository);
+    const updateDocument = new UpdateDocumentUseCase(documentRepository, ownershipGuard);
     const document = await updateDocument.execute(c.req.param("id"), body, c.get("user").id);
 
     return c.json({

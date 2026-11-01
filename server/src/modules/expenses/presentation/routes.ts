@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { AuthEnv } from "@server/shared/require-auth";
+import { ownershipGuard } from "@server/shared/ownership-guard";
 import { DrizzleExpensesRepository } from "@server/modules/expenses/infrastructure/repositories/DrizzleExpensesRepository";
 import {
   CreateExpenseUseCase,
@@ -37,7 +38,7 @@ expenseRouter
   .post("/",  zValidator('json', createExpenseSchema), async (c) => {
     const body = c.req.valid('json');
 
-    const createExpense = new CreateExpenseUseCase(expenseRepository);
+    const createExpense = new CreateExpenseUseCase(expenseRepository, ownershipGuard);
     const expense = await createExpense.execute(body, c.get("user").id);
 
     return c.json({
@@ -47,7 +48,7 @@ expenseRouter
   })
   .put("/:id", zValidator('param', updateExpensesSchema.shape.param), zValidator('json', updateExpensesSchema.shape.body), async (c) => {
     const body = c.req.valid('json');
-    const updateExpense = new UpdateExpenseUseCase(expenseRepository);
+    const updateExpense = new UpdateExpenseUseCase(expenseRepository, ownershipGuard);
     const expense = await updateExpense.execute(c.req.param("id"), body, c.get("user").id);
 
     return c.json({

@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { AuthEnv } from "@server/shared/require-auth";
+import { ownershipGuard } from "@server/shared/ownership-guard";
 import { DrizzleMaintenanceRequestRepository } from "@server/modules/maintenance-request/infrastructure/repositories/DrizzleMaintenanceRequestRepository";
 import {
   CreateMaintenanceRequestUseCase,
@@ -37,7 +38,7 @@ maintenanceRequestRouter
   .post("/",  zValidator('json', createMaintenanceRequestSchema), async (c) => {
     const body = c.req.valid('json');
 
-    const createMaintenanceRequest = new CreateMaintenanceRequestUseCase(maintenanceRequestRepository);
+    const createMaintenanceRequest = new CreateMaintenanceRequestUseCase(maintenanceRequestRepository, ownershipGuard);
     const maintenanceRequest = await createMaintenanceRequest.execute(body, c.get("user").id);
 
     return c.json({
@@ -47,7 +48,7 @@ maintenanceRequestRouter
   })
   .put("/:id", zValidator('param', updateMaintenanceRequestsSchema.shape.param), zValidator('json', updateMaintenanceRequestsSchema.shape.body), async (c) => {
     const body = c.req.valid('json');
-    const updateMaintenanceRequest = new UpdateMaintenanceRequestUseCase(maintenanceRequestRepository);
+    const updateMaintenanceRequest = new UpdateMaintenanceRequestUseCase(maintenanceRequestRepository, ownershipGuard);
     const maintenanceRequest = await updateMaintenanceRequest.execute(c.req.param("id"), body, c.get("user").id);
 
     return c.json({
