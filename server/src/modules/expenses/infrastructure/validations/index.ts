@@ -5,7 +5,7 @@ export const createExpenseSchema = z.object({
   userId: z.string(),
   category: z.string({ error: (issue) => (issue.input === undefined ? "category is required" : undefined) }),
   description: z.string(),
-  amount: z.number(),
+  amount: z.number().transform(String),
   expenseDate: z.string(),
   receiptFile: z.string(),
   vendor: z.string(),

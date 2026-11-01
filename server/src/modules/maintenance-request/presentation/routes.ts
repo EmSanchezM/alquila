@@ -49,7 +49,7 @@ maintenanceRequestRouter
   })
   .post("/",  zValidator('json', createMaintenanceRequestSchema), async (c) => {
     try {
-      const body = await c.req.json();
+      const body = c.req.valid('json');
 
       const createMaintenanceRequest = new CreateMaintenanceRequestUseCase(maintenanceRequestRepository);
       const maintenanceRequest = await createMaintenanceRequest.execute(body);

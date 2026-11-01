@@ -1,11 +1,11 @@
 import type { PropertiesRepository } from "@server/modules/properties/domain/repositories/properties.repository";
 
 import { db } from "@server/database";
-import { properties, type Property } from "@server/database/schema";
+import { properties, type Property, type NewProperty } from "@server/database/schema";
 import { eq } from "drizzle-orm";
 
 export class DrizzlePropertiesRepository implements PropertiesRepository {
-  async create(property: Omit<Property, 'createdAt' | 'updatedAt'>): Promise<Property | null> {
+  async create(property: Omit<NewProperty, 'createdAt' | 'updatedAt'>): Promise<Property | null> {
     const [newProperty] = await db.insert(properties).values({
       ...property,
       createdAt: new Date(),

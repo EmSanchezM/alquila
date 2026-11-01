@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createPaymentSchema = z.object({
   leaseId: z.string(),
   userId: z.string(),
-  amount: z.number(),
+  amount: z.number().transform(String),
   dueDate: z.string(),
   paidDate: z.string(),
   paymentMethod: z.string(),
@@ -11,7 +11,7 @@ export const createPaymentSchema = z.object({
   reference: z.string(),
   receiptFile: z.string(),
   notes: z.string(),
-  customFields: z.object({}),
+  customFields: z.record(z.string(), z.unknown()),
 });
 
 export const findAllPaymentsSchema = z.object({
@@ -43,7 +43,7 @@ export const updatePaymentsSchema = z.object({
     reference: z.string().optional(),
     receiptFile: z.string().optional(),
     notes: z.string().optional(),
-    customFields: z.object({}).optional(),
+    customFields: z.record(z.string(), z.unknown()).optional(),
   }),
 });
 

@@ -2,10 +2,10 @@ import { eq } from "drizzle-orm";
 import type { PaymentsRepository } from "@server/modules/payments/domain/repositories/payments.repository";
 
 import { db } from "@server/database";
-import { payments, type Payment } from "@server/database/schema";
+import { payments, type Payment, type NewPayment } from "@server/database/schema";
 
 export class DrizzlePaymentsRepository implements PaymentsRepository {
-  async create(payment: Omit<Payment, 'createdAt' | 'updatedAt'>): Promise<Payment | null> {
+  async create(payment: Omit<NewPayment, 'createdAt' | 'updatedAt'>): Promise<Payment | null> {
     const [newPayment] = await db.insert(payments).values({
       ...payment,
     }).returning();
