@@ -16,13 +16,13 @@ Branch: `feat/authentication` (worktree `~/Desktop/projects/alquila-worktrees/fe
 
 Assumptions (not asked explicitly):
 - A1: email verification is not required to sign in.
-- A2: users that exist before this change have no `account` row and cannot sign in until they reset or are migrated (open question Q1).
+- A2: users that exist before this change have no `account` row and cannot sign in. Accepted: there are no real users in qa or production (L7).
 
 ## Tasks
 
 | ID | Specs | Route | Status | Evidence |
 |---|---|---|---|---|
-| T1 | S1, S2, S8 | inline | done | RED: auth.test.ts failed (no `account` table). GREEN: 54/54. Migration 0002→0003 with an existing user keeps password, names, max_properties and properties; name backfilled. HTTP: HttpOnly cookie, untrusted origin 403, no CORS header for it. |
+| T1 | S1, S2, S8 | inline | done | RED: auth.test.ts failed (no `account` table). GREEN: 54/54. Migration 0002→0003 with an existing user keeps password, names, max_properties and properties; name backfilled. HTTP: HttpOnly cookie, untrusted origin 403, no CORS header for it. Independent verifier: no blockers (S1, S2, S8 PASS; 95-request regression diff vs 66abff0 clean). |
 | T2 | S3, S4, S5, S6 | inline | pending | |
 | T3 | S7 | inline | pending | |
 | T4 | docs (README env vars, test database) | inline | pending | |
@@ -36,6 +36,8 @@ Route evidence: tasks depend on each other in order (T2 needs T1's session, T3 n
 - **L3 (2026-11-01):** `c831fec` rewrote `users` destructively (dropped password, first_name, last_name, subscription_*, max_properties). Not reused as-is; only its config shape (drizzle adapter, email/password, Google) is reused.
 - **L4 (2026-11-01):** better-auth latest is 1.7.15, published today; pinned 1.7.10 (2026-10-15). Peer deps: drizzle-orm ^0.45.2, zod ^4.5.4 — both satisfied.
 - **L5 (2026-11-01):** found during analysis: every `findAll` returns all users' rows; S5 fixes it.
-- **Q1 (open):** are there real users in qa/production? If so, their password hashes need a migration into `account` (format must be compatible with better-auth's scrypt) or a reset flow.
+- **Q1 (resolved 2026-11-01):** are there real users in qa/production? If so, their password hashes need a migration into `account` (format must be compatible with better-auth's scrypt) or a reset flow.
+- **L7 (2026-11-01, user):** "no hay usuarios reales en qa ni producción". No hash migration or reset flow is needed; A2 only affects local test data. `users.password` stays as a nullable legacy column.
 - **L6 (2026-11-01):** T1 done. Tests now run against a dedicated database: `.env.test.local` (git-ignored, loaded by `bun test`) sets `DATABASE_URL` to `alquila_test`, and `bunfig.toml` preloads `server/tests/setup.ts`, which applies all migrations. The generated `ADD COLUMN "name" text NOT NULL` would fail on existing rows; 0003 was edited to add it nullable, backfill `first_name || ' ' || last_name`, then set NOT NULL.
-- Next step: T2.
+- **L8 (2026-11-01):** verifier advisories, not fixed in T1: (1) Google profiles without given_name/family_name store empty first/last name; (2) names over 100 chars return 422 from the DB instead of a validation error; (3) pre-existing: unknown userId in a create body returns 500 (S4 removes userId from bodies).
+- Next step: open the T1 PR, then T2.
