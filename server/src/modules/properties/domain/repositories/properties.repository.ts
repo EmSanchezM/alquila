@@ -5,5 +5,6 @@ export interface PropertiesRepository {
   findAll(): Promise<Property[]>;
   findById(id: string): Promise<Property | null>;
   update(id: string, property: Partial<Property>): Promise<Property | null>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<boolean>;
+  hasActiveLeases(id: string): Promise<boolean>;
 }

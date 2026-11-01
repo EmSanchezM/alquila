@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { PaymentsRepository } from "@server/modules/payments/domain/repositories/payments.repository";
 
 import { db } from "@server/database";
@@ -19,7 +19,7 @@ export class DrizzlePaymentsRepository implements PaymentsRepository {
   }
   
   async findById(id: string): Promise<Payment | null> {
-    const [result] = await db.select().from(payments).where(eq(payments.id, id));
+    const [result] = await db.select().from(payments).where(and(eq(payments.id, id), eq(payments.isActive, true)));
 
     if(!result) return null;
 
@@ -32,7 +32,7 @@ export class DrizzlePaymentsRepository implements PaymentsRepository {
         ...payment,
         updatedAt: new Date(),
       })
-      .where(eq(payments.id, id))
+      .where(and(eq(payments.id, id), eq(payments.isActive, true)))
       .returning();
 
     if(!updatedPayment) return null;
@@ -40,12 +40,15 @@ export class DrizzlePaymentsRepository implements PaymentsRepository {
     return updatedPayment;
   }
 
-  async delete(id: string): Promise<void> {
-    await db.update(payments)
+  async delete(id: string): Promise<boolean> {
+    const deleted = await db.update(payments)
       .set({
         isActive: false,
         updatedAt: new Date(),
       })
-      .where(eq(payments.id, id));
+      .where(and(eq(payments.id, id), eq(payments.isActive, true)))
+      .returning({ id: payments.id });
+
+    return deleted.length > 0;
   }
 }

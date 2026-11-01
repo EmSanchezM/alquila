@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { LeasesRepository } from "@server/modules/leases/domain/repositories/leases.repository";
 
 import { db } from "@server/database";
@@ -21,7 +21,7 @@ export class DrizzleLeasesRepository implements LeasesRepository {
   }
   
   async findById(id: string): Promise<Lease | null> {
-    const [result] = await db.select().from(leases).where(eq(leases.id, id));
+    const [result] = await db.select().from(leases).where(and(eq(leases.id, id), eq(leases.isActive, true)));
 
     if(!result) return null;
 
@@ -34,7 +34,7 @@ export class DrizzleLeasesRepository implements LeasesRepository {
         ...lease,
         updatedAt: new Date(),
       })
-      .where(eq(leases.id, id))
+      .where(and(eq(leases.id, id), eq(leases.isActive, true)))
       .returning();
 
     if(!updatedLease) return null;
@@ -42,12 +42,15 @@ export class DrizzleLeasesRepository implements LeasesRepository {
     return updatedLease;
   }
 
-  async delete(id: string): Promise<void> {
-    await db.update(leases)
+  async delete(id: string): Promise<boolean> {
+    const deleted = await db.update(leases)
       .set({
         isActive: false,
         updatedAt: new Date(),
       })
-      .where(eq(leases.id, id));
+      .where(and(eq(leases.id, id), eq(leases.isActive, true)))
+      .returning({ id: leases.id });
+
+    return deleted.length > 0;
   }
 }
