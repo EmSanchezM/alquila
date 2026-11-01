@@ -15,6 +15,13 @@
       "when": 1749596271350,
       "tag": "0001_redifine",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793561802325,
+      "tag": "0002_sync_schema",
+      "breakpoints": true
     }
   ]
 }
