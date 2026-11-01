@@ -44,3 +44,5 @@ bun.lockb
 .cursor
 .kiro
 .windsurf
+# typescript incremental build info
+*.tsbuildinfo
