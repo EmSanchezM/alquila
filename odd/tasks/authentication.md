@@ -23,7 +23,7 @@ Assumptions (not asked explicitly):
 | ID | Specs | Route | Status | Evidence |
 |---|---|---|---|---|
 | T1 | S1, S2, S8 | inline | done | RED: auth.test.ts failed (no `account` table). GREEN: 54/54. Migration 0002→0003 with an existing user keeps password, names, max_properties and properties; name backfilled. HTTP: HttpOnly cookie, untrusted origin 403, no CORS header for it. Independent verifier: no blockers (S1, S2, S8 PASS; 95-request regression diff vs 66abff0 clean). |
-| T2 | S3, S4, S5, S6 | inline | pending | |
+| T2 | S3, S4, S5, S6 | inline | done (verification pending) | `59efded` (S3–S5): RED 17 new failures + S4 body failures, GREEN 72/72. `3ceb715` (S6): RED 16 cross-user references accepted, GREEN 89/89. |
 | T3 | S7 | inline | pending | |
 | T4 | docs (README env vars, test database) | inline | pending | |
 
@@ -40,4 +40,6 @@ Route evidence: tasks depend on each other in order (T2 needs T1's session, T3 n
 - **L7 (2026-11-01, user):** "no hay usuarios reales en qa ni producción". No hash migration or reset flow is needed; A2 only affects local test data. `users.password` stays as a nullable legacy column.
 - **L6 (2026-11-01):** T1 done. Tests now run against a dedicated database: `.env.test.local` (git-ignored, loaded by `bun test`) sets `DATABASE_URL` to `alquila_test`, and `bunfig.toml` preloads `server/tests/setup.ts`, which applies all migrations. The generated `ADD COLUMN "name" text NOT NULL` would fail on existing rows; 0003 was edited to add it nullable, backfill `first_name || ' ' || last_name`, then set NOT NULL.
 - **L8 (2026-11-01):** verifier advisories, not fixed in T1: (1) Google profiles without given_name/family_name store empty first/last name; (2) names over 100 chars return 422 from the DB instead of a validation error; (3) pre-existing: unknown userId in a create body returns 500 (S4 removes userId from bodies).
-- Next step: open the T1 PR, then T2.
+- **L9 (2026-11-01):** T1 merged as #13 (`ae217db`). T2 on a new branch `feat/auth-isolation` from `develop` to avoid squash history noise.
+- **L10 (2026-11-01):** T2 design: `requireAuth` middleware on the `/api` router (`/api/auth/*` mounted before it, stays public); every repository method takes `userId`; `OwnershipGuard` (`server/src/shared/ownership.ts`) reuses each module's user-scoped `findById` for references, injected into 9 create/update use cases. References to deleted records are rejected too. The `api-errors` 500 test now forces a DB error with a 300-char property name (varchar(200)).
+- Next step: independent verification of T2, then the T2 PR, then T3.
