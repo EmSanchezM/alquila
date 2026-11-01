@@ -10,7 +10,7 @@ export class DrizzleExpensesRepository implements ExpensesRepository {
       ...expense,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning();
 
     if(!newExpense) return null;
 

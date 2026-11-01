@@ -10,7 +10,7 @@ export class DrizzleLeasesRepository implements LeasesRepository {
       ...lease,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning();
 
     if(!newLease) return null;
 

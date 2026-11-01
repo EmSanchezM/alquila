@@ -10,7 +10,7 @@ export class DrizzlePropertiesRepository implements PropertiesRepository {
       ...property,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning();
 
     if(!newProperty) return null;
 

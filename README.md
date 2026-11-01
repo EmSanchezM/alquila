@@ -33,3 +33,10 @@ bun run build
 bun run build:shared  # Build the shared types package
 bun run build:client  # Build the React frontend
 ```
+
+### Testing
+
+```bash
+# Run the server integration tests (needs DATABASE_URL pointing at a migrated Postgres)
+bun run test:server
+```

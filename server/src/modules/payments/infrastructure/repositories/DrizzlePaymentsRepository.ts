@@ -8,7 +8,7 @@ export class DrizzlePaymentsRepository implements PaymentsRepository {
   async create(payment: Omit<Payment, 'createdAt' | 'updatedAt'>): Promise<Payment | null> {
     const [newPayment] = await db.insert(payments).values({
       ...payment,
-    });
+    }).returning();
 
     if(!newPayment) return null;
 

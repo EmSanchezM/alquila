@@ -8,7 +8,7 @@ export class DrizzleDocumentsRepository implements DocumentsRepository {
   async create(document: Omit<Document, 'createdAt' | 'updatedAt'>): Promise<Document | null> {
     const [newDocument] = await db.insert(documents).values({
       ...document,
-    });
+    }).returning();
 
     if(!newDocument) return null;
 

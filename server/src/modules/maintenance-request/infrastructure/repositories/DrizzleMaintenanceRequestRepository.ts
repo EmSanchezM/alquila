@@ -10,7 +10,7 @@ export class DrizzleMaintenanceRequestRepository implements MaintenanceRequestRe
       ...maintenanceRequest,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning();
 
     if(!newMaintenanceRequest) return null;
 

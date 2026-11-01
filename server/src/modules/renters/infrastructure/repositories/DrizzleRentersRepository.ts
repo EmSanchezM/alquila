@@ -10,7 +10,7 @@ export class DrizzleRentersRepository implements RentersRepository {
       ...renter,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning();
 
     if(!newRenter) return null;
 
