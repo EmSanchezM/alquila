@@ -2,7 +2,6 @@ import { z } from "zod";
 
 export const createDocumentSchema = z.object({
   propertyId: z.string(),
-  userId: z.string(),
   renterId: z.string(),
   leaseId: z.string(),
   name: z.string(),
@@ -35,7 +34,6 @@ export const updateDocumentsSchema = z.object({
   }),
   body: z.object({
     propertyId: z.string().optional(),
-    userId: z.string().optional(),
     renterId: z.string().optional(),
     leaseId: z.string().optional(),
     name: z.string().optional(),

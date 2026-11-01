@@ -4,7 +4,6 @@ export const amenitiesSchema = z.array(z.string()).optional();
 export const imagesSchema = z.array(z.string()).optional();
 
 export const createPropertySchema = z.object({
-  userId: z.string(),
   name: z.string(),
   address: z.string(),
   city: z.string(),

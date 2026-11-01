@@ -5,8 +5,8 @@ import type { MaintenanceRequestRepository } from "@server/modules/maintenance-r
 export class UpdateMaintenanceRequestUseCase {
   constructor(private readonly repository: MaintenanceRequestRepository) {}
 
-  async execute(id: string, payload: Partial<Omit<MaintenanceRequest, 'id' | 'createdAt' | 'updatedAt'>>): Promise<MaintenanceRequest> {
-    const updatedMaintenanceRequest = await this.repository.update(id, payload);
+  async execute(id: string, payload: Partial<Omit<MaintenanceRequest, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>, userId: string): Promise<MaintenanceRequest> {
+    const updatedMaintenanceRequest = await this.repository.update(id, userId, payload);
 
     if (!updatedMaintenanceRequest) throw new NotFoundError('Maintenance request not found');
 

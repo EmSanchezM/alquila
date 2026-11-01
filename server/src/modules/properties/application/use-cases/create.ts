@@ -4,9 +4,10 @@ import { generateUuid } from "@server/shared/generate-uuid";
 
 export class CreatePropertyUseCase {
   constructor(private readonly repository: PropertiesRepository) {}
-  async execute(payload: Omit<NewProperty, 'id' | 'createdAt' | 'updatedAt'>): Promise<Property> {
+  async execute(payload: Omit<NewProperty, 'id' | 'userId' | 'createdAt' | 'updatedAt'>, userId: string): Promise<Property> {
     const data = {
       ...payload,
+      userId,
       id: generateUuid(),
     }
     const createdProperty = await this.repository.create(data);

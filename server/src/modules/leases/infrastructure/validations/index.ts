@@ -3,7 +3,6 @@ import { z } from "zod";
 export const creatLeaseSchema = z.object({
   propertyId: z.string(),
   renterId: z.string(),
-  userId: z.string(),
   startDate: z.string(),
   endDate: z.string(),
   monthlyRent: z.number().transform(String),

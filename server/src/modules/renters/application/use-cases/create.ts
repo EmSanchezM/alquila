@@ -4,9 +4,10 @@ import { generateUuid } from "@server/shared/generate-uuid";
 
 export class CreateRenterUseCase {
   constructor(private readonly repository: RentersRepository) {}
-  async execute(payload: Omit<NewRenter, 'id' | 'createdAt' | 'updatedAt'>): Promise<Renter> {
+  async execute(payload: Omit<NewRenter, 'id' | 'userId' | 'createdAt' | 'updatedAt'>, userId: string): Promise<Renter> {
     const data = {
       ...payload,
+      userId,
       id: generateUuid(),
     }
     const createdRenter = await this.repository.create(data);

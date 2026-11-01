@@ -5,8 +5,8 @@ import type { PropertiesRepository } from "@server/modules/properties/domain/rep
 export class FindByIdPropertiesUseCase {
   constructor(private readonly repository: PropertiesRepository) {}
 
-  async execute(id: string): Promise<Property> {
-    const property = await this.repository.findById(id);
+  async execute(id: string, userId: string): Promise<Property> {
+    const property = await this.repository.findById(id, userId);
     
     if (!property) throw new NotFoundError('Property not found');
     

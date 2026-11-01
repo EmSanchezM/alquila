@@ -5,8 +5,8 @@ import type { PaymentsRepository } from "@server/modules/payments/domain/reposit
 export class UpdatePaymentUseCase {
   constructor(private readonly repository: PaymentsRepository) {}
 
-  async execute(id: string, payload: Partial<Omit<Payment, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Payment> {
-    const updatedPayment = await this.repository.update(id, payload);
+  async execute(id: string, payload: Partial<Omit<Payment, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>, userId: string): Promise<Payment> {
+    const updatedPayment = await this.repository.update(id, userId, payload);
 
     if (!updatedPayment) throw new NotFoundError('Payment not found');
 

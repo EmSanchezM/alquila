@@ -14,25 +14,25 @@ export class DrizzleDocumentsRepository implements DocumentsRepository {
 
     return newDocument;
   }
-  async findAll(): Promise<Document[]> {
-    return await db.select().from(documents).where(eq(documents.isActive, true));
+  async findAll(userId: string): Promise<Document[]> {
+    return await db.select().from(documents).where(and(eq(documents.userId, userId), eq(documents.isActive, true)));
   }
   
-  async findById(id: string): Promise<Document | null> {
-    const [result] = await db.select().from(documents).where(and(eq(documents.id, id), eq(documents.isActive, true)));
+  async findById(id: string, userId: string): Promise<Document | null> {
+    const [result] = await db.select().from(documents).where(and(eq(documents.id, id), eq(documents.userId, userId), eq(documents.isActive, true)));
 
     if(!result) return null;
 
     return result;
   }
   
-  async update(id:string, document: Partial<Document>): Promise<Document | null> {
+  async update(id: string, userId: string, document: Partial<Document>): Promise<Document | null> {
     const [updatedDocument] = await db.update(documents)
       .set({
         ...document,
         updatedAt: new Date(),
       })
-      .where(and(eq(documents.id, id), eq(documents.isActive, true)))
+      .where(and(eq(documents.id, id), eq(documents.userId, userId), eq(documents.isActive, true)))
       .returning();
 
     if(!updatedDocument) return null;
@@ -40,13 +40,13 @@ export class DrizzleDocumentsRepository implements DocumentsRepository {
     return updatedDocument;
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, userId: string): Promise<boolean> {
     const deleted = await db.update(documents)
       .set({
         isActive: false,
         updatedAt: new Date(),
       })
-      .where(and(eq(documents.id, id), eq(documents.isActive, true)))
+      .where(and(eq(documents.id, id), eq(documents.userId, userId), eq(documents.isActive, true)))
       .returning({ id: documents.id });
 
     return deleted.length > 0;

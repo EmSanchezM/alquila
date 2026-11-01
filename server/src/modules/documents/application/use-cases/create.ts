@@ -4,9 +4,10 @@ import { generateUuid } from "@server/shared/generate-uuid";
 
 export class CreateDocumentUseCase {
   constructor(private readonly repository: DocumentsRepository) {}
-  async execute(payload: Omit<NewDocument, 'id' | 'createdAt' | 'updatedAt'>): Promise<Document> {
+  async execute(payload: Omit<NewDocument, 'id' | 'userId' | 'createdAt' | 'updatedAt'>, userId: string): Promise<Document> {
     const data = {
       ...payload,
+      userId,
       id: generateUuid(),
     }
     const createdDocument = await this.repository.create(data);

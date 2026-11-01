@@ -5,8 +5,8 @@ import type { MaintenanceRequestRepository } from "@server/modules/maintenance-r
 export class FindByIdMaintenanceRequestsUseCase {
   constructor(private readonly repository: MaintenanceRequestRepository) {}
 
-  async execute(id: string): Promise<MaintenanceRequest> {
-    const maintenanceRequest = await this.repository.findById(id);
+  async execute(id: string, userId: string): Promise<MaintenanceRequest> {
+    const maintenanceRequest = await this.repository.findById(id, userId);
     
     if (!maintenanceRequest) throw new NotFoundError('Maintenance request not found');
     

@@ -5,8 +5,8 @@ import type { RentersRepository } from "@server/modules/renters/domain/repositor
 export class UpdateRenterUseCase {
   constructor(private readonly repository: RentersRepository) {}
 
-  async execute(id: string, payload: Partial<Omit<Renter, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Renter> {
-    const updatedRenter = await this.repository.update(id, payload);
+  async execute(id: string, payload: Partial<Omit<Renter, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>, userId: string): Promise<Renter> {
+    const updatedRenter = await this.repository.update(id, userId, payload);
 
     if (!updatedRenter) throw new NotFoundError('Renter not found');
 

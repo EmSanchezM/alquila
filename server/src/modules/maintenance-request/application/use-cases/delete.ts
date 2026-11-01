@@ -4,8 +4,8 @@ import type { MaintenanceRequestRepository } from "@server/modules/maintenance-r
 export class DeleteMaintenanceRequestUseCase {
   constructor(private readonly repository: MaintenanceRequestRepository) {}
 
-  async execute(id: string): Promise<void> {
-    const deleted = await this.repository.delete(id);
+  async execute(id: string, userId: string): Promise<void> {
+    const deleted = await this.repository.delete(id, userId);
 
     if (!deleted) throw new NotFoundError('Maintenance request not found');
   }

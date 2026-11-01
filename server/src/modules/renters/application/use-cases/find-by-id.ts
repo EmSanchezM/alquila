@@ -5,8 +5,8 @@ import type { RentersRepository } from "@server/modules/renters/domain/repositor
 export class FindByIdRentersUseCase {
   constructor(private readonly repository: RentersRepository) {}
 
-  async execute(id: string): Promise<Renter> {
-    const renter = await this.repository.findById(id);
+  async execute(id: string, userId: string): Promise<Renter> {
+    const renter = await this.repository.findById(id, userId);
     
     if (!renter) throw new NotFoundError('Renter not found');
     

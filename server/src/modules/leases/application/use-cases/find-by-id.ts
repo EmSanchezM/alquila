@@ -5,8 +5,8 @@ import type { LeasesRepository } from "@server/modules/leases/domain/repositorie
 export class FindByIdLeasesUseCase {
   constructor(private readonly repository: LeasesRepository) {}
 
-  async execute(id: string): Promise<Lease> {
-    const lease = await this.repository.findById(id);
+  async execute(id: string, userId: string): Promise<Lease> {
+    const lease = await this.repository.findById(id, userId);
     
     if (!lease) throw new NotFoundError('Lease not found');
     

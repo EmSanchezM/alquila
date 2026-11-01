@@ -4,9 +4,10 @@ import { generateUuid } from "@server/shared/generate-uuid";
 
 export class CreateMaintenanceRequestUseCase {
   constructor(private readonly repository: MaintenanceRequestRepository) {}
-  async execute(payload: Omit<NewMaintenanceRequest, 'id' | 'createdAt' | 'updatedAt'>): Promise<MaintenanceRequest> {
+  async execute(payload: Omit<NewMaintenanceRequest, 'id' | 'userId' | 'createdAt' | 'updatedAt'>, userId: string): Promise<MaintenanceRequest> {
     const data = {
       ...payload,
+      userId,
       id: generateUuid(),
     }
     const createdMaintenanceRequest = await this.repository.create(data);

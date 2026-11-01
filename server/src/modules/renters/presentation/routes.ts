@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import type { AuthEnv } from "@server/shared/require-auth";
 import { DrizzleRentersRepository } from "@server/modules/renters/infrastructure/repositories/DrizzleRentersRepository";
 import {
   CreateRenterUseCase,
@@ -11,13 +12,13 @@ import {
 import { zValidator } from "@server/shared/validator-wrapper";
 import { createRenterSchema, findByIdRentersSchema, updateRenterSchema } from "@server/modules/renters/infrastructure/validations";
 
-const renterRouter = new Hono();
+const renterRouter = new Hono<AuthEnv>();
 const renterRepository = new DrizzleRentersRepository();
 
 renterRouter
   .get("/", async (c) => {
     const findAllRenters = new FindAllRentersUseCase(renterRepository);
-    const renters = await findAllRenters.execute();
+    const renters = await findAllRenters.execute(c.get("user").id);
 
     return c.json({
       success: true,
@@ -26,7 +27,7 @@ renterRouter
   })
   .get("/:id", zValidator('param', findByIdRentersSchema), async (c) => {
     const findByIdRenters = new FindByIdRentersUseCase(renterRepository);
-    const renter = await findByIdRenters.execute(c.req.param("id"));
+    const renter = await findByIdRenters.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,
@@ -37,7 +38,7 @@ renterRouter
     const body = c.req.valid('json');
 
     const createRenter = new CreateRenterUseCase(renterRepository);
-    const renter = await createRenter.execute(body);
+    const renter = await createRenter.execute(body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -47,7 +48,7 @@ renterRouter
   .put("/:id", zValidator('param', updateRenterSchema.shape.param), zValidator('json', updateRenterSchema.shape.body), async (c) => {
     const body = c.req.valid('json');
     const updateRenter = new UpdateRenterUseCase(renterRepository);
-    const renter = await updateRenter.execute(c.req.param("id"), body);
+    const renter = await updateRenter.execute(c.req.param("id"), body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -56,7 +57,7 @@ renterRouter
   })
   .delete("/:id", zValidator('param', findByIdRentersSchema), async (c) => {
     const deleteRenter = new DeleteRenterUseCase(renterRepository);
-    await deleteRenter.execute(c.req.param("id"));
+    await deleteRenter.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,

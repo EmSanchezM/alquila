@@ -4,7 +4,7 @@ import type { DocumentsRepository } from "@server/modules/documents/domain/repos
 export class FindAllDocumentsUseCase {
   constructor(private readonly repository: DocumentsRepository) {}
 
-  async execute(): Promise<Omit<Document[], 'updatedAt'>> {
-    return await this.repository.findAll();
+  async execute(userId: string): Promise<Omit<Document[], 'updatedAt'>> {
+    return await this.repository.findAll(userId);
   }
 }
