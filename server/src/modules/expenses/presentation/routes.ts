@@ -1,4 +1,6 @@
 import { Hono } from "hono";
+import type { AuthEnv } from "@server/shared/require-auth";
+import { ownershipGuard } from "@server/shared/ownership-guard";
 import { DrizzleExpensesRepository } from "@server/modules/expenses/infrastructure/repositories/DrizzleExpensesRepository";
 import {
   CreateExpenseUseCase,
@@ -11,13 +13,13 @@ import {
 import { zValidator } from "@server/shared/validator-wrapper";
 import { createExpenseSchema, findByIdExpensesSchema, updateExpensesSchema } from "@server/modules/expenses/infrastructure/validations";
 
-const expenseRouter = new Hono();
+const expenseRouter = new Hono<AuthEnv>();
 const expenseRepository = new DrizzleExpensesRepository();
 
 expenseRouter
   .get("/", async (c) => {
     const findAllExpenses = new FindAllExpensesUseCase(expenseRepository);
-    const expenses = await findAllExpenses.execute();
+    const expenses = await findAllExpenses.execute(c.get("user").id);
 
     return c.json({
       success: true,
@@ -26,7 +28,7 @@ expenseRouter
   })
   .get("/:id", zValidator('param', findByIdExpensesSchema), async (c) => {
     const findByIdExpense = new FindByIdExpensesUseCase(expenseRepository);
-    const expense = await findByIdExpense.execute(c.req.param("id"));
+    const expense = await findByIdExpense.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,
@@ -36,8 +38,8 @@ expenseRouter
   .post("/",  zValidator('json', createExpenseSchema), async (c) => {
     const body = c.req.valid('json');
 
-    const createExpense = new CreateExpenseUseCase(expenseRepository);
-    const expense = await createExpense.execute(body);
+    const createExpense = new CreateExpenseUseCase(expenseRepository, ownershipGuard);
+    const expense = await createExpense.execute(body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -46,8 +48,8 @@ expenseRouter
   })
   .put("/:id", zValidator('param', updateExpensesSchema.shape.param), zValidator('json', updateExpensesSchema.shape.body), async (c) => {
     const body = c.req.valid('json');
-    const updateExpense = new UpdateExpenseUseCase(expenseRepository);
-    const expense = await updateExpense.execute(c.req.param("id"), body);
+    const updateExpense = new UpdateExpenseUseCase(expenseRepository, ownershipGuard);
+    const expense = await updateExpense.execute(c.req.param("id"), body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -56,7 +58,7 @@ expenseRouter
   })
   .delete("/:id", zValidator('param', findByIdExpensesSchema), async (c) => {
     const deleteExpense = new DeleteExpenseUseCase(expenseRepository);
-    await deleteExpense.execute(c.req.param("id"));
+    await deleteExpense.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,

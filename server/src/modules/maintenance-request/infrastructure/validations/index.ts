@@ -3,7 +3,6 @@ import { z } from "zod";
 export const createMaintenanceRequestSchema = z.object({
   propertyId: z.string(),
   renterId: z.string(),
-  userId: z.string(),
   title: z.string({ error: (issue) => (issue.input === undefined ? "title is required" : undefined) }),
   description: z.string(),
   category: z.string({ error: (issue) => (issue.input === undefined ? "category is required" : undefined) }),
@@ -40,7 +39,6 @@ export const updateMaintenanceRequestsSchema = z.object({
   body: z.object({
     propertyId: z.string().optional(),
     renterId: z.string().optional(),
-    userId: z.string().optional(),
     title: z.string().optional(),
     description: z.string().optional(),
     category: z.string().optional(),

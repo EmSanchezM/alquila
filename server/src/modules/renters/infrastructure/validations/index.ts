@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const createRenterSchema = z.object({
-  userId: z.string(),
   firstName: z.string(),
   lastName: z.string(),
   email: z.string(),

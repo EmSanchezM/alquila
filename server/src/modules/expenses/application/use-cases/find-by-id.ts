@@ -5,8 +5,8 @@ import type { ExpensesRepository } from "@server/modules/expenses/domain/reposit
 export class FindByIdExpensesUseCase {
   constructor(private readonly repository: ExpensesRepository) {}
 
-  async execute(id: string): Promise<Expense> {
-    const expense = await this.repository.findById(id);
+  async execute(id: string, userId: string): Promise<Expense> {
+    const expense = await this.repository.findById(id, userId);
     
     if (!expense) throw new NotFoundError('Expense not found');
     

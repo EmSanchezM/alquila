@@ -4,7 +4,7 @@ import type { LeasesRepository } from "@server/modules/leases/domain/repositorie
 export class FindAllLeasesUseCase {
   constructor(private readonly repository: LeasesRepository) {}
 
-  async execute(): Promise<Omit<Lease[], 'updatedAt'>> {
-    return await this.repository.findAll();
+  async execute(userId: string): Promise<Omit<Lease[], 'updatedAt'>> {
+    return await this.repository.findAll(userId);
   }
 }

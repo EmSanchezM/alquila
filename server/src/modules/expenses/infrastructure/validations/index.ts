@@ -2,7 +2,6 @@ import { z } from "zod";
 
 export const createExpenseSchema = z.object({
   propertyId: z.string(),
-  userId: z.string(),
   category: z.string({ error: (issue) => (issue.input === undefined ? "category is required" : undefined) }),
   description: z.string(),
   amount: z.number().transform(String),

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 
-import { createFixtures, moduleCases, request } from "./helpers";
+import { createFixtures, moduleCases } from "./helpers";
 
 const f = createFixtures();
 
@@ -11,7 +11,7 @@ describe("POST create returns the persisted row", () => {
   for (const c of moduleCases(f)) {
     test(c.name, async () => {
       const body = c.body();
-      const { status, json } = await request("POST", c.path, body);
+      const { status, json } = await f.request("POST", c.path, body);
 
       expect(status).toBe(200);
       expect(json.success).toBe(true);

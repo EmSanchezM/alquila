@@ -1,4 +1,6 @@
 import { Hono } from "hono";
+import type { AuthEnv } from "@server/shared/require-auth";
+import { ownershipGuard } from "@server/shared/ownership-guard";
 import { DrizzlePaymentsRepository } from "@server/modules/payments/infrastructure/repositories/DrizzlePaymentsRepository";
 import {
   CreatePaymentUseCase,
@@ -11,13 +13,13 @@ import {
 import { zValidator } from "@server/shared/validator-wrapper";
 import { createPaymentSchema, findByIdPaymentsSchema, updatePaymentsSchema } from "@server/modules/payments/infrastructure/validations";
 
-const paymentRouter = new Hono();
+const paymentRouter = new Hono<AuthEnv>();
 const paymentRepository = new DrizzlePaymentsRepository();
 
 paymentRouter
   .get("/", async (c) => {
     const findAllPayments = new FindAllPaymentssUseCase(paymentRepository);
-    const payments = await findAllPayments.execute();
+    const payments = await findAllPayments.execute(c.get("user").id);
 
     return c.json({
       success: true,
@@ -26,7 +28,7 @@ paymentRouter
   })
   .get("/:id", zValidator('param', findByIdPaymentsSchema), async (c) => {
     const findByIdPayment = new FindByIdPaymentUseCase(paymentRepository);
-    const payment = await findByIdPayment.execute(c.req.param("id"));
+    const payment = await findByIdPayment.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,
@@ -36,8 +38,8 @@ paymentRouter
   .post("/",  zValidator('json', createPaymentSchema), async (c) => {
     const body = c.req.valid('json');
 
-    const createPayment = new CreatePaymentUseCase(paymentRepository);
-    const payment = await createPayment.execute(body);
+    const createPayment = new CreatePaymentUseCase(paymentRepository, ownershipGuard);
+    const payment = await createPayment.execute(body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -46,8 +48,8 @@ paymentRouter
   })
   .put("/:id", zValidator('param', updatePaymentsSchema.shape.param), zValidator('json', updatePaymentsSchema.shape.body), async (c) => {
     const body = c.req.valid('json');
-    const updatePayment = new UpdatePaymentUseCase(paymentRepository);
-    const payment = await updatePayment.execute(c.req.param("id"), body);
+    const updatePayment = new UpdatePaymentUseCase(paymentRepository, ownershipGuard);
+    const payment = await updatePayment.execute(c.req.param("id"), body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -56,7 +58,7 @@ paymentRouter
   })
   .delete("/:id", zValidator('param', findByIdPaymentsSchema), async (c) => {
     const deletePayment = new DeletePaymentUseCase(paymentRepository);
-    await deletePayment.execute(c.req.param("id"));
+    await deletePayment.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,

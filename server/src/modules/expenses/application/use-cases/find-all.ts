@@ -4,7 +4,7 @@ import type { ExpensesRepository } from "@server/modules/expenses/domain/reposit
 export class FindAllExpensesUseCase {
   constructor(private readonly repository: ExpensesRepository) {}
 
-  async execute(): Promise<Omit<Expense[], 'updatedAt'>> {
-    return await this.repository.findAll();
+  async execute(userId: string): Promise<Omit<Expense[], 'updatedAt'>> {
+    return await this.repository.findAll(userId);
   }
 }

@@ -4,7 +4,7 @@ import type { MaintenanceRequestRepository } from "@server/modules/maintenance-r
 export class FindAllMaintenanceRequestsUseCase {
   constructor(private readonly repository: MaintenanceRequestRepository) {}
 
-  async execute(): Promise<Omit<MaintenanceRequest[], 'updatedAt'>> {
-    return await this.repository.findAll();
+  async execute(userId: string): Promise<Omit<MaintenanceRequest[], 'updatedAt'>> {
+    return await this.repository.findAll(userId);
   }
 }

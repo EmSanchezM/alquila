@@ -14,25 +14,25 @@ export class DrizzlePaymentsRepository implements PaymentsRepository {
 
     return newPayment;
   }
-  async findAll(): Promise<Payment[]> {
-    return await db.select().from(payments).where(eq(payments.isActive, true));
+  async findAll(userId: string): Promise<Payment[]> {
+    return await db.select().from(payments).where(and(eq(payments.userId, userId), eq(payments.isActive, true)));
   }
   
-  async findById(id: string): Promise<Payment | null> {
-    const [result] = await db.select().from(payments).where(and(eq(payments.id, id), eq(payments.isActive, true)));
+  async findById(id: string, userId: string): Promise<Payment | null> {
+    const [result] = await db.select().from(payments).where(and(eq(payments.id, id), eq(payments.userId, userId), eq(payments.isActive, true)));
 
     if(!result) return null;
 
     return result;
   }
   
-  async update(id:string, payment: Partial<Payment>): Promise<Payment | null> {
+  async update(id: string, userId: string, payment: Partial<Payment>): Promise<Payment | null> {
     const [updatedPayment] = await db.update(payments)
       .set({
         ...payment,
         updatedAt: new Date(),
       })
-      .where(and(eq(payments.id, id), eq(payments.isActive, true)))
+      .where(and(eq(payments.id, id), eq(payments.userId, userId), eq(payments.isActive, true)))
       .returning();
 
     if(!updatedPayment) return null;
@@ -40,13 +40,13 @@ export class DrizzlePaymentsRepository implements PaymentsRepository {
     return updatedPayment;
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, userId: string): Promise<boolean> {
     const deleted = await db.update(payments)
       .set({
         isActive: false,
         updatedAt: new Date(),
       })
-      .where(and(eq(payments.id, id), eq(payments.isActive, true)))
+      .where(and(eq(payments.id, id), eq(payments.userId, userId), eq(payments.isActive, true)))
       .returning({ id: payments.id });
 
     return deleted.length > 0;

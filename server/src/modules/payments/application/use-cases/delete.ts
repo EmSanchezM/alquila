@@ -4,8 +4,8 @@ import type { PaymentsRepository } from "@server/modules/payments/domain/reposit
 export class DeletePaymentUseCase {
   constructor(private readonly repository: PaymentsRepository) {}
 
-  async execute(id: string): Promise<void> {
-    const deleted = await this.repository.delete(id);
+  async execute(id: string, userId: string): Promise<void> {
+    const deleted = await this.repository.delete(id, userId);
 
     if (!deleted) throw new NotFoundError('Payment not found');
   }

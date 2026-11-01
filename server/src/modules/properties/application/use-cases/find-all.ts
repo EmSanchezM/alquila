@@ -4,7 +4,7 @@ import type { PropertiesRepository } from "@server/modules/properties/domain/rep
 export class FindAllPropertiesUseCase {
   constructor(private readonly repository: PropertiesRepository) {}
 
-  async execute(): Promise<Omit<Property[], 'updatedAt'>> {
-    return await this.repository.findAll();
+  async execute(userId: string): Promise<Omit<Property[], 'updatedAt'>> {
+    return await this.repository.findAll(userId);
   }
 }

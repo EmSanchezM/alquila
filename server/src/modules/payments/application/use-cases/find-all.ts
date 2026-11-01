@@ -4,7 +4,7 @@ import type { PaymentsRepository } from "@server/modules/payments/domain/reposit
 export class FindAllPaymentssUseCase {
   constructor(private readonly repository: PaymentsRepository) {}
 
-  async execute(): Promise<Omit<Payment[], 'updatedAt'>> {
-    return await this.repository.findAll();
+  async execute(userId: string): Promise<Omit<Payment[], 'updatedAt'>> {
+    return await this.repository.findAll(userId);
   }
 }

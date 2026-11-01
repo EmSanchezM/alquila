@@ -5,8 +5,8 @@ import type { LeasesRepository } from "@server/modules/leases/domain/repositorie
 export class UpdateLeaseUseCase {
   constructor(private readonly repository: LeasesRepository) {}
 
-  async execute(id: string, payload: Partial<Omit<Lease, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Lease> {
-    const updatedLease = await this.repository.update(id, payload);
+  async execute(id: string, payload: Partial<Omit<Lease, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>, userId: string): Promise<Lease> {
+    const updatedLease = await this.repository.update(id, userId, payload);
 
     if (!updatedLease) throw new NotFoundError('Lease not found');
 

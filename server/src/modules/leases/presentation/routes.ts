@@ -1,4 +1,6 @@
 import { Hono } from "hono";
+import type { AuthEnv } from "@server/shared/require-auth";
+import { ownershipGuard } from "@server/shared/ownership-guard";
 import { DrizzleLeasesRepository } from "@server/modules/leases/infrastructure/repositories/DrizzleLeasesRepository";
 import {
   CreateLeaseUseCase,
@@ -11,13 +13,13 @@ import {
 import { zValidator } from "@server/shared/validator-wrapper";
 import { creatLeaseSchema, findByIdLeasesSchema, updateLeaseSchema } from "@server/modules/leases/infrastructure/validations";
 
-const leaseRouter = new Hono();
+const leaseRouter = new Hono<AuthEnv>();
 const leaseRepository = new DrizzleLeasesRepository();
 
 leaseRouter
   .get("/", async (c) => {
     const findAllLeases = new FindAllLeasesUseCase(leaseRepository);
-    const leases = await findAllLeases.execute();
+    const leases = await findAllLeases.execute(c.get("user").id);
 
     return c.json({
       success: true,
@@ -26,7 +28,7 @@ leaseRouter
   })
   .get("/:id", zValidator('param', findByIdLeasesSchema), async (c) => {
     const findByIdLeases = new FindByIdLeasesUseCase(leaseRepository);
-    const lease = await findByIdLeases.execute(c.req.param("id"));
+    const lease = await findByIdLeases.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,
@@ -36,8 +38,8 @@ leaseRouter
   .post("/",  zValidator('json', creatLeaseSchema), async (c) => {
     const body = c.req.valid('json');
 
-    const createLease = new CreateLeaseUseCase(leaseRepository);
-    const lease = await createLease.execute(body);
+    const createLease = new CreateLeaseUseCase(leaseRepository, ownershipGuard);
+    const lease = await createLease.execute(body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -47,7 +49,7 @@ leaseRouter
   .put("/:id", zValidator('param', updateLeaseSchema.shape.param), zValidator('json', updateLeaseSchema.shape.body), async (c) => {
     const body = c.req.valid('json');
     const updateLease = new UpdateLeaseUseCase(leaseRepository);
-    const lease = await updateLease.execute(c.req.param("id"), body);
+    const lease = await updateLease.execute(c.req.param("id"), body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -56,7 +58,7 @@ leaseRouter
   })
   .delete("/:id", zValidator('param', findByIdLeasesSchema), async (c) => {
     const deleteLease = new DeleteLeaseUseCase(leaseRepository);
-    await deleteLease.execute(c.req.param("id"));
+    await deleteLease.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,

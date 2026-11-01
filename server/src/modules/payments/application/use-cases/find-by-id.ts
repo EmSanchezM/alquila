@@ -5,8 +5,8 @@ import type { PaymentsRepository } from "@server/modules/payments/domain/reposit
 export class FindByIdPaymentUseCase {
   constructor(private readonly repository: PaymentsRepository) {}
 
-  async execute(id: string): Promise<Payment> {
-    const payment = await this.repository.findById(id);
+  async execute(id: string, userId: string): Promise<Payment> {
+    const payment = await this.repository.findById(id, userId);
     
     if (!payment) throw new NotFoundError('Payment not found');
     

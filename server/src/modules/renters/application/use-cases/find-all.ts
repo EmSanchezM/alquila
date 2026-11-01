@@ -4,7 +4,7 @@ import type { RentersRepository } from "@server/modules/renters/domain/repositor
 export class FindAllRentersUseCase {
   constructor(private readonly repository: RentersRepository) {}
 
-  async execute(): Promise<Omit<Renter[], 'updatedAt'>> {
-    return await this.repository.findAll();;
+  async execute(userId: string): Promise<Omit<Renter[], 'updatedAt'>> {
+    return await this.repository.findAll(userId);;
   }
 }

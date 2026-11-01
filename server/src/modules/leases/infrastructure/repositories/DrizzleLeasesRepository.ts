@@ -16,25 +16,25 @@ export class DrizzleLeasesRepository implements LeasesRepository {
 
     return newLease;
   }
-  async findAll(): Promise<Lease[]> {
-    return await db.select().from(leases).where(eq(leases.isActive, true));
+  async findAll(userId: string): Promise<Lease[]> {
+    return await db.select().from(leases).where(and(eq(leases.userId, userId), eq(leases.isActive, true)));
   }
   
-  async findById(id: string): Promise<Lease | null> {
-    const [result] = await db.select().from(leases).where(and(eq(leases.id, id), eq(leases.isActive, true)));
+  async findById(id: string, userId: string): Promise<Lease | null> {
+    const [result] = await db.select().from(leases).where(and(eq(leases.id, id), eq(leases.userId, userId), eq(leases.isActive, true)));
 
     if(!result) return null;
 
     return result;
   }
   
-  async update(id:string, lease: Partial<Lease>): Promise<Lease | null> {
+  async update(id: string, userId: string, lease: Partial<Lease>): Promise<Lease | null> {
     const [updatedLease] = await db.update(leases)
       .set({
         ...lease,
         updatedAt: new Date(),
       })
-      .where(and(eq(leases.id, id), eq(leases.isActive, true)))
+      .where(and(eq(leases.id, id), eq(leases.userId, userId), eq(leases.isActive, true)))
       .returning();
 
     if(!updatedLease) return null;
@@ -42,13 +42,13 @@ export class DrizzleLeasesRepository implements LeasesRepository {
     return updatedLease;
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, userId: string): Promise<boolean> {
     const deleted = await db.update(leases)
       .set({
         isActive: false,
         updatedAt: new Date(),
       })
-      .where(and(eq(leases.id, id), eq(leases.isActive, true)))
+      .where(and(eq(leases.id, id), eq(leases.userId, userId), eq(leases.isActive, true)))
       .returning({ id: leases.id });
 
     return deleted.length > 0;

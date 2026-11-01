@@ -5,8 +5,8 @@ import type { DocumentsRepository } from "@server/modules/documents/domain/repos
 export class FindByIdDocumentUseCase {
   constructor(private readonly repository: DocumentsRepository) {}
 
-  async execute(id: string): Promise<Document> {
-    const document = await this.repository.findById(id);
+  async execute(id: string, userId: string): Promise<Document> {
+    const document = await this.repository.findById(id, userId);
     
     if (!document) throw new NotFoundError('Document not found');
     

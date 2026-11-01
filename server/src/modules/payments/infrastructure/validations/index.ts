@@ -2,7 +2,6 @@ import { z } from "zod";
 
 export const createPaymentSchema = z.object({
   leaseId: z.string(),
-  userId: z.string(),
   amount: z.number().transform(String),
   dueDate: z.string(),
   paidDate: z.string(),
@@ -34,7 +33,6 @@ export const updatePaymentsSchema = z.object({
   }),
   body: z.object({
     leaseId: z.string().optional(),
-    userId: z.string().optional(),
     amount: z.number().transform(String).optional(),
     dueDate: z.string().optional(),
     paidDate: z.string().optional(),

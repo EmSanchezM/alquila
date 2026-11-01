@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import type { AuthEnv } from "@server/shared/require-auth";
 import { DrizzlePropertiesRepository } from "@server/modules/properties/infrastructure/repositories/DrizzlePropertiesRepository";
 import {
   FindByIdPropertiesUseCase,
@@ -11,13 +12,13 @@ import {
 import { zValidator } from "@server/shared/validator-wrapper";
 import { createPropertySchema, findByIdPropertiesSchema, updatePropertySchema } from "@server/modules/properties/infrastructure/validations";
 
-const propertyRouter = new Hono();
+const propertyRouter = new Hono<AuthEnv>();
 const propertyRepository = new DrizzlePropertiesRepository();
 
 propertyRouter
   .get("/", async (c) => {
     const findAllProperties = new FindAllPropertiesUseCase(propertyRepository);
-    const properties = await findAllProperties.execute();
+    const properties = await findAllProperties.execute(c.get("user").id);
 
     return c.json({
       success: true,
@@ -26,7 +27,7 @@ propertyRouter
   })
   .get("/:id", zValidator('param', findByIdPropertiesSchema), async (c) => {
     const findByIdProperties = new FindByIdPropertiesUseCase(propertyRepository);
-    const property = await findByIdProperties.execute(c.req.param("id"));
+    const property = await findByIdProperties.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,
@@ -37,7 +38,7 @@ propertyRouter
     const body = c.req.valid('json');
 
     const createProperty = new CreatePropertyUseCase(propertyRepository);
-    const property = await createProperty.execute(body);
+    const property = await createProperty.execute(body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -47,7 +48,7 @@ propertyRouter
   .put("/:id", zValidator('param', updatePropertySchema.shape.param), zValidator('json', updatePropertySchema.shape.body), async (c) => {
     const body = c.req.valid('json');
     const updateProperty = new UpdatePropertyUseCase(propertyRepository);
-    const property = await updateProperty.execute(c.req.param("id"), body);
+    const property = await updateProperty.execute(c.req.param("id"), body, c.get("user").id);
 
     return c.json({
       success: true,
@@ -56,7 +57,7 @@ propertyRouter
   })
   .delete("/:id", zValidator('param', findByIdPropertiesSchema), async (c) => {
     const deleteProperty = new DeletePropertyUseCase(propertyRepository);
-    await deleteProperty.execute(c.req.param("id"));
+    await deleteProperty.execute(c.req.param("id"), c.get("user").id);
 
     return c.json({
       success: true,
