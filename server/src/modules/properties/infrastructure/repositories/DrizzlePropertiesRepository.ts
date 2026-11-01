@@ -1,8 +1,8 @@
 import type { PropertiesRepository } from "@server/modules/properties/domain/repositories/properties.repository";
 
 import { db } from "@server/database";
-import { properties, type Property, type NewProperty } from "@server/database/schema";
-import { eq } from "drizzle-orm";
+import { leases, properties, type Property, type NewProperty } from "@server/database/schema";
+import { and, eq } from "drizzle-orm";
 
 export class DrizzlePropertiesRepository implements PropertiesRepository {
   async create(property: Omit<NewProperty, 'createdAt' | 'updatedAt'>): Promise<Property | null> {
@@ -17,18 +17,11 @@ export class DrizzlePropertiesRepository implements PropertiesRepository {
     return newProperty;
   }
   async findAll(): Promise<Property[]> {
-    //return await db.select().from(properties).where(eq(properties.isActive, true));
-    try {
-      const results = await db.select().from(properties);
-      return results;
-    } catch (error) {
-      console.error('Error finding all properties:', error);
-      throw error;
-    }
+    return await db.select().from(properties).where(eq(properties.isActive, true));
   }
   
   async findById(id: string): Promise<Property | null> {
-    const [result] = await db.select().from(properties).where(eq(properties.id, id));
+    const [result] = await db.select().from(properties).where(and(eq(properties.id, id), eq(properties.isActive, true)));
 
     if(!result) return null;
 
@@ -41,7 +34,7 @@ export class DrizzlePropertiesRepository implements PropertiesRepository {
         ...property,
         updatedAt: new Date(),
       })
-      .where(eq(properties.id, id))
+      .where(and(eq(properties.id, id), eq(properties.isActive, true)))
       .returning();
 
     if(!updatedProperty) return null;
@@ -49,12 +42,24 @@ export class DrizzlePropertiesRepository implements PropertiesRepository {
     return updatedProperty;
   }
 
-  async delete(id: string): Promise<void> {
-    await db.update(properties)
+  async delete(id: string): Promise<boolean> {
+    const deleted = await db.update(properties)
       .set({
         isActive: false,
         updatedAt: new Date(),
       })
-      .where(eq(properties.id, id));
+      .where(and(eq(properties.id, id), eq(properties.isActive, true)))
+      .returning({ id: properties.id });
+
+    return deleted.length > 0;
+  }
+
+  async hasActiveLeases(id: string): Promise<boolean> {
+    const [lease] = await db.select({ id: leases.id })
+      .from(leases)
+      .where(and(eq(leases.propertyId, id), eq(leases.isActive, true)))
+      .limit(1);
+
+    return lease !== undefined;
   }
 }

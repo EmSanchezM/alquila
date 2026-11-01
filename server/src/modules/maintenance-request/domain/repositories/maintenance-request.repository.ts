@@ -5,5 +5,5 @@ export interface MaintenanceRequestRepository {
   findAll(): Promise<MaintenanceRequest[]>;
   findById(id: string): Promise<MaintenanceRequest | null>;
   update(id: string, maintenanceRequest: Partial<MaintenanceRequest>): Promise<MaintenanceRequest | null>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<boolean>;
 }

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { MaintenanceRequestRepository } from "@server/modules/maintenance-request/domain/repositories/maintenance-request.repository";
 
 import { db } from "@server/database";
@@ -21,7 +21,7 @@ export class DrizzleMaintenanceRequestRepository implements MaintenanceRequestRe
   }
   
   async findById(id: string): Promise<MaintenanceRequest | null> {
-    const [result] = await db.select().from(maintenanceRequests).where(eq(maintenanceRequests.id, id));
+    const [result] = await db.select().from(maintenanceRequests).where(and(eq(maintenanceRequests.id, id), eq(maintenanceRequests.isActive, true)));
 
     if(!result) return null;
 
@@ -34,7 +34,7 @@ export class DrizzleMaintenanceRequestRepository implements MaintenanceRequestRe
         ...expense,
         updatedAt: new Date(),
       })
-      .where(eq(maintenanceRequests.id, id))
+      .where(and(eq(maintenanceRequests.id, id), eq(maintenanceRequests.isActive, true)))
       .returning();
 
     if(!updatedMaintenance) return null;
@@ -42,12 +42,15 @@ export class DrizzleMaintenanceRequestRepository implements MaintenanceRequestRe
     return updatedMaintenance;
   }
 
-  async delete(id: string): Promise<void> {
-    await db.update(maintenanceRequests)
+  async delete(id: string): Promise<boolean> {
+    const deleted = await db.update(maintenanceRequests)
       .set({
         isActive: false,
         updatedAt: new Date(),
       })
-      .where(eq(maintenanceRequests.id, id));
+      .where(and(eq(maintenanceRequests.id, id), eq(maintenanceRequests.isActive, true)))
+      .returning({ id: maintenanceRequests.id });
+
+    return deleted.length > 0;
   }
 }

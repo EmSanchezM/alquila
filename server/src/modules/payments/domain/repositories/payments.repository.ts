@@ -5,5 +5,5 @@ export interface PaymentsRepository {
   findAll(): Promise<Payment[]>;
   findById(id: string): Promise<Payment | null>;
   update(id: string, payment: Partial<Payment>): Promise<Payment | null>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<boolean>;
 }

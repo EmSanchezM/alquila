@@ -53,7 +53,6 @@ export const updatePropertySchema = z.object({
     description: z.string().optional(),
     amenities: amenitiesSchema.optional(),
     images: imagesSchema.optional(),
-    isActive: z.boolean().optional(),
   }),
 });
 
