@@ -1,3 +1,4 @@
+import { NotFoundError } from "@server/shared/errors";
 import type { MaintenanceRequest } from "@server/database/schema";
 import type { MaintenanceRequestRepository } from "@server/modules/maintenance-request/domain/repositories/maintenance-request.repository";
 
@@ -7,7 +8,7 @@ export class UpdateMaintenanceRequestUseCase {
   async execute(id: string, payload: Partial<Omit<MaintenanceRequest, 'id' | 'createdAt' | 'updatedAt'>>): Promise<MaintenanceRequest> {
     const updatedMaintenanceRequest = await this.repository.update(id, payload);
 
-    if (!updatedMaintenanceRequest) throw new Error('Maintenance request not updated');
+    if (!updatedMaintenanceRequest) throw new NotFoundError('Maintenance request not found');
 
     return updatedMaintenanceRequest;
   }

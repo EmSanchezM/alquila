@@ -16,86 +16,51 @@ const expenseRepository = new DrizzleExpensesRepository();
 
 expenseRouter
   .get("/", async (c) => {
-    try {
-      const findAllExpenses = new FindAllExpensesUseCase(expenseRepository);
-      const expenses = await findAllExpenses.execute();
+    const findAllExpenses = new FindAllExpensesUseCase(expenseRepository);
+    const expenses = await findAllExpenses.execute();
 
-      return c.json({
-        success: true,
-        data: expenses,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: expenses,
+    });
   })
   .get("/:id", zValidator('param', findByIdExpensesSchema), async (c) => {
-    try {
-      const findByIdExpense = new FindByIdExpensesUseCase(expenseRepository);
-      const expense = await findByIdExpense.execute(c.req.param("id"));
+    const findByIdExpense = new FindByIdExpensesUseCase(expenseRepository);
+    const expense = await findByIdExpense.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        data: expense,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: expense,
+    });
   })
   .post("/",  zValidator('json', createExpenseSchema), async (c) => {
-    try {
-      const body = c.req.valid('json');
+    const body = c.req.valid('json');
 
-      const createExpense = new CreateExpenseUseCase(expenseRepository);
-      const expense = await createExpense.execute(body);
+    const createExpense = new CreateExpenseUseCase(expenseRepository);
+    const expense = await createExpense.execute(body);
 
-      return c.json({
-        success: true,
-        data: expense,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: expense,
+    });
   })
   .put("/:id", zValidator('param', updateExpensesSchema.shape.param), zValidator('json', updateExpensesSchema.shape.body), async (c) => {
-    try {
-      const body = c.req.valid('json');
-      const updateExpense = new UpdateExpenseUseCase(expenseRepository);
-      const expense = await updateExpense.execute(c.req.param("id"), body);
+    const body = c.req.valid('json');
+    const updateExpense = new UpdateExpenseUseCase(expenseRepository);
+    const expense = await updateExpense.execute(c.req.param("id"), body);
 
-      return c.json({
-        success: true,
-        data: expense,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: expense,
+    });
   })
   .delete("/:id", zValidator('param', findByIdExpensesSchema), async (c) => {
-    try {
-      const deleteExpense = new DeleteExpenseUseCase(expenseRepository);
-      await deleteExpense.execute(c.req.param("id"));
+    const deleteExpense = new DeleteExpenseUseCase(expenseRepository);
+    await deleteExpense.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        message: "Expense deleted successfully",
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      message: "Expense deleted successfully",
+    });
   });
 export default expenseRouter;

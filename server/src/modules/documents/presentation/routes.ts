@@ -16,86 +16,51 @@ const documentRepository = new DrizzleDocumentsRepository();
 
 documentRouter
   .get("/", async (c) => {
-    try {
-      const findAllDocuments = new FindAllDocumentsUseCase(documentRepository);
-      const documents = await findAllDocuments.execute();
+    const findAllDocuments = new FindAllDocumentsUseCase(documentRepository);
+    const documents = await findAllDocuments.execute();
 
-      return c.json({
-        success: true,
-        data: documents,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: documents,
+    });
   })
   .get("/:id", zValidator('param', findByIdDocumentsSchema), async (c) => {
-    try {
-      const findByIdDocument = new FindByIdDocumentUseCase(documentRepository);
-      const document = await findByIdDocument.execute(c.req.param("id"));
+    const findByIdDocument = new FindByIdDocumentUseCase(documentRepository);
+    const document = await findByIdDocument.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        data: document,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: document,
+    });
   })
   .post("/",  zValidator('json', createDocumentSchema), async (c) => {
-    try {
-      const body = c.req.valid('json');
+    const body = c.req.valid('json');
 
-      const createDocument = new CreateDocumentUseCase(documentRepository);
-      const document = await createDocument.execute(body);
+    const createDocument = new CreateDocumentUseCase(documentRepository);
+    const document = await createDocument.execute(body);
 
-      return c.json({
-        success: true,
-        data: document,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: document,
+    });
   })
   .put("/:id", zValidator('param', updateDocumentsSchema.shape.param), zValidator('json', updateDocumentsSchema.shape.body), async (c) => {
-    try {
-      const body = c.req.valid('json');
-      const updateDocument = new UpdateDocumentUseCase(documentRepository);
-      const document = await updateDocument.execute(c.req.param("id"), body);
+    const body = c.req.valid('json');
+    const updateDocument = new UpdateDocumentUseCase(documentRepository);
+    const document = await updateDocument.execute(c.req.param("id"), body);
 
-      return c.json({
-        success: true,
-        data: document,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: document,
+    });
   })
   .delete("/:id", zValidator('param', findByIdDocumentsSchema), async (c) => {
-    try {
-      const deleteDocument = new DeleteDocumentUseCase(documentRepository);
-      await deleteDocument.execute(c.req.param("id"));
+    const deleteDocument = new DeleteDocumentUseCase(documentRepository);
+    await deleteDocument.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        message: "Document deleted successfully",
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      message: "Document deleted successfully",
+    });
   });
 export default documentRouter;

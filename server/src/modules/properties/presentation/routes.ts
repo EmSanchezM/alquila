@@ -16,86 +16,51 @@ const propertyRepository = new DrizzlePropertiesRepository();
 
 propertyRouter
   .get("/", async (c) => {
-    try {
-      const findAllProperties = new FindAllPropertiesUseCase(propertyRepository);
-      const properties = await findAllProperties.execute();
+    const findAllProperties = new FindAllPropertiesUseCase(propertyRepository);
+    const properties = await findAllProperties.execute();
 
-      return c.json({
-        success: true,
-        data: properties,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: properties,
+    });
   })
   .get("/:id", zValidator('param', findByIdPropertiesSchema), async (c) => {
-    try {
-      const findByIdProperties = new FindByIdPropertiesUseCase(propertyRepository);
-      const property = await findByIdProperties.execute(c.req.param("id"));
+    const findByIdProperties = new FindByIdPropertiesUseCase(propertyRepository);
+    const property = await findByIdProperties.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        data: property,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: property,
+    });
   })
   .post("/",  zValidator('json', createPropertySchema), async (c) => {
-    try {
-      const body = c.req.valid('json');
+    const body = c.req.valid('json');
 
-      const createProperty = new CreatePropertyUseCase(propertyRepository);
-      const property = await createProperty.execute(body);
+    const createProperty = new CreatePropertyUseCase(propertyRepository);
+    const property = await createProperty.execute(body);
 
-      return c.json({
-        success: true,
-        data: property,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: property,
+    });
   })
   .put("/:id", zValidator('param', updatePropertySchema.shape.param), zValidator('json', updatePropertySchema.shape.body), async (c) => {
-    try {
-      const body = c.req.valid('json');
-      const updateProperty = new UpdatePropertyUseCase(propertyRepository);
-      const property = await updateProperty.execute(c.req.param("id"), body);
+    const body = c.req.valid('json');
+    const updateProperty = new UpdatePropertyUseCase(propertyRepository);
+    const property = await updateProperty.execute(c.req.param("id"), body);
 
-      return c.json({
-        success: true,
-        data: property,
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      data: property,
+    });
   })
   .delete("/:id", zValidator('param', findByIdPropertiesSchema), async (c) => {
-    try {
-      const deleteProperty = new DeletePropertyUseCase(propertyRepository);
-      await deleteProperty.execute(c.req.param("id"));
+    const deleteProperty = new DeletePropertyUseCase(propertyRepository);
+    await deleteProperty.execute(c.req.param("id"));
 
-      return c.json({
-        success: true,
-        message: "Property deleted successfully",
-      });
-    } catch (error) {
-      return c.json({
-        success: false,
-        message: error instanceof Error ? error.message : "Something went wrong",
-      }, 400)
-    }
+    return c.json({
+      success: true,
+      message: "Property deleted successfully",
+    });
   });
 export default propertyRouter;
