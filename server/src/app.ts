@@ -5,6 +5,7 @@ import { cors } from "hono/cors"
 import { HTTPException } from "hono/http-exception";
 
 import { AppError } from "./shared/errors";
+import { auth, trustedOrigins } from "./shared/auth";
 
 import propertyRouter from "./modules/properties/presentation/routes";
 import renterRouter from "./modules/renters/presentation/routes";
@@ -17,9 +18,11 @@ import paymentRouter from "./modules/payments/presentation/routes";
 const app = new Hono()
 app.use("*", logger());
 app.use("*", cors({
-  origin: "*",
+  origin: trustedOrigins,
   credentials: true,
 }));
+
+app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
 const api = new Hono()
   .route("/properties", propertyRouter)

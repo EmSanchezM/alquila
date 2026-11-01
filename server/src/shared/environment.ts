@@ -10,6 +10,12 @@ const ServeEnv = z.object({
   DATABASE_URL: z.string(),
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.string(),
+  // Comma-separated origins allowed to send credentialed requests, besides BETTER_AUTH_URL
+  // (e.g. the Vite dev server: http://localhost:5173).
+  TRUSTED_ORIGINS: z
+    .string()
+    .default("")
+    .transform((value) => value.split(",").map((origin) => origin.trim()).filter(Boolean)),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
 });
