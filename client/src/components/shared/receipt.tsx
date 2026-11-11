@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react"
 
 import FileUpload from "@/components/shared/file-upload"
+import { safeFileHref } from "@/lib/services/files"
 
 interface ReceiptInputProps {
   url: string
@@ -20,11 +21,12 @@ export function ReceiptInput({ url, name, onChange }: ReceiptInputProps) {
   )
 }
 
-/** Opens the receipt in a new tab, or nothing when there is none. */
+/** Opens the receipt in a new tab, or nothing when there is none or its URL is not safe to open. */
 export function ReceiptLink({ url }: { url: string | null }) {
-  if (!url) return null
+  const href = safeFileHref(url)
+  if (!href) return null
   return (
-    <a href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-blue-600 hover:underline">
+    <a href={href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-blue-600 hover:underline">
       View receipt
       <ExternalLink className="h-3 w-3" />
     </a>
