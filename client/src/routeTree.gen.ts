@@ -19,11 +19,12 @@ import { Route as AuthenticatedMaintenanceIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authenticated/payments/index'
 import { Route as AuthenticatedPaymentsAutomationRouteImport } from './routes/_authenticated/payments/automation'
 import { Route as AuthenticatedPropertiesIndexRouteImport } from './routes/_authenticated/properties/index'
-import { Route as AuthenticatedPropertiesPropertyIdRouteImport } from './routes/_authenticated/properties/$propertyId'
 import { Route as AuthenticatedPropertiesCreateRouteImport } from './routes/_authenticated/properties/create'
 import { Route as AuthenticatedRentersIndexRouteImport } from './routes/_authenticated/renters/index'
 import { Route as AuthenticatedRentersRenterIdRouteImport } from './routes/_authenticated/renters/$renterId'
 import { Route as AuthenticatedRentersCommunicationsRouteImport } from './routes/_authenticated/renters/communications'
+import { Route as AuthenticatedPropertiesPropertyIdIndexRouteImport } from './routes/_authenticated/properties/$propertyId/index'
+import { Route as AuthenticatedPropertiesPropertyIdEditRouteImport } from './routes/_authenticated/properties/$propertyId/edit'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -78,12 +79,6 @@ const AuthenticatedPropertiesIndexRoute =
     path: '/properties/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedPropertiesPropertyIdRoute =
-  AuthenticatedPropertiesPropertyIdRouteImport.update({
-    id: '/properties/$propertyId',
-    path: '/properties/$propertyId',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedPropertiesCreateRoute =
   AuthenticatedPropertiesCreateRouteImport.update({
     id: '/properties/create',
@@ -108,6 +103,18 @@ const AuthenticatedRentersCommunicationsRoute =
     path: '/renters/communications',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedPropertiesPropertyIdIndexRoute =
+  AuthenticatedPropertiesPropertyIdIndexRouteImport.update({
+    id: '/properties/$propertyId/',
+    path: '/properties/$propertyId/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPropertiesPropertyIdEditRoute =
+  AuthenticatedPropertiesPropertyIdEditRouteImport.update({
+    id: '/properties/$propertyId/edit',
+    path: '/properties/$propertyId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedRouteWithChildren
@@ -117,7 +124,6 @@ export interface FileRoutesByFullPath {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
-  '/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdRoute
   '/properties/create': typeof AuthenticatedPropertiesCreateRoute
   '/renters/$renterId': typeof AuthenticatedRentersRenterIdRoute
   '/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
@@ -125,6 +131,8 @@ export interface FileRoutesByFullPath {
   '/payments/': typeof AuthenticatedPaymentsIndexRoute
   '/properties/': typeof AuthenticatedPropertiesIndexRoute
   '/renters/': typeof AuthenticatedRentersIndexRoute
+  '/properties/$propertyId/edit': typeof AuthenticatedPropertiesPropertyIdEditRoute
+  '/properties/$propertyId/': typeof AuthenticatedPropertiesPropertyIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedRouteWithChildren
@@ -134,7 +142,6 @@ export interface FileRoutesByTo {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
-  '/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdRoute
   '/properties/create': typeof AuthenticatedPropertiesCreateRoute
   '/renters/$renterId': typeof AuthenticatedRentersRenterIdRoute
   '/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
@@ -142,6 +149,8 @@ export interface FileRoutesByTo {
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/properties': typeof AuthenticatedPropertiesIndexRoute
   '/renters': typeof AuthenticatedRentersIndexRoute
+  '/properties/$propertyId/edit': typeof AuthenticatedPropertiesPropertyIdEditRoute
+  '/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,7 +161,6 @@ export interface FileRoutesById {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/_authenticated/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
-  '/_authenticated/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdRoute
   '/_authenticated/properties/create': typeof AuthenticatedPropertiesCreateRoute
   '/_authenticated/renters/$renterId': typeof AuthenticatedRentersRenterIdRoute
   '/_authenticated/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
@@ -160,6 +168,8 @@ export interface FileRoutesById {
   '/_authenticated/payments/': typeof AuthenticatedPaymentsIndexRoute
   '/_authenticated/properties/': typeof AuthenticatedPropertiesIndexRoute
   '/_authenticated/renters/': typeof AuthenticatedRentersIndexRoute
+  '/_authenticated/properties/$propertyId/edit': typeof AuthenticatedPropertiesPropertyIdEditRoute
+  '/_authenticated/properties/$propertyId/': typeof AuthenticatedPropertiesPropertyIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,7 +181,6 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/payments/automation'
-    | '/properties/$propertyId'
     | '/properties/create'
     | '/renters/$renterId'
     | '/renters/communications'
@@ -179,6 +188,8 @@ export interface FileRouteTypes {
     | '/payments/'
     | '/properties/'
     | '/renters/'
+    | '/properties/$propertyId/edit'
+    | '/properties/$propertyId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,7 +199,6 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/payments/automation'
-    | '/properties/$propertyId'
     | '/properties/create'
     | '/renters/$renterId'
     | '/renters/communications'
@@ -196,6 +206,8 @@ export interface FileRouteTypes {
     | '/payments'
     | '/properties'
     | '/renters'
+    | '/properties/$propertyId/edit'
+    | '/properties/$propertyId'
   id:
     | '__root__'
     | '/_authenticated'
@@ -205,7 +217,6 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/_authenticated/payments/automation'
-    | '/_authenticated/properties/$propertyId'
     | '/_authenticated/properties/create'
     | '/_authenticated/renters/$renterId'
     | '/_authenticated/renters/communications'
@@ -213,6 +224,8 @@ export interface FileRouteTypes {
     | '/_authenticated/payments/'
     | '/_authenticated/properties/'
     | '/_authenticated/renters/'
+    | '/_authenticated/properties/$propertyId/edit'
+    | '/_authenticated/properties/$propertyId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -292,13 +305,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPropertiesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/properties/$propertyId': {
-      id: '/_authenticated/properties/$propertyId'
-      path: '/properties/$propertyId'
-      fullPath: '/properties/$propertyId'
-      preLoaderRoute: typeof AuthenticatedPropertiesPropertyIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/properties/create': {
       id: '/_authenticated/properties/create'
       path: '/properties/create'
@@ -327,6 +333,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRentersCommunicationsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/properties/$propertyId/': {
+      id: '/_authenticated/properties/$propertyId/'
+      path: '/properties/$propertyId'
+      fullPath: '/properties/$propertyId/'
+      preLoaderRoute: typeof AuthenticatedPropertiesPropertyIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/properties/$propertyId/edit': {
+      id: '/_authenticated/properties/$propertyId/edit'
+      path: '/properties/$propertyId/edit'
+      fullPath: '/properties/$propertyId/edit'
+      preLoaderRoute: typeof AuthenticatedPropertiesPropertyIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -334,7 +354,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedPaymentsAutomationRoute: typeof AuthenticatedPaymentsAutomationRoute
-  AuthenticatedPropertiesPropertyIdRoute: typeof AuthenticatedPropertiesPropertyIdRoute
   AuthenticatedPropertiesCreateRoute: typeof AuthenticatedPropertiesCreateRoute
   AuthenticatedRentersRenterIdRoute: typeof AuthenticatedRentersRenterIdRoute
   AuthenticatedRentersCommunicationsRoute: typeof AuthenticatedRentersCommunicationsRoute
@@ -342,14 +361,14 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPaymentsIndexRoute: typeof AuthenticatedPaymentsIndexRoute
   AuthenticatedPropertiesIndexRoute: typeof AuthenticatedPropertiesIndexRoute
   AuthenticatedRentersIndexRoute: typeof AuthenticatedRentersIndexRoute
+  AuthenticatedPropertiesPropertyIdEditRoute: typeof AuthenticatedPropertiesPropertyIdEditRoute
+  AuthenticatedPropertiesPropertyIdIndexRoute: typeof AuthenticatedPropertiesPropertyIdIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedPaymentsAutomationRoute: AuthenticatedPaymentsAutomationRoute,
-  AuthenticatedPropertiesPropertyIdRoute:
-    AuthenticatedPropertiesPropertyIdRoute,
   AuthenticatedPropertiesCreateRoute: AuthenticatedPropertiesCreateRoute,
   AuthenticatedRentersRenterIdRoute: AuthenticatedRentersRenterIdRoute,
   AuthenticatedRentersCommunicationsRoute:
@@ -358,6 +377,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPaymentsIndexRoute: AuthenticatedPaymentsIndexRoute,
   AuthenticatedPropertiesIndexRoute: AuthenticatedPropertiesIndexRoute,
   AuthenticatedRentersIndexRoute: AuthenticatedRentersIndexRoute,
+  AuthenticatedPropertiesPropertyIdEditRoute:
+    AuthenticatedPropertiesPropertyIdEditRoute,
+  AuthenticatedPropertiesPropertyIdIndexRoute:
+    AuthenticatedPropertiesPropertyIdIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

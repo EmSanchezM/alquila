@@ -38,10 +38,10 @@ describe("missing records answer 404", () => {
 
 describe("unexpected errors answer 500 without internals", () => {
   test("database failure does not leak SQL", async () => {
-    // properties.name is varchar(200): zod accepts the value, Postgres rejects it.
-    const { status, json } = await f.request("POST", "/properties", {
-      name: "x".repeat(300), address: "A", city: "C", state: "S", zipCode: "1", country: "CR",
-      propertyType: "house", bedrooms: 1, bathrooms: 1, squareMeters: 50, description: "",
+    // renters.first_name is varchar(100): zod accepts the value, Postgres rejects it.
+    const { status, json } = await f.request("POST", "/renters", {
+      firstName: "x".repeat(300), lastName: "L", email: "l@test.com", phoneNumber: "1", dniNumber: "1",
+      emergencyContact: { name: "M", phone: "1", relationship: "mother" }, verificationStatus: "pending", notes: "",
     });
 
     expect(status).toBe(500);
