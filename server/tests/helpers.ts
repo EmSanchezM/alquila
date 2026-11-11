@@ -145,7 +145,7 @@ export function moduleCases(f: Fixtures): ModuleCase[] {
     },
     {
       name: "documents", path: "/documents", entity: "Document", field: "name",
-      body: () => ({ propertyId, renterId, leaseId, name: `Doc ${tag}`, type: "lease", fileUrl: "http://x/c.pdf", fileSize: 1024, mimeType: "application/pdf", expirationDate: "2027-01-01", isImportant: true, tags: [] }),
+      body: () => ({ propertyId, renterId, leaseId, name: `Doc ${tag}`, type: "contract", fileUrl: `/api/files/${f.userId}/019a0000-0000-7000-8000-000000000000.pdf`, fileSize: 1024, mimeType: "application/pdf", expirationDate: "2027-01-01", isImportant: true, tags: [] }),
     },
   ];
 }
