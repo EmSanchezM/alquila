@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Bath, Bed, Building2, MapPin, Square } from 'lucide-react'
+import { Bath, Bed, Building2, MapPin, Pencil, Square } from 'lucide-react'
 
 import placeholder from '@/assets/placeholder.svg'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
@@ -79,6 +79,14 @@ const PropertiesDetails: FC<PropertiesDetailsProps> = ({ propertyId }) => {
               <MapPin className="h-4 w-4 mr-1 shrink-0" />
               {[property.address, property.city, property.state, property.zipCode, property.country].filter(Boolean).join(', ')}
             </p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" asChild>
+              <Link to="/properties/$propertyId/edit" params={{ propertyId }}>
+                <Pencil className="h-4 w-4 mr-2" />
+                Edit
+              </Link>
+            </Button>
           </div>
         </div>
       </header>

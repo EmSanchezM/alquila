@@ -1,46 +1,23 @@
-import { Link } from "@tanstack/react-router"
-// import { useForm } from "react-hook-form";
-// import { z } from "zod";
-// import { zodResolver } from '@hookform/resolvers/zod';
+import { Link, useNavigate } from "@tanstack/react-router"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-// import { Form } from "@/components/ui/form";
-// import FormField from "@/components/form-field";
-// import { SelectItem } from "@/components/ui/select";
-
-// import { CreatePropertyFormValidation } from "@/lib/validations/properties";
-// import { FormFieldsTypes } from "@/lib/constants/form-fields-types";
-// import type { CreateProperty } from "shared";
-
-// const PROPERTIES_TYPES = [
-//   { value: "Apartamento", label: "Apartamento" },
-//   { value: "Casa", label: "Casa" },
-//   { value: "Casas", label: "Casas" },
-//   { value: "Condominio", label: "Condominio" },
-//   { value: "Lote", label: "Lote" },
-//   { value: "Lotes", label: "Lotes" }
-// ]
+import PropertyForm from "@/features/properties/components/property-form";
+import { createProperty, propertiesQueryKey } from "@/lib/services/properties";
+import { emptyPropertyForm, toPropertyInput, type PropertyFormValues } from "@/lib/validations/properties";
 
 const CreateProperty = () => {
-  // TODO: Fix Zod version compatibility issues
-  // const form = useForm<z.infer<typeof CreatePropertyFormValidation>>({
-  //   resolver: zodResolver(CreatePropertyFormValidation),
-  //   defaultValues: {
-  //     name: "",
-  //     address: "",
-  //     city: "",
-  //     state: "",
-  //     zipCode: "",
-  //     country: "",
-  //     propertyType: "",
-  //     bedrooms: 0,
-  //     bathrooms: 0,
-  //     squareMeters: "0",
-  //     description: "",
-  //     amenities: [],
-  //     images: [],
-  //   },
-  // });
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (values: PropertyFormValues) => createProperty(toPropertyInput(values)),
+    onSuccess: async (property) => {
+      queryClient.setQueryData([...propertiesQueryKey, property.id], property)
+      await queryClient.invalidateQueries({ queryKey: propertiesQueryKey, exact: true })
+      await navigate({ to: "/properties/$propertyId", params: { propertyId: property.id } })
+    },
+  })
 
   return (
     <>
@@ -70,20 +47,22 @@ const CreateProperty = () => {
             Create New Property
           </h2>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
-            Add a new property to your portfolio by filling out the form below. Make sure to include all relevant details 
+            Add a new property to your portfolio by filling out the form below. Make sure to include all relevant details
             such as location, amenities, and property specifications to provide accurate information for potential clients.
           </p>
         </div>
       </div>
     </header>
     <section className="mt-8 max-w-4xl">
-      <div className="p-8 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <h3 className="text-lg font-medium text-yellow-800 mb-2">Form Temporarily Disabled</h3>
-        <p className="text-yellow-700">
-          The property creation form is temporarily disabled due to Zod version compatibility issues. 
-          This will be resolved in a future update.
-        </p>
-      </div>
+      <PropertyForm
+        defaultValues={emptyPropertyForm}
+        submitLabel="Create property"
+        pendingLabel="Creating..."
+        isPending={mutation.isPending}
+        error={mutation.error?.message ?? null}
+        cancel={{ to: "/properties" }}
+        onSubmit={(values) => mutation.mutate(values)}
+      />
     </section>
     </>
   )
