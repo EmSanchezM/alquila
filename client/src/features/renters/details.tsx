@@ -7,6 +7,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Button } from '@/components/ui/button'
 import DeleteResourceButton from '@/components/shared/delete-resource-button'
 import { LoadErrorState, LoadingState, NotFoundState } from '@/components/shared/resource-states'
+import LeaseSection from '@/features/leases/components/lease-section'
 import VerificationBadge from '@/features/renters/components/verification-badge'
 import { ApiError } from '@/lib/services/api-client'
 import { deleteRenter, emergencyContactOf, getRenterQueryOptions, renterName, rentersQueryKey } from '@/lib/services/renters'
@@ -118,6 +119,10 @@ const RenterDetails: FC<RenterDetailsProps> = ({ renterId }) => {
           {renter.notes && <p className="whitespace-pre-line">{renter.notes}</p>}
         </Detail>
       </section>
+
+      <div className="mt-10 max-w-4xl">
+        <LeaseSection renterId={renterId} />
+      </div>
     </>
   )
 }
