@@ -18,6 +18,13 @@ const ServeEnv = z.object({
     .transform((value) => value.split(",").map((origin) => origin.trim()).filter(Boolean)),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  // S3-compatible file storage (AWS S3, Cloudflare R2, or Floci in development). Optional: without a
+  // bucket, the file endpoints answer 503 and the rest of the API keeps working.
+  S3_ENDPOINT: z.string().optional(),
+  S3_REGION: z.string().default("us-east-1"),
+  S3_BUCKET: z.string().optional(),
+  S3_ACCESS_KEY_ID: z.string().optional(),
+  S3_SECRET_ACCESS_KEY: z.string().optional(),
 });
 
 export const ProcessEnv = ServeEnv.parse(process.env);
