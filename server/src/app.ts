@@ -15,6 +15,7 @@ import expenseRouter from "./modules/expenses/presentation/routes";
 import maintenanceRequestRouter from "./modules/maintenance-request/presentation/routes";
 import documentRouter from "./modules/documents/presentation/routes";
 import paymentRouter from "./modules/payments/presentation/routes";
+import fileRouter from "./modules/files/presentation/routes";
 
 const app = new Hono()
 app.use("*", logger());
@@ -33,7 +34,8 @@ const api = new Hono()
   .route("/expenses", expenseRouter)
   .route("/maintenance-requests", maintenanceRequestRouter)
   .route("/documents", documentRouter)
-  .route("/payments", paymentRouter);
+  .route("/payments", paymentRouter)
+  .route("/files", fileRouter);
 
 const routes = app.route("/api", api);
 
