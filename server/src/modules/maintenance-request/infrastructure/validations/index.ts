@@ -22,7 +22,8 @@ const optionalFields = {
   assignedTo: z.string().max(100).nullable().optional(),
   estimatedCost: cost.nullable().optional(),
   actualCost: cost.nullable().optional(),
-  photos: z.array(z.string()).nullable().optional(),
+  // Up to 10 photo URLs; the use cases check they are the caller's uploaded images.
+  photos: z.array(z.string().max(500)).max(10).nullable().optional(),
   notes: z.string().nullable().optional(),
 };
 

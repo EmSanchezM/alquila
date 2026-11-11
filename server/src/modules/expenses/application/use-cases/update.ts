@@ -1,3 +1,4 @@
+import { assertUserFile } from "@server/modules/files/application/assert-user-files";
 import type { OwnershipGuard } from "@server/shared/ownership";
 import { NotFoundError } from "@server/shared/errors";
 import type { Expense } from "@server/database/schema";
@@ -10,6 +11,7 @@ export class UpdateExpenseUseCase {
   ) {}
 
   async execute(id: string, payload: Partial<Omit<Expense, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>, userId: string): Promise<Expense> {
+    assertUserFile(payload.receiptFile, userId, "receiptFile");
     await this.ownership.assertOwns(userId, payload);
 
     const updatedExpense = await this.repository.update(id, userId, payload);

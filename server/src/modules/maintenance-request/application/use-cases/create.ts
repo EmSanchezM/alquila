@@ -1,3 +1,4 @@
+import { assertUserImages } from "@server/modules/files/application/assert-user-files";
 import type { OwnershipGuard } from "@server/shared/ownership";
 import type { MaintenanceRequest, NewMaintenanceRequest } from "@server/database/schema";
 import type { MaintenanceRequestRepository } from "@server/modules/maintenance-request/domain/repositories/maintenance-request.repository";
@@ -9,6 +10,7 @@ export class CreateMaintenanceRequestUseCase {
     private readonly ownership: OwnershipGuard,
   ) {}
   async execute(payload: Omit<NewMaintenanceRequest, 'id' | 'userId' | 'createdAt' | 'updatedAt'>, userId: string): Promise<MaintenanceRequest> {
+    assertUserImages(payload.photos, userId, "photos");
     await this.ownership.assertOwns(userId, payload);
 
     const data = {
