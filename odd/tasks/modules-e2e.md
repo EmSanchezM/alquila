@@ -22,7 +22,7 @@ Out of scope (phase 4 per L2 of `authentication.md`): documents, communications,
 
 | ID | Specs | Route | Status | Evidence |
 |---|---|---|---|---|
-| T1 | S1, S2, S3 (renters) | inline | pending | |
+| T1 | S1, S2, S3 (renters) | inline | done | Branch `feat/renters-e2e`. `c8ead04` server: RED 11/12, GREEN 12/12, suite 114/114. `c9a8295` shared client refactor (properties e2e still 15/15). `7fb32ce` renters screens: scratch e2e RED on `develop` 0/10, GREEN 10/10 ×3. S2 not needed for renters (no references). RDD: medium, under_budget. |
 | T2 | S1, S2, S4 (leases + menu) | inline | pending | |
 | T3 | S1, S2, S5, S10 (payments) | inline | pending | |
 | T4 | S1, S2, S6, S10 (maintenance) | inline | pending | |
@@ -38,3 +38,4 @@ Route evidence: each module unit reuses the phase 2 pattern and T2–T7 depend o
 - **L2 (2026-11-11, user):** "1, pantallas propias con entrada en el menú" (leases and expenses get their own screens and menu entries, plus sections in property and renter details).
 - **L3 (2026-11-11):** explorer map. All six modules have server CRUD (`GET/POST /`, `GET/PUT/DELETE /:id`, soft delete, `OwnershipGuard` 404 on foreign references). Zod schemas: every create field required even for nullable columns, no `.max()`, enums as free strings, money `z.number().transform(String)`, dates `z.string()` (maintenance `z.coerce.date()`). Lists return IDs only. Client: renters, payments, maintenance and dashboard are mock-only; leases and expenses have no screen; only menu is `client/src/components/shared/header.tsx`. Renters delete answers 409 with active leases; leases, payments, maintenance and expenses have no delete rules.
 - **L4 (2026-11-11, user):** "1, un PR por módulo" (one PR per module, merged into `develop` before the next).
+- **L5 (2026-11-11):** T1 decisions. The `api-errors` 500 test now spies on `DrizzleRentersRepository.prototype.findAll` to simulate a driver failure, because every body will be validated and no column is left to overflow. Shared client pieces for the next units: `client/src/lib/services/api-client.ts` (`apiRequest`, `crudClient`, `ApiError`, `retryServerErrors`), `components/shared/resource-states.tsx`, `components/shared/delete-resource-button.tsx`. Renter update keeps accepting a partial `emergencyContact` object (existing behavior); create requires all three strings when the object is sent. The "Communications" button on `/renters` still links to the phase 4 mock page.
