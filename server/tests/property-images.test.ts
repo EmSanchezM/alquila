@@ -70,4 +70,12 @@ describe("property images", () => {
     expect(cleared.status).toBe(200);
     expect(cleared.json.data.images).toBeNull();
   });
+
+  test("a PUT without images keeps the stored ones", async () => {
+    const { json: created } = await create([image(6), image(7, "webp")]);
+    const { status, json } = await f.request("PUT", `/properties/${created.data.id}`, { city: "Heredia" });
+
+    expect(status).toBe(200);
+    expect(json.data).toMatchObject({ city: "Heredia", images: [image(6), image(7, "webp")] });
+  });
 });

@@ -10,7 +10,7 @@ describe("safeFileHref", () => {
   });
 
   test("drops script and other schemes, relative paths and empty values", () => {
-    for (const url of ["javascript:alert(1)", "JavaScript:alert(1)", " javascript:alert(1)", "data:text/html,<script>1</script>", "vbscript:x", "/other/path.pdf", "c.pdf", "", null, undefined]) {
+    for (const url of ["/api/files/u/../../auth/sign-out", "/api/files/u/019a0000-0000-7000-8000-000000000001.html", "javascript:alert(1)", "JavaScript:alert(1)", " javascript:alert(1)", "data:text/html,<script>1</script>", "vbscript:x", "/other/path.pdf", "c.pdf", "", null, undefined]) {
       expect(safeFileHref(url)).toBeNull();
     }
   });

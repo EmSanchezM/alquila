@@ -78,12 +78,14 @@ const DocumentDetails: FC<DocumentDetailsProps> = ({ documentId }) => {
             <Badge variant="outline">{labelOf(DOCUMENT_TYPES, document.type)}</Badge>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" asChild>
-              <a href={fileHref ?? undefined} target="_blank" rel="noreferrer" aria-disabled={!fileHref}>
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Open file
-              </a>
-            </Button>
+            {fileHref && (
+              <Button variant="outline" asChild>
+                <a href={fileHref} target="_blank" rel="noreferrer">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Open file
+                </a>
+              </Button>
+            )}
             <Button variant="outline" asChild>
               <Link to="/documents/$documentId/edit" params={{ documentId }}>
                 <Pencil className="h-4 w-4 mr-2" />
