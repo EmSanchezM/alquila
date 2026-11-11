@@ -6,6 +6,7 @@ import { Bath, Bed, Building2, MapPin, Pencil, Square } from 'lucide-react'
 import placeholder from '@/assets/placeholder.svg'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
+import DeletePropertyButton from '@/features/properties/components/delete-property-button'
 import { ApiError, getPropertyQueryOptions } from '@/lib/services/properties'
 
 interface PropertiesDetailsProps {
@@ -87,6 +88,7 @@ const PropertiesDetails: FC<PropertiesDetailsProps> = ({ propertyId }) => {
                 Edit
               </Link>
             </Button>
+            <DeletePropertyButton propertyId={propertyId} propertyName={property.name} />
           </div>
         </div>
       </header>
