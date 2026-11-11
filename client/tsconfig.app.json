@@ -23,6 +23,8 @@
     }
   },
   "include": ["src"],
+  // Unit tests run with `bun test` (root `test:client`), which provides bun:test.
+  "exclude": ["src/**/*.test.ts"],
   "references": [
     { "path": "../server" },
     { "path": "../shared" }
