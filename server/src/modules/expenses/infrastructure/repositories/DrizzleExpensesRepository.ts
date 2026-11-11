@@ -1,8 +1,18 @@
-import { and, eq } from "drizzle-orm";
-import type { ExpensesRepository } from "@server/modules/expenses/domain/repositories/expenses.repository";
+import { and, eq, getTableColumns } from "drizzle-orm";
+import type { ExpensesRepository, ExpenseWithNames } from "@server/modules/expenses/domain/repositories/expenses.repository";
 
 import { db } from "@server/database";
-import { expenses, type Expense, type NewExpense } from "@server/database/schema";
+import { expenses, properties, type Expense, type NewExpense } from "@server/database/schema";
+
+// Expenses with the property name. The property is optional, so it is a left join
+// and propertyName is null without one.
+const withNames = () =>
+  db.select({
+    ...getTableColumns(expenses),
+    propertyName: properties.name,
+  })
+    .from(expenses)
+    .leftJoin(properties, eq(expenses.propertyId, properties.id));
 
 export class DrizzleExpensesRepository implements ExpensesRepository {
   async create(expense: Omit<NewExpense, 'createdAt' | 'updatedAt'>): Promise<Expense | null> {
@@ -16,12 +26,12 @@ export class DrizzleExpensesRepository implements ExpensesRepository {
 
     return newExpense;
   }
-  async findAll(userId: string): Promise<Expense[]> {
-    return await db.select().from(expenses).where(and(eq(expenses.userId, userId), eq(expenses.isActive, true)));
+  async findAll(userId: string): Promise<ExpenseWithNames[]> {
+    return await withNames().where(and(eq(expenses.userId, userId), eq(expenses.isActive, true)));
   }
   
-  async findById(id: string, userId: string): Promise<Expense | null> {
-    const [result] = await db.select().from(expenses).where(and(eq(expenses.id, id), eq(expenses.userId, userId), eq(expenses.isActive, true)));
+  async findById(id: string, userId: string): Promise<ExpenseWithNames | null> {
+    const [result] = await withNames().where(and(eq(expenses.id, id), eq(expenses.userId, userId), eq(expenses.isActive, true)));
 
     if(!result) return null;
 

@@ -12,11 +12,11 @@ import { ApiError } from '@/lib/services/api-client'
 import {
   deleteMaintenanceRequest,
   getMaintenanceRequestQueryOptions,
-  labelOf,
   MAINTENANCE_CATEGORIES,
   maintenanceQueryKey,
 } from '@/lib/services/maintenance'
 import { formatDay, formatMoney } from '@/lib/utils/format'
+import { labelOf } from '@/lib/utils/options'
 
 interface MaintenanceDetailsProps {
   requestId: string

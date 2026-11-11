@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge"
-import { labelOf, MAINTENANCE_PRIORITIES, MAINTENANCE_STATUSES } from "@/lib/services/maintenance"
+import { MAINTENANCE_PRIORITIES, MAINTENANCE_STATUSES } from "@/lib/services/maintenance"
+import { labelOf } from "@/lib/utils/options"
 
 type Variant = "default" | "secondary" | "destructive" | "outline"
 

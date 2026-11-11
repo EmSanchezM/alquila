@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { LoadErrorState, LoadingState } from "@/components/shared/resource-states"
 import { MaintenancePriorityBadge, MaintenanceStatusBadge } from "@/features/maintenance/components/maintenance-badges"
-import { getAllMaintenanceRequestsQueryOptions, labelOf, MAINTENANCE_CATEGORIES, MAINTENANCE_STATUSES } from "@/lib/services/maintenance"
+import { getAllMaintenanceRequestsQueryOptions, MAINTENANCE_CATEGORIES, MAINTENANCE_STATUSES } from "@/lib/services/maintenance"
+import { labelOf } from "@/lib/utils/options"
 import { formatDay } from "@/lib/utils/format"
 
 const isActive = (status: string) => status === "open" || status === "in_progress"

@@ -94,6 +94,3 @@ export const getMaintenanceRequestQueryOptions = (id: string) =>
     queryFn: () => requests.get(id),
     retry: retryServerErrors,
   });
-
-export const labelOf = (options: readonly { value: string, label: string }[], value: string) =>
-  options.find((o) => o.value === value)?.label ?? value;
