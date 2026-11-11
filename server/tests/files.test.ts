@@ -77,6 +77,45 @@ describe("POST /api/files", () => {
   });
 });
 
+describe("POST /api/files checks the content, the body and the origin", () => {
+  test("detects the type from the content when the name has no extension", async () => {
+    const res = await upload(new File([PNG], "blob", { type: "image/png" }), owner.cookie);
+    const json = await res.json() as { data: { key: string, mimeType: string } };
+
+    expect(res.status).toBe(200);
+    expect(json.data.mimeType).toBe("image/png");
+    expect(json.data.key.endsWith(".png")).toBe(true);
+  });
+
+  test("rejects content that is not an allowed type even with an allowed name", async () => {
+    const res = await upload(new File(["<html><script>alert(1)</script></html>"], "photo.png", { type: "image/png" }), owner.cookie);
+
+    expect(res.status).toBe(415);
+  });
+
+  test("answers 400 to a malformed multipart body", async () => {
+    const res = await app.request("/api/files", {
+      method: "POST",
+      headers: { origin: TRUSTED_ORIGIN, cookie: owner.cookie, "content-type": "multipart/form-data; boundary=zz" },
+      body: "garbage",
+    });
+
+    expect(res.status).toBe(400);
+  });
+
+  test("rejects an upload from an untrusted origin with 403", async () => {
+    const form = new FormData();
+    form.append("file", new File([PNG], "pixel.png", { type: "image/png" }));
+    const res = await app.request("/api/files", {
+      method: "POST",
+      headers: { origin: "https://evil.example", cookie: owner.cookie },
+      body: form,
+    });
+
+    expect(res.status).toBe(403);
+  });
+});
+
 describe("GET /api/files/:key", () => {
   test("returns the stored bytes and type to the owner", async () => {
     const { data } = await (await upload(new File([PNG], "pixel.png", { type: "image/png" }), owner.cookie)).json() as { data: { url: string } };
@@ -94,17 +133,38 @@ describe("GET /api/files/:key", () => {
     expect((await download(data.url)).status).toBe(401);
   });
 
-  test("answers 404 for a missing key and for keys outside the user's prefix", async () => {
-    expect((await download(`/api/files/${owner.userId}/does-not-exist.png`, owner.cookie)).status).toBe(404);
-    expect((await download(`/api/files/${owner.userId}/../${stranger.userId}/x.png`, owner.cookie)).status).toBe(404);
+  test("answers 404 for a missing key and for another user's real key reached through the owner's prefix", async () => {
+    const { data } = await (await upload(new File([PNG], "pixel.png", { type: "image/png" }), stranger.cookie)).json() as { data: { key: string } };
+
+    expect((await download(`/api/files/${owner.userId}/019a0000-0000-7000-8000-000000000000.png`, owner.cookie)).status).toBe(404);
+    expect((await download(`/api/files/${owner.userId}/../${data.key}`, owner.cookie)).status).toBe(404);
+    expect((await download(`/api/files/${owner.userId}/%2e%2e/${data.key}`, owner.cookie)).status).toBe(404);
   });
 });
 
-describe("createFileStorage", () => {
-  test("is null without a bucket, so the file endpoints answer 503", async () => {
+describe("without storage configured", () => {
+  test("createFileStorage is null without a bucket", async () => {
     const { createFileStorage } = await import("@server/modules/files/infrastructure/s3-file-storage");
 
     expect(createFileStorage({ S3_REGION: "us-east-1" } as Parameters<typeof createFileStorage>[0])).toBeNull();
     expect(createFileStorage({ S3_REGION: "us-east-1", S3_BUCKET: "b" } as Parameters<typeof createFileStorage>[0])).not.toBeNull();
+  });
+
+  test("the file endpoints answer 503", async () => {
+    const { Hono } = await import("hono");
+    const { createFileRouter } = await import("@server/modules/files/presentation/routes");
+    const { AppError } = await import("@server/shared/errors");
+    const unconfigured = new Hono()
+      .use("*", async (c, next) => { c.set("user" as never, { id: owner.userId } as never); await next(); })
+      .route("/api/files", createFileRouter(null))
+      .onError((error, c) => c.json({ success: false, message: error.message }, error instanceof AppError ? error.status : 500));
+
+    for (const res of [
+      await unconfigured.request("/api/files", { method: "POST", headers: { origin: TRUSTED_ORIGIN }, body: new FormData() }),
+      await unconfigured.request(`/api/files/${owner.userId}/019a0000-0000-7000-8000-000000000000.png`),
+    ]) {
+      expect(res.status).toBe(503);
+      expect(await res.json()).toEqual({ success: false, message: "File storage is not configured" });
+    }
   });
 });
