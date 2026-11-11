@@ -1,18 +1,12 @@
-import RentersDetails from '@/features/renters/details'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_authenticated/renters/$renterId')({
-  loader: async ({ params: { renterId } }) => {
-    return {
-      renter: { id: renterId, title: 'Renter Title', body: 'Renter Body' },
-    }
-  },
-  component: RentersDetailsPage,
+import RenterDetails from '@/features/renters/details'
+
+export const Route = createFileRoute('/_authenticated/renters/$renterId/')({
+  component: RenterDetailsPage,
 })
 
-function RentersDetailsPage() {
-  const { renter } = Route.useLoaderData()
-  return (
-    <RentersDetails renter={renter} />
-  )
+function RenterDetailsPage() {
+  const { renterId } = Route.useParams()
+  return <RenterDetails renterId={renterId} />
 }
