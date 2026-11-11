@@ -3,20 +3,35 @@ import { z } from "zod";
 export const amenitiesSchema = z.array(z.string()).optional();
 export const imagesSchema = z.array(z.string()).optional();
 
-export const createPropertySchema = z.object({
-  name: z.string(),
+// Limits mirror the `properties` table, so invalid values answer 400 instead of failing in Postgres.
+const INT4_MAX = 2_147_483_647;
+const count = z.number().int().min(0).max(INT4_MAX);
+// square_meters is decimal(8, 2).
+const squareMeters = z.number().min(0).max(999_999.99).transform(String);
+
+const requiredFields = {
+  name: z.string().max(200),
   address: z.string(),
-  city: z.string(),
-  state: z.string(),
-  zipCode: z.string(),
-  country: z.string(),
-  propertyType: z.string(),
-  bedrooms: z.number(),
-  bathrooms: z.number(),
-  squareMeters: z.number().transform(String),
-  description: z.string(),
+  city: z.string().max(100),
+  country: z.string().max(100),
+  propertyType: z.string().max(50),
+};
+
+// Columns that are nullable in the table: optional, and null clears them.
+const nullableFields = {
+  state: z.string().max(100).nullable().optional(),
+  zipCode: z.string().max(20).nullable().optional(),
+  bedrooms: count.nullable().optional(),
+  bathrooms: count.nullable().optional(),
+  squareMeters: squareMeters.nullable().optional(),
+  description: z.string().nullable().optional(),
   amenities: amenitiesSchema,
   images: imagesSchema,
+};
+
+export const createPropertySchema = z.object({
+  ...requiredFields,
+  ...nullableFields,
   isActive: z.boolean().default(true),
 });
 
@@ -39,19 +54,8 @@ export const updatePropertySchema = z.object({
     id: z.string(),
   }),
   body: z.object({
-    name: z.string().optional(),
-    address: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    zipCode: z.string().optional(),
-    country: z.string().optional(),
-    propertyType: z.string().optional(),
-    bedrooms: z.number().optional(),
-    bathrooms: z.number().optional(),
-    squareMeters: z.number().transform(String).optional(),
-    description: z.string().optional(),
-    amenities: amenitiesSchema.optional(),
-    images: imagesSchema.optional(),
+    ...z.object(requiredFields).partial().shape,
+    ...nullableFields,
   }),
 });
 
