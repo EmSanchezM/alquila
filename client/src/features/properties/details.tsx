@@ -3,15 +3,15 @@ import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { Bath, Bed, MapPin, Pencil, Square } from 'lucide-react'
 
-import placeholder from '@/assets/placeholder.svg'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import ExpenseSection from '@/features/expenses/components/expense-section'
 import LeaseSection from '@/features/leases/components/lease-section'
 import DeletePropertyButton from '@/features/properties/components/delete-property-button'
+import PropertyGallery from '@/features/properties/components/property-gallery'
 import { LoadErrorState, LoadingState, NotFoundState } from '@/components/shared/resource-states'
 import { ApiError } from '@/lib/services/api-client'
-import { getPropertyQueryOptions } from '@/lib/services/properties'
+import { getPropertyQueryOptions, imagesOf } from '@/lib/services/properties'
 
 interface PropertiesDetailsProps {
   propertyId: string
@@ -87,13 +87,7 @@ const PropertiesDetails: FC<PropertiesDetailsProps> = ({ propertyId }) => {
       </header>
 
       <section className="grid gap-8 lg:grid-cols-2 max-w-5xl">
-        <img
-          src={placeholder}
-          alt={property.name}
-          className="w-full aspect-video object-cover rounded-lg border"
-          width={600}
-          height={338}
-        />
+        <PropertyGallery images={imagesOf(property)} name={property.name} />
 
         <div className="grid gap-6 content-start">
           <div className="grid grid-cols-3 gap-4">

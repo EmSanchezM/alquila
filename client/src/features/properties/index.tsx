@@ -6,7 +6,7 @@ import { Building2, Search, Plus, MapPin, Bed, Bath, Square } from "lucide-react
 import placeholder from "@/assets/placeholder.svg"
 import { Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
-import { getAllPropertiesQueryOptions } from "@/lib/services/properties"
+import { getAllPropertiesQueryOptions, imagesOf } from "@/lib/services/properties"
 
 export default function PropertiesPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -78,7 +78,7 @@ export default function PropertiesPage() {
                 <Card key={property.id} className="overflow-hidden">
                   <div className="aspect-video relative">
                     <img
-                      src={placeholder}
+                      src={imagesOf(property)[0] ?? placeholder}
                       alt={property.name}
                       className="w-full h-full object-cover"
                       width={300}
