@@ -1,8 +1,20 @@
-import { and, eq } from "drizzle-orm";
-import type { LeasesRepository } from "@server/modules/leases/domain/repositories/leases.repository";
+import { and, eq, getTableColumns, sql } from "drizzle-orm";
+import type { LeasesRepository, LeaseWithNames } from "@server/modules/leases/domain/repositories/leases.repository";
 
 import { db } from "@server/database";
-import { leases, type Lease, type NewLease } from "@server/database/schema";
+import { leases, properties, renters, type Lease, type NewLease } from "@server/database/schema";
+
+// Leases with the names the screens show. Inner joins are safe: both references are NOT NULL,
+// and soft-deleted properties or renters keep their rows.
+const withNames = () =>
+  db.select({
+    ...getTableColumns(leases),
+    propertyName: properties.name,
+    renterName: sql<string>`${renters.firstName} || ' ' || ${renters.lastName}`,
+  })
+    .from(leases)
+    .innerJoin(properties, eq(leases.propertyId, properties.id))
+    .innerJoin(renters, eq(leases.renterId, renters.id));
 
 export class DrizzleLeasesRepository implements LeasesRepository {
   async create(lease: Omit<NewLease, 'createdAt' | 'updatedAt'>): Promise<Lease | null> {
@@ -16,12 +28,12 @@ export class DrizzleLeasesRepository implements LeasesRepository {
 
     return newLease;
   }
-  async findAll(userId: string): Promise<Lease[]> {
-    return await db.select().from(leases).where(and(eq(leases.userId, userId), eq(leases.isActive, true)));
+  async findAll(userId: string): Promise<LeaseWithNames[]> {
+    return await withNames().where(and(eq(leases.userId, userId), eq(leases.isActive, true)));
   }
   
-  async findById(id: string, userId: string): Promise<Lease | null> {
-    const [result] = await db.select().from(leases).where(and(eq(leases.id, id), eq(leases.userId, userId), eq(leases.isActive, true)));
+  async findById(id: string, userId: string): Promise<LeaseWithNames | null> {
+    const [result] = await withNames().where(and(eq(leases.id, id), eq(leases.userId, userId), eq(leases.isActive, true)));
 
     if(!result) return null;
 
