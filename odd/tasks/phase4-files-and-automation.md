@@ -17,7 +17,7 @@ Branch: one per unit from `develop` (`feat/file-storage`, …) · Delivery: one 
 
 | ID | Specs | Route | Status | Evidence |
 |---|---|---|---|---|
-| T1 | S1, S2 | inline | in progress | |
+| T1 | S1, S2 | inline | done | Branch `feat/file-storage`. `9d49fe6`: RED 8/9, GREEN 10/10, suite 195/195, real HTTP smoke (3 MB roundtrip, 12 MB → 413). Independent verifier (Risk item 2): S1 PASS, S2 PASS, no blockers, no regressions vs `bba81e0`. `7dc2897` fixes 4 advisories: RED 4 failing, GREEN 15/15, suite 200/200, rechecked over real HTTP. |
 | T2 | S3 | inline | pending | |
 | T3 | S4 | inline | pending | |
 | T4 | S5 | inline | pending | |
@@ -31,3 +31,5 @@ Route evidence: T2–T4 depend on T1's storage; units are sequential and reviewe
 - **L1 (2026-11-11, user):** "si" (start phase 4).
 - **L2 (2026-11-11, user):** "pero minio esta deprecado ya podemos usar otra alternativa como floci". Verified: MinIO removed Community Edition management features (May 2025), stopped publishing Community images and binaries (Oct 2025), declared maintenance mode (Dec 2025) and archived the repository (2026). Floci (`floci/floci`, MIT) is a local AWS emulator with S3 on port 4566; it is for development and tests, not production storage.
 - **L3 (2026-11-11):** probe: Bun 1.4.4 `S3Client` against Floci (container `alquila-floci`, host port 4568 to avoid priscilapp's 4566) — bucket creation through a plain `PUT /<bucket>`, write, read, stat, list, presigned GET and delete all work. No new dependency needed.
+- **L4 (2026-11-11):** T1 design. Module `server/src/modules/files` (port `FileStorage`, adapter `S3FileStorage`, use cases `UploadFileUseCase` / `DownloadFileUseCase`, `createFileRouter(storage)`). Keys are `<userId>/<uuidv7>.<ext>`; download accepts only that format and the caller's prefix (`404` otherwise). `S3_*` are optional; the test preload points them at Floci with bucket `alquila-test`. `server/.env.example` cannot be read in this session, so the variables are documented in the README only.
+- **L5 (2026-11-11):** independent verifier (Risk item 2): no blockers. Advisories fixed in `7dc2897`: (1) Bun derives `File.type` from the file name and ignores the declared part type → the type now comes from the leading bytes (JPEG, PNG, WebP, PDF signatures), so renamed files are rejected and extensionless images accepted; (2) malformed multipart answered 500 → 400; (3) multipart uploads skip the CORS preflight and the session cookie is `SameSite=Lax` → `csrf({ origin: trustedOrigins })` on the upload (403); (4) test gaps → endpoint-level 503 through `createFileRouter(null)` and a traversal test that targets another user's real key. Not fixed (advisories): no `Content-Disposition`; Bun drops `content-length` on the streamed download; UUIDv7 keys are time-ordered (only matters if keys ever become public or presigned URLs); the CSRF 403 body is plain text "Forbidden", not the JSON error shape.
