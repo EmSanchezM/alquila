@@ -86,9 +86,10 @@ describe("/maintenance-requests photos", () => {
   for (const [label, photos] of rejected) {
     test(`rejects ${label} with 400`, async () => {
       const resolved = photos.map((url) => (url === "STRANGER" ? upload(1, "png", stranger.userId) : url));
-      const { status } = await create("/maintenance-requests", "maintenanceRequests", { ...body(), photos: resolved });
+      const { status, json } = await create("/maintenance-requests", "maintenanceRequests", { ...body(), photos: resolved });
 
       expect(status).toBe(400);
+      if (resolved.length <= 10) expect(json).toEqual({ success: false, message: "photos must be your uploaded JPEG, PNG or WebP files" });
     });
   }
 
@@ -100,5 +101,19 @@ describe("/maintenance-requests photos", () => {
     expect(replaced.status).toBe(200);
     expect(replaced.json.data.photos).toEqual([upload(4, "jpg")]);
     expect((await f.request("PUT", `/maintenance-requests/${id}`, { photos: [upload(5, "png", stranger.userId)] })).status).toBe(400);
+  });
+});
+
+describe("updates that leave the files out", () => {
+  test("a PUT without receiptFile or photos keeps them; an empty receiptFile clears it", async () => {
+    const payment = (await create("/payments", "payments", { leaseId, amount: 800, dueDate: "2026-12-05", receiptFile: upload(7, "pdf") })).json.data;
+    const kept = await f.request("PUT", `/payments/${payment.id}`, { amount: 900 });
+    expect(kept.json.data).toMatchObject({ amount: "900.00", receiptFile: upload(7, "pdf") });
+    const cleared = await f.request("PUT", `/payments/${payment.id}`, { receiptFile: "" });
+    expect(cleared.json.data.receiptFile).toBeNull();
+
+    const request = (await create("/maintenance-requests", "maintenanceRequests", { propertyId, title: `Keep ${tag}`, description: "d", category: "general", photos: [upload(8, "png")] })).json.data;
+    const keptPhotos = await f.request("PUT", `/maintenance-requests/${request.id}`, { assignedTo: "Juan" });
+    expect(keptPhotos.json.data).toMatchObject({ assignedTo: "Juan", photos: [upload(8, "png")] });
   });
 });
