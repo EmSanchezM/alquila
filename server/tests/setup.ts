@@ -15,4 +15,6 @@ process.env.S3_BUCKET ??= "alquila-test";
 process.env.S3_ACCESS_KEY_ID ??= "test";
 process.env.S3_SECRET_ACCESS_KEY ??= "test";
 // Floci accepts a plain PUT to create the bucket; an existing bucket is fine.
-await fetch(`${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`, { method: "PUT" }).catch(() => {});
+await fetch(`${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`, { method: "PUT" }).catch((error) => {
+  console.warn(`File storage is unreachable at ${process.env.S3_ENDPOINT} (is the alquila-floci container running?); file tests will fail.`, error);
+});

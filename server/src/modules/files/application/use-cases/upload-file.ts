@@ -14,6 +14,22 @@ const SIGNATURES: { type: string, extension: string, matches: (head: Uint8Array)
 
 const ascii = (bytes: Uint8Array, start: number, end: number) => String.fromCharCode(...bytes.slice(start, end));
 
+/** The first `length` bytes, reading only as much of the file as needed. */
+async function readHead(file: File, length: number): Promise<Uint8Array> {
+  const reader = file.stream().getReader();
+  const head = new Uint8Array(length);
+  let filled = 0;
+  while (filled < length) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const chunk = value.subarray(0, length - filled);
+    head.set(chunk, filled);
+    filled += chunk.length;
+  }
+  await reader.cancel();
+  return head.subarray(0, filled);
+}
+
 export interface UploadedFile {
   key: string;
   url: string;
@@ -30,8 +46,7 @@ export class UploadFileUseCase {
 
     // The type comes from the content, not the name or the declared type: Bun derives File.type from
     // the file name, so a renamed file would otherwise pass and a name without extension would not.
-    // parseBody already holds the file in memory (10 MB at most), so reading it is cheap.
-    const head = new Uint8Array(await file.arrayBuffer(), 0, Math.min(12, file.size));
+    const head = await readHead(file, 12);
     const kind = SIGNATURES.find((signature) => signature.matches(head));
     if (!kind) throw new AppError("Only JPEG, PNG, WebP and PDF files are allowed", 415);
 

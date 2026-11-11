@@ -13,9 +13,13 @@ export class S3FileStorage implements FileStorage {
 
   async get(key: string): Promise<StoredFile | null> {
     const file = this.client.file(key);
-    if (!(await file.exists())) return null;
+    // One HEAD tells both whether the object exists and its size and type.
+    const stat = await file.stat().catch((error: unknown) => {
+      if ((error as { code?: string }).code === "NoSuchKey") return null;
+      throw error;
+    });
+    if (!stat) return null;
 
-    const stat = await file.stat();
     return { body: file.stream(), size: stat.size, type: stat.type };
   }
 
