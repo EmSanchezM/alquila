@@ -54,14 +54,20 @@ export const deleteProperty = (id: string) =>
 
 export const propertiesQueryKey = ["properties"] as const;
 
+// A 4xx (e.g. 404 for a missing property) will not change on retry; show it right away.
+const retryServerErrors = (failureCount: number, error: Error) =>
+  !(error instanceof ApiError && error.status < 500) && failureCount < 3;
+
 export const getAllPropertiesQueryOptions = queryOptions({
   queryKey: propertiesQueryKey,
   queryFn: getAllProperties,
   staleTime: 1000 * 60 * 5,
+  retry: retryServerErrors,
 });
 
 export const getPropertyQueryOptions = (id: string) =>
   queryOptions({
     queryKey: [...propertiesQueryKey, id],
     queryFn: () => getProperty(id),
+    retry: retryServerErrors,
   });
