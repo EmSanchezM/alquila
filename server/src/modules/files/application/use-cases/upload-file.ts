@@ -1,6 +1,7 @@
 import { AppError } from "@server/shared/errors";
 import { generateUuid } from "@server/shared/generate-uuid";
 import type { FileStorage } from "@server/modules/files/domain/file-storage";
+import { fileUrlOf } from "@server/modules/files/domain/file-key";
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -54,6 +55,6 @@ export class UploadFileUseCase {
     const key = `${userId}/${generateUuid()}.${kind.extension}`;
     await this.storage.put(key, file, kind.type);
 
-    return { key, url: `/api/files/${key}`, name: file.name, size: file.size, mimeType: kind.type };
+    return { key, url: fileUrlOf(key), name: file.name, size: file.size, mimeType: kind.type };
   }
 }
