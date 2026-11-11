@@ -4,6 +4,7 @@ import {
   MAINTENANCE_CATEGORIES,
   MAINTENANCE_PRIORITIES,
   MAINTENANCE_STATUSES,
+  photosOf,
   type MaintenanceRequest,
   type MaintenanceRequestInput,
 } from "@/lib/services/maintenance";
@@ -37,10 +38,14 @@ export const MaintenanceFormValidation = z.object({
   assignedTo: z.string().trim().max(100, "Use 100 characters or fewer"),
   estimatedCost: cost,
   actualCost: cost,
+  // No max here: ImageListInput stops at 10, and stored photos sent back unchanged are not re-validated.
+  photos: z.array(z.string()),
   notes: z.string(),
 });
 
 export type MaintenanceFormValues = z.infer<typeof MaintenanceFormValidation>;
+
+const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((value, i) => value === b[i]);
 
 /** The UTC day of a timestamp, as the date inputs show it. */
 const day = (timestamp: string | null) => (timestamp ? timestamp.slice(0, 10) : "");
@@ -59,6 +64,7 @@ export const emptyMaintenanceForm = (today: string): MaintenanceFormValues => ({
   assignedTo: "",
   estimatedCost: "",
   actualCost: "",
+  photos: [],
   notes: "",
 });
 
@@ -81,6 +87,7 @@ export function toMaintenanceForm(request: MaintenanceRequest): MaintenanceFormV
     assignedTo: request.assignedTo ?? "",
     estimatedCost: amount(request.estimatedCost),
     actualCost: amount(request.actualCost),
+    photos: photosOf(request),
     notes: request.notes ?? "",
   };
 }
@@ -109,6 +116,9 @@ export function toMaintenanceInput(values: MaintenanceFormValues, original?: Mai
     assignedTo: orNull(values.assignedTo),
     estimatedCost: amount(values.estimatedCost),
     actualCost: amount(values.actualCost),
+    // Photos saved before the file storage existed (any strings, any count) would fail validation
+    // on every edit, so they are only sent when they changed.
+    ...(original && sameList(values.photos, photosOf(original)) ? {} : { photos: values.photos }),
     notes: values.notes.trim() === "" ? null : values.notes,
   };
 }

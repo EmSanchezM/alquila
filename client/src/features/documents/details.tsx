@@ -11,7 +11,7 @@ import { LoadErrorState, LoadingState, NotFoundState } from '@/components/shared
 import ExpirationBadge from '@/features/documents/components/expiration-badge'
 import { ApiError } from '@/lib/services/api-client'
 import { deleteDocument, DOCUMENT_TYPES, documentsQueryKey, getDocumentQueryOptions, tagsOf } from '@/lib/services/documents'
-import { formatFileSize, isImage } from '@/lib/services/files'
+import { formatFileSize, isImage, safeFileHref } from '@/lib/services/files'
 import { labelOf } from '@/lib/utils/options'
 
 interface DocumentDetailsProps {
@@ -48,6 +48,8 @@ const DocumentDetails: FC<DocumentDetailsProps> = ({ documentId }) => {
   }
 
   const tags = tagsOf(document)
+  // Files saved before the file storage could be any string; only safe URLs are opened or embedded.
+  const fileHref = safeFileHref(document.fileUrl)
 
   return (
     <>
@@ -76,12 +78,14 @@ const DocumentDetails: FC<DocumentDetailsProps> = ({ documentId }) => {
             <Badge variant="outline">{labelOf(DOCUMENT_TYPES, document.type)}</Badge>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" asChild>
-              <a href={document.fileUrl} target="_blank" rel="noreferrer">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Open file
-              </a>
-            </Button>
+            {fileHref && (
+              <Button variant="outline" asChild>
+                <a href={fileHref} target="_blank" rel="noreferrer">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Open file
+                </a>
+              </Button>
+            )}
             <Button variant="outline" asChild>
               <Link to="/documents/$documentId/edit" params={{ documentId }}>
                 <Pencil className="h-4 w-4 mr-2" />
@@ -107,10 +111,12 @@ const DocumentDetails: FC<DocumentDetailsProps> = ({ documentId }) => {
 
       <section className="grid gap-8 lg:grid-cols-[2fr_1fr] max-w-6xl">
         <div className="rounded-lg border bg-white overflow-hidden min-h-64">
-          {isImage(document.mimeType) ? (
-            <img src={document.fileUrl} alt={document.name} className="w-full h-auto object-contain max-h-[70vh]" />
+          {!fileHref ? (
+            <p className="p-6 text-sm text-gray-500">This file's address cannot be opened.</p>
+          ) : isImage(document.mimeType) ? (
+            <img src={fileHref} alt={document.name} className="w-full h-auto object-contain max-h-[70vh]" />
           ) : document.mimeType === 'application/pdf' ? (
-            <iframe src={document.fileUrl} title={document.name} className="w-full h-[70vh]" />
+            <iframe src={fileHref} title={document.name} className="w-full h-[70vh]" />
           ) : (
             <p className="p-6 text-sm text-gray-500">No preview available. Use "Open file".</p>
           )}

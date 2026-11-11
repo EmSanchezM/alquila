@@ -6,6 +6,8 @@ import { Pencil } from 'lucide-react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import DeleteResourceButton from '@/components/shared/delete-resource-button'
+import { ReceiptLink } from '@/components/shared/receipt'
+import { safeFileHref } from '@/lib/services/files'
 import { LoadErrorState, LoadingState, NotFoundState } from '@/components/shared/resource-states'
 import { ApiError } from '@/lib/services/api-client'
 import { deleteExpense, EXPENSE_CATEGORIES, expensesQueryKey, getExpenseQueryOptions, RECURRING_FREQUENCIES } from '@/lib/services/expenses'
@@ -105,6 +107,7 @@ const ExpenseDetails: FC<ExpenseDetailsProps> = ({ expenseId }) => {
           <Detail label="Amount">{formatMoney(expense.amount)}</Detail>
           <Detail label="Date">{formatDay(expense.expenseDate)}</Detail>
           <Detail label="Vendor">{expense.vendor}</Detail>
+          <Detail label="Receipt">{safeFileHref(expense.receiptFile) && <ReceiptLink url={expense.receiptFile} />}</Detail>
           <Detail label="Repeats">
             {expense.isRecurring ? labelOf(RECURRING_FREQUENCIES, expense.recurringFrequency ?? '') : 'No (one-off)'}
           </Detail>

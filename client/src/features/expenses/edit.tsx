@@ -20,7 +20,7 @@ const EditExpense: FC<EditExpenseProps> = ({ expenseId }) => {
   const { data: expense, isLoading, error, refetch } = useQuery(getExpenseQueryOptions(expenseId))
 
   const mutation = useMutation({
-    mutationFn: (values: ExpenseFormValues) => updateExpense(expenseId, toExpenseInput(values)),
+    mutationFn: (values: ExpenseFormValues) => updateExpense(expenseId, toExpenseInput(values, expense)),
     onSuccess: async () => {
       // The update answers without names; refetch the list and the detail.
       await queryClient.invalidateQueries({ queryKey: expensesQueryKey })

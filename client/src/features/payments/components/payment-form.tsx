@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ReceiptInput } from "@/components/shared/receipt"
 import { getAllLeasesQueryOptions } from "@/lib/services/leases"
 import { PAYMENT_METHODS, PAYMENT_STATUSES } from "@/lib/services/payments"
 import { NO_METHOD, PaymentFormValidation, type PaymentFormValues } from "@/lib/validations/payments"
@@ -31,6 +32,7 @@ export default function PaymentForm({ defaultValues, submitLabel, pendingLabel, 
   })
 
   const { data: leases = [], isLoading: leasesLoading } = useQuery(getAllLeasesQueryOptions)
+  const receipt = useWatch({ control: form.control, name: ["receiptFile", "receiptName"] })
 
   const textField = (name: TextFieldName, label: string, props: React.ComponentProps<typeof Input> = {}) => (
     <FormField
@@ -126,6 +128,25 @@ export default function PaymentForm({ defaultValues, submitLabel, pendingLabel, 
           {select("paymentMethod", "Method", [{ value: NO_METHOD, label: "Not set" }, ...PAYMENT_METHODS])}
           {textField("reference", "Reference (optional)")}
         </div>
+
+        <FormField
+          control={form.control}
+          name="receiptFile"
+          render={() => (
+            <FormItem>
+              <FormLabel>Receipt (optional)</FormLabel>
+              <ReceiptInput
+                url={receipt[0]}
+                name={receipt[1]}
+                onChange={({ url, name }) => {
+                  form.setValue("receiptFile", url, { shouldDirty: true })
+                  form.setValue("receiptName", name)
+                }}
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

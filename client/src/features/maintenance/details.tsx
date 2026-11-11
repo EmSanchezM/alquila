@@ -14,7 +14,9 @@ import {
   getMaintenanceRequestQueryOptions,
   MAINTENANCE_CATEGORIES,
   maintenanceQueryKey,
+  photosOf,
 } from '@/lib/services/maintenance'
+import { safeFileHref } from '@/lib/services/files'
 import { formatDay, formatMoney } from '@/lib/utils/format'
 import { labelOf } from '@/lib/utils/options'
 
@@ -52,6 +54,9 @@ const MaintenanceDetails: FC<MaintenanceDetailsProps> = ({ requestId }) => {
   if (error || !request) {
     return <LoadErrorState message="Failed to load the maintenance request." onRetry={() => refetch()} />
   }
+
+  // Photos saved before the file storage could be any string; only safe URLs are rendered.
+  const safePhotos = photosOf(request).map(safeFileHref).filter((url): url is string => url !== null)
 
   return (
     <>
@@ -127,6 +132,19 @@ const MaintenanceDetails: FC<MaintenanceDetailsProps> = ({ requestId }) => {
           <Detail label="Estimated cost">{request.estimatedCost !== null && formatMoney(request.estimatedCost)}</Detail>
           <Detail label="Actual cost">{request.actualCost !== null && formatMoney(request.actualCost)}</Detail>
         </dl>
+
+        {safePhotos.length > 0 && (
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 mb-2">Photos</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {safePhotos.map((url, index) => (
+                <a key={url} href={url} target="_blank" rel="noreferrer" className="block aspect-video rounded-md overflow-hidden border">
+                  <img src={url} alt={`Photo ${index + 1} of ${request.title}`} className="w-full h-full object-cover" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         <Detail label="Notes">
           {request.notes && <p className="whitespace-pre-line">{request.notes}</p>}

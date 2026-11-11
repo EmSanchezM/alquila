@@ -10,10 +10,12 @@ interface FileUploadProps {
   onUploaded: (file: UploadedFile) => void
   label?: string
   invalid?: boolean
+  /** When given, an attached file can be removed. */
+  onRemove?: () => void
 }
 
 /** Uploads a file as soon as it is picked and reports the stored file. */
-export default function FileUpload({ current, onUploaded, label = "Choose file", invalid = false }: FileUploadProps) {
+export default function FileUpload({ current, onUploaded, label = "Choose file", invalid = false, onRemove }: FileUploadProps) {
   const inputId = useId()
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -52,6 +54,11 @@ export default function FileUpload({ current, onUploaded, label = "Choose file",
             {isUploading ? "Uploading..." : current ? "Replace file" : label}
           </label>
         </Button>
+        {current && onRemove && (
+          <Button type="button" variant="ghost" size="sm" onClick={onRemove} disabled={isUploading}>
+            Remove
+          </Button>
+        )}
         <input id={inputId} type="file" accept={ACCEPTED_FILE_TYPES} className="sr-only" onChange={handleChange} disabled={isUploading} aria-label={label} />
       </div>
       <p className="text-xs text-gray-500">PDF, JPEG, PNG or WebP, up to 10 MB.</p>

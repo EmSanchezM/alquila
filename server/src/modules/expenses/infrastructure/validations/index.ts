@@ -17,7 +17,8 @@ const frequencyWhenRecurringIssue = { message: "recurringFrequency is required f
 // Columns that are nullable or have a table default: optional, and null clears the nullable ones.
 const optionalFields = {
   propertyId: z.string().nullable().optional(),
-  receiptFile: z.string().max(500).nullable().optional(),
+  // An empty receipt used to be sent for "none"; it is stored as null. The use cases check it is the caller's upload.
+  receiptFile: z.preprocess((value) => (value === "" ? null : value), z.string().max(500).nullable().optional()),
   vendor: z.string().max(100).nullable().optional(),
   isRecurring: z.boolean().optional(),
   recurringFrequency: frequency,

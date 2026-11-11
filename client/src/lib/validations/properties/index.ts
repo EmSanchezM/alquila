@@ -32,7 +32,8 @@ export const PropertyFormValidation = z.object({
     .regex(/^(\d+(\.\d{1,2})?)?$/, "Enter a number with up to 2 decimals")
     .refine((v) => v === "" || Number(v) <= 999_999.99, "Use a value up to 999999.99"),
   description: z.string(),
-  images: z.array(z.string()).max(10, "Use 10 images or fewer"),
+  // No max here: ImageListInput stops at 10, and stored images sent back unchanged are not re-validated.
+  images: z.array(z.string()),
 });
 
 export type PropertyFormValues = z.infer<typeof PropertyFormValidation>;
@@ -72,8 +73,15 @@ export function toPropertyForm(property: Property): PropertyFormValues {
   };
 }
 
-/** Blank optional fields become null, so editing can clear them. */
-export function toPropertyInput(values: PropertyFormValues): PropertyInput {
+const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((value, i) => value === b[i]);
+
+/**
+ * Blank optional fields become null, so editing can clear them. When editing, images are only sent if
+ * they changed: images saved before the file storage existed (any strings, any count) would otherwise
+ * fail validation on every edit.
+ */
+export function toPropertyInput(values: PropertyFormValues, original?: Property): PropertyInput {
+  const imagesUnchanged = original !== undefined && sameList(values.images, imagesOf(original));
   const orNull = (value: string) => (value.trim() === "" ? null : value.trim());
   const numberOrNull = (value: string) => (value.trim() === "" ? null : Number(value));
 
@@ -89,6 +97,6 @@ export function toPropertyInput(values: PropertyFormValues): PropertyInput {
     bathrooms: numberOrNull(values.bathrooms),
     squareMeters: numberOrNull(values.squareMeters),
     description: values.description.trim() === "" ? null : values.description,
-    images: values.images,
+    ...(imagesUnchanged ? {} : { images: values.images }),
   };
 }

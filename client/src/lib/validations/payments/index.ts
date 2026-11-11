@@ -32,6 +32,9 @@ export const PaymentFormValidation = z
     paymentMethod: z.string().refine((v) => v === NO_METHOD || methods.includes(v), "Select a method"),
     status: z.string().refine((v) => statuses.includes(v), "Select a status"),
     reference: z.string().trim().max(100, "Use 100 characters or fewer"),
+    // Set by the upload, not typed: the receipt's URL and a name to show.
+    receiptFile: z.string(),
+    receiptName: z.string(),
     notes: z.string(),
   })
   .refine((v) => !(v.status === "paid" || v.status === "partial") || v.paidDate !== "", {
@@ -49,6 +52,8 @@ export const emptyPaymentForm: PaymentFormValues = {
   paymentMethod: NO_METHOD,
   status: "pending",
   reference: "",
+  receiptFile: "",
+  receiptName: "",
   notes: "",
 };
 
@@ -62,12 +67,19 @@ export function toPaymentForm(payment: Payment): PaymentFormValues {
     paymentMethod: payment.paymentMethod === null ? NO_METHOD : methods.includes(payment.paymentMethod) ? payment.paymentMethod : "",
     status: statuses.includes(payment.status) ? payment.status : "",
     reference: payment.reference ?? "",
+    receiptFile: payment.receiptFile ?? "",
+    receiptName: payment.receiptFile ? "Current receipt" : "",
     notes: payment.notes ?? "",
   };
 }
 
 /** Blank optional fields become null, so editing can clear them. */
-export function toPaymentInput(values: PaymentFormValues): PaymentInput {
+/**
+ * When editing, the stored receipt is only sent if it changed: a receipt saved before the file
+ * storage existed (any string) would otherwise fail validation on every edit.
+ */
+export function toPaymentInput(values: PaymentFormValues, original?: Payment): PaymentInput {
+  const receiptUnchanged = original !== undefined && values.receiptFile === (original.receiptFile ?? "");
   return {
     leaseId: values.leaseId,
     amount: Number(values.amount),
@@ -76,6 +88,7 @@ export function toPaymentInput(values: PaymentFormValues): PaymentInput {
     paymentMethod: values.paymentMethod === NO_METHOD ? null : (values.paymentMethod as PaymentMethod),
     status: values.status as PaymentStatus,
     reference: values.reference.trim() === "" ? null : values.reference.trim(),
+    ...(receiptUnchanged ? {} : { receiptFile: values.receiptFile === "" ? null : values.receiptFile }),
     notes: values.notes.trim() === "" ? null : values.notes,
   };
 }

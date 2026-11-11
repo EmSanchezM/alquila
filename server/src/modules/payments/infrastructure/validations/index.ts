@@ -13,7 +13,8 @@ const optionalFields = {
   paymentMethod: z.enum(paymentMethods).nullable().optional(),
   status: z.enum(paymentStatuses).optional(),
   reference: z.string().max(100).nullable().optional(),
-  receiptFile: z.string().max(500).nullable().optional(),
+  // An empty receipt used to be sent for "none"; it is stored as null. The use cases check it is the caller's upload.
+  receiptFile: z.preprocess((value) => (value === "" ? null : value), z.string().max(500).nullable().optional()),
   notes: z.string().nullable().optional(),
   customFields: z.record(z.string(), z.unknown()).nullable().optional(),
 };

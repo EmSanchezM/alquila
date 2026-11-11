@@ -1,3 +1,4 @@
+import { assertUserFile } from "@server/modules/files/application/assert-user-files";
 import type { OwnershipGuard } from "@server/shared/ownership";
 import type { Payment, NewPayment } from "@server/database/schema";
 import type { PaymentsRepository } from "@server/modules/payments/domain/repositories/payments.repository";
@@ -9,6 +10,7 @@ export class CreatePaymentUseCase {
     private readonly ownership: OwnershipGuard,
   ) {}
   async execute(payload: Omit<NewPayment, 'id' | 'userId' | 'createdAt' | 'updatedAt'>, userId: string): Promise<Payment> {
+    assertUserFile(payload.receiptFile, userId, "receiptFile");
     await this.ownership.assertOwns(userId, payload);
 
     const data = {

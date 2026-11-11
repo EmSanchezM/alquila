@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import ImageListInput from "@/components/shared/image-list-input"
 import { MAINTENANCE_CATEGORIES, MAINTENANCE_PRIORITIES, MAINTENANCE_STATUSES } from "@/lib/services/maintenance"
 import { getAllPropertiesQueryOptions } from "@/lib/services/properties"
 import { getAllRentersQueryOptions, renterName } from "@/lib/services/renters"
@@ -131,6 +132,18 @@ export default function MaintenanceForm({ defaultValues, submitLabel, pendingLab
           {textField("estimatedCost", "Estimated cost (optional)", { inputMode: "decimal" })}
           {textField("actualCost", "Actual cost (optional)", { inputMode: "decimal" })}
         </div>
+
+        <FormField
+          control={form.control}
+          name="photos"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Photos (optional)</FormLabel>
+              <ImageListInput value={field.value} onChange={field.onChange} withCover={false} />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

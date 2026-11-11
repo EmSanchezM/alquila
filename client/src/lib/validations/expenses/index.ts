@@ -23,6 +23,9 @@ export const ExpenseFormValidation = z
       .refine((v) => Number(v) <= 99_999_999.99, "Use an amount up to 99999999.99"),
     expenseDate: z.iso.date("Enter a date"),
     vendor: z.string().trim().max(100, "Use 100 characters or fewer"),
+    // Set by the upload, not typed: the receipt's URL and a name to show.
+    receiptFile: z.string(),
+    receiptName: z.string(),
     isRecurring: z.boolean(),
     recurringFrequency: z.string(),
     notes: z.string(),
@@ -43,6 +46,8 @@ export const emptyExpenseForm = (today: string): ExpenseFormValues => ({
   vendor: "",
   isRecurring: false,
   recurringFrequency: "",
+  receiptFile: "",
+  receiptName: "",
   notes: "",
 });
 
@@ -58,12 +63,19 @@ export function toExpenseForm(expense: Expense): ExpenseFormValues {
     vendor: expense.vendor ?? "",
     isRecurring: expense.isRecurring ?? false,
     recurringFrequency: known(RECURRING_FREQUENCIES, expense.recurringFrequency),
+    receiptFile: expense.receiptFile ?? "",
+    receiptName: expense.receiptFile ? "Current receipt" : "",
     notes: expense.notes ?? "",
   };
 }
 
 /** Blank optional fields become null, so editing can clear them. A one-off expense has no frequency. */
-export function toExpenseInput(values: ExpenseFormValues): ExpenseInput {
+/**
+ * When editing, the stored receipt is only sent if it changed: a receipt saved before the file
+ * storage existed (any string) would otherwise fail validation on every edit.
+ */
+export function toExpenseInput(values: ExpenseFormValues, original?: Expense): ExpenseInput {
+  const receiptUnchanged = original !== undefined && values.receiptFile === (original.receiptFile ?? "");
   return {
     propertyId: values.propertyId === NO_PROPERTY ? null : values.propertyId,
     category: values.category,
@@ -73,6 +85,7 @@ export function toExpenseInput(values: ExpenseFormValues): ExpenseInput {
     vendor: values.vendor.trim() === "" ? null : values.vendor.trim(),
     isRecurring: values.isRecurring,
     recurringFrequency: values.isRecurring ? values.recurringFrequency : null,
+    ...(receiptUnchanged ? {} : { receiptFile: values.receiptFile === "" ? null : values.receiptFile }),
     notes: values.notes.trim() === "" ? null : values.notes,
   };
 }

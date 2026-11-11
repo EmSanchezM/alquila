@@ -27,6 +27,8 @@ export async function uploadFile(file: File): Promise<UploadedFile> {
   return body.data as UploadedFile;
 }
 
+export { safeFileHref } from "@/lib/utils/safe-href";
+
 export const isImage = (mimeType: string | null | undefined) => !!mimeType && mimeType.startsWith("image/");
 
 export function formatFileSize(bytes: number | null | undefined) {

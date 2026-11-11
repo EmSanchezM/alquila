@@ -16,8 +16,8 @@ export interface PropertyInput {
   bathrooms: number | null;
   squareMeters: number | null;
   description: string | null;
-  /** Uploaded image URLs; the first is the cover. */
-  images: string[];
+  /** Uploaded image URLs; the first is the cover. Left out on edit when unchanged, so stored images are kept. */
+  images?: string[];
 }
 
 const properties = crudClient<Property, PropertyInput>("/properties");

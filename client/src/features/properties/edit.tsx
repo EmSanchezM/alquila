@@ -20,7 +20,7 @@ const EditProperty: FC<EditPropertyProps> = ({ propertyId }) => {
   const { data: property, isLoading, error, refetch } = useQuery(getPropertyQueryOptions(propertyId))
 
   const mutation = useMutation({
-    mutationFn: (values: PropertyFormValues) => updateProperty(propertyId, toPropertyInput(values)),
+    mutationFn: (values: PropertyFormValues) => updateProperty(propertyId, toPropertyInput(values, property)),
     onSuccess: async (updated) => {
       queryClient.setQueryData([...propertiesQueryKey, updated.id], updated)
       await queryClient.invalidateQueries({ queryKey: propertiesQueryKey, exact: true })
