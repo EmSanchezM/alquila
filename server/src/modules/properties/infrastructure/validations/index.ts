@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export const amenitiesSchema = z.array(z.string()).optional();
-export const imagesSchema = z.array(z.string()).optional();
+// Up to 10 image URLs, the first is the cover; the use cases check they are the caller's uploads.
+export const imagesSchema = z.array(z.string().max(500)).max(10).nullable().optional();
 
 // Limits mirror the `properties` table, so invalid values answer 400 instead of failing in Postgres.
 const INT4_MAX = 2_147_483_647;
