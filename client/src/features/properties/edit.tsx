@@ -5,7 +5,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import PropertyForm from "@/features/properties/components/property-form"
-import { ApiError, getPropertyQueryOptions, propertiesQueryKey, updateProperty } from "@/lib/services/properties"
+import { LoadErrorState, LoadingState, NotFoundState } from "@/components/shared/resource-states"
+import { ApiError } from "@/lib/services/api-client"
+import { getPropertyQueryOptions, propertiesQueryKey, updateProperty } from "@/lib/services/properties"
 import { toPropertyForm, toPropertyInput, type PropertyFormValues } from "@/lib/validations/properties"
 
 interface EditPropertyProps {
@@ -27,29 +29,20 @@ const EditProperty: FC<EditPropertyProps> = ({ propertyId }) => {
   })
 
   if (isLoading) {
-    return <p className="p-4 text-blue-800">Loading property...</p>
+    return <LoadingState>Loading property...</LoadingState>
   }
 
   if (error instanceof ApiError && error.status === 404) {
     return (
-      <div className="text-center py-12">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Property not found</h3>
-        <Button asChild>
-          <Link to="/properties">Back to properties</Link>
-        </Button>
-      </div>
+      <NotFoundState
+        title="Property not found"
+        action={<Button asChild><Link to="/properties">Back to properties</Link></Button>}
+      />
     )
   }
 
   if (error || !property) {
-    return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md flex items-center justify-between gap-4">
-        <p className="text-red-800">Failed to load the property.</p>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          Try again
-        </Button>
-      </div>
-    )
+    return <LoadErrorState message="Failed to load the property." onRetry={() => refetch()} />
   }
 
   return (
