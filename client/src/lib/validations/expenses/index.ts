@@ -70,7 +70,12 @@ export function toExpenseForm(expense: Expense): ExpenseFormValues {
 }
 
 /** Blank optional fields become null, so editing can clear them. A one-off expense has no frequency. */
-export function toExpenseInput(values: ExpenseFormValues): ExpenseInput {
+/**
+ * When editing, the stored receipt is only sent if it changed: a receipt saved before the file
+ * storage existed (any string) would otherwise fail validation on every edit.
+ */
+export function toExpenseInput(values: ExpenseFormValues, original?: Expense): ExpenseInput {
+  const receiptUnchanged = original !== undefined && values.receiptFile === (original.receiptFile ?? "");
   return {
     propertyId: values.propertyId === NO_PROPERTY ? null : values.propertyId,
     category: values.category,
@@ -80,7 +85,7 @@ export function toExpenseInput(values: ExpenseFormValues): ExpenseInput {
     vendor: values.vendor.trim() === "" ? null : values.vendor.trim(),
     isRecurring: values.isRecurring,
     recurringFrequency: values.isRecurring ? values.recurringFrequency : null,
-    receiptFile: values.receiptFile === "" ? null : values.receiptFile,
+    ...(receiptUnchanged ? {} : { receiptFile: values.receiptFile === "" ? null : values.receiptFile }),
     notes: values.notes.trim() === "" ? null : values.notes,
   };
 }

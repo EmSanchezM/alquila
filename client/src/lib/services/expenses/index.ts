@@ -48,7 +48,8 @@ export interface ExpenseInput {
   vendor: string | null;
   isRecurring: boolean;
   recurringFrequency: string | null;
-  receiptFile: string | null;
+  /** Left out on edit when unchanged, so the stored receipt is kept. */
+  receiptFile?: string | null;
   notes: string | null;
 }
 

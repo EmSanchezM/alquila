@@ -21,7 +21,7 @@ const EditPayment: FC<EditPaymentProps> = ({ paymentId }) => {
   const { data: payment, isLoading, error, refetch } = useQuery(getPaymentQueryOptions(paymentId))
 
   const mutation = useMutation({
-    mutationFn: (values: PaymentFormValues) => updatePayment(paymentId, toPaymentInput(values)),
+    mutationFn: (values: PaymentFormValues) => updatePayment(paymentId, toPaymentInput(values, payment)),
     onSuccess: async () => {
       // The update answers without names; refetch the list and the detail.
       await queryClient.invalidateQueries({ queryKey: paymentsQueryKey })

@@ -38,11 +38,14 @@ export const MaintenanceFormValidation = z.object({
   assignedTo: z.string().trim().max(100, "Use 100 characters or fewer"),
   estimatedCost: cost,
   actualCost: cost,
-  photos: z.array(z.string()).max(10, "Use 10 photos or fewer"),
+  // No max here: ImageListInput stops at 10, and stored photos sent back unchanged are not re-validated.
+  photos: z.array(z.string()),
   notes: z.string(),
 });
 
 export type MaintenanceFormValues = z.infer<typeof MaintenanceFormValidation>;
+
+const sameList = (a: string[], b: string[]) => a.length === b.length && a.every((value, i) => value === b[i]);
 
 /** The UTC day of a timestamp, as the date inputs show it. */
 const day = (timestamp: string | null) => (timestamp ? timestamp.slice(0, 10) : "");
@@ -113,7 +116,9 @@ export function toMaintenanceInput(values: MaintenanceFormValues, original?: Mai
     assignedTo: orNull(values.assignedTo),
     estimatedCost: amount(values.estimatedCost),
     actualCost: amount(values.actualCost),
-    photos: values.photos,
+    // Photos saved before the file storage existed (any strings, any count) would fail validation
+    // on every edit, so they are only sent when they changed.
+    ...(original && sameList(values.photos, photosOf(original)) ? {} : { photos: values.photos }),
     notes: values.notes.trim() === "" ? null : values.notes,
   };
 }

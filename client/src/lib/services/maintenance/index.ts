@@ -66,8 +66,8 @@ export interface MaintenanceRequestInput {
   assignedTo: string | null;
   estimatedCost: number | null;
   actualCost: number | null;
-  /** Uploaded image URLs. */
-  photos: string[];
+  /** Uploaded image URLs; left out on edit when unchanged, so stored photos are kept. */
+  photos?: string[];
   notes: string | null;
 }
 
