@@ -1,47 +1,67 @@
+import { useQueries } from "@tanstack/react-query"
+
+import { LoadErrorState, LoadingState } from "@/components/shared/resource-states"
+import { getAllLeasesQueryOptions } from "@/lib/services/leases"
+import { getAllMaintenanceRequestsQueryOptions } from "@/lib/services/maintenance"
+import { getAllPaymentsQueryOptions } from "@/lib/services/payments"
+import { getAllPropertiesQueryOptions } from "@/lib/services/properties"
+import { getAllRentersQueryOptions } from "@/lib/services/renters"
 import StatsOverview from "./components/stats-overview"
 import QuickActions from "./components/quick-actions"
 import RecentPayments from "./components/recent-payments"
 import MaintenanceRequests from "./components/maintenance-requests"
 import OccupancyOverview from "./components/occupancy-overview"
+import { summarizeDashboard } from "./stats"
 
 export default function Dashboard() {
-  // Mock data - in real app, this would come from your database
-  const stats = {
-    totalProperties: 12,
-    totalTenants: 28,
-    monthlyRevenue: 45600,
-    pendingPayments: 3,
-    maintenanceRequests: 5,
-    occupancyRate: 92,
+  // The list queries are shared with the module pages, so their caches stay in sync.
+  const [properties, renters, leases, payments, maintenance] = useQueries({
+    queries: [
+      getAllPropertiesQueryOptions,
+      getAllRentersQueryOptions,
+      getAllLeasesQueryOptions,
+      getAllPaymentsQueryOptions,
+      getAllMaintenanceRequestsQueryOptions,
+    ],
+  })
+  const all = [properties, renters, leases, payments, maintenance]
+
+  if (all.some((q) => q.isLoading)) {
+    return <LoadingState>Loading dashboard...</LoadingState>
   }
 
-  const recentPayments = [
-    { id: 1, tenant: "María García", property: "Apt 101", amount: 1200, status: "paid", date: "2025-01-05" },
-    { id: 2, tenant: "Carlos López", property: "Apt 205", amount: 1500, status: "pending", date: "2025-01-08" },
-    { id: 3, tenant: "Ana Rodríguez", property: "Apt 302", amount: 1100, status: "overdue", date: "2025-01-01" },
-  ]
+  if (all.some((q) => q.error)) {
+    return (
+      <LoadErrorState
+        message="Failed to load the dashboard."
+        onRetry={() => all.filter((q) => q.error).forEach((q) => q.refetch())}
+      />
+    )
+  }
 
-  const maintenanceRequests = [
-    { id: 1, property: "Apt 101", issue: "Faucet leak", priority: "high", status: "open" },
-    { id: 2, property: "Apt 205", issue: "AC not working", priority: "urgent", status: "in_progress" },
-    { id: 3, property: "Apt 302", issue: "Light bulb replacement", priority: "low", status: "completed" },
-  ]
+  const summary = summarizeDashboard({
+    properties: properties.data ?? [],
+    renters: renters.data ?? [],
+    leases: leases.data ?? [],
+    payments: payments.data ?? [],
+    maintenance: maintenance.data ?? [],
+  })
 
   return (
     <>
     {/* Stats Overview */}
-    <StatsOverview stats={stats} />
+    <StatsOverview summary={summary} />
 
     {/* Quick Actions */}
     <QuickActions />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Recent Payments */}
-      <RecentPayments recentPayments={recentPayments} />
+      <RecentPayments recentPayments={summary.recentPayments} />
       {/* Maintenance Requests */}
-      <MaintenanceRequests maintenanceRequests={maintenanceRequests} />
+      <MaintenanceRequests maintenanceRequests={summary.openMaintenance} />
     </div>
     {/* Occupancy Overview */}
-    <OccupancyOverview stats={stats} />
+    <OccupancyOverview summary={summary} />
     </>
   )
 }
