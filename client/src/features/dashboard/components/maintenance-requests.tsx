@@ -1,62 +1,51 @@
 import { FC } from "react"
+import { Link } from "@tanstack/react-router"
+
 import { Card, CardContent, CardHeader, CardDescription, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Clock, Wrench } from "lucide-react"
+import { MaintenancePriorityBadge, MaintenanceStatusBadge } from "@/features/maintenance/components/maintenance-badges"
+import type { MaintenanceRequestWithNames } from "@/lib/services/maintenance"
 
 interface MaintenanceRequestsProps {
-  maintenanceRequests: {
-    id: number
-    property: string
-    issue: string
-    priority: string
-    status: string
-  }[]
+  maintenanceRequests: MaintenanceRequestWithNames[]
 }
 
 const MaintenanceRequests: FC<MaintenanceRequestsProps> = ({ maintenanceRequests }) => {
   return (
     <Card>
-        <CardHeader>
-          <CardTitle>Maintenance Requests</CardTitle>
-          <CardDescription>Active maintenance issues</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <CardHeader>
+        <CardTitle>Maintenance Requests</CardTitle>
+        <CardDescription>Open requests, most urgent first</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {maintenanceRequests.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No open maintenance requests.</p>
+        ) : (
           <div className="space-y-4">
             {maintenanceRequests.map((request) => (
-              <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-3">
-                  {request.status === "completed" ? (
-                    <CheckCircle className="h-5 w-5 text-green-500" />
-                  ) : request.status === "in_progress" ? (
-                    <Clock className="h-5 w-5 text-blue-500" />
-                  ) : (
-                    <Wrench className="h-5 w-5 text-orange-500" />
-                  )}
-                  <div>
-                    <p className="font-medium">{request.issue}</p>
-                    <p className="text-sm text-muted-foreground">{request.property}</p>
-                  </div>
+              <Link
+                key={request.id}
+                to="/maintenance/$requestId"
+                params={{ requestId: request.id }}
+                className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+              >
+                <div>
+                  <p className="font-medium">{request.title}</p>
+                  <p className="text-sm text-muted-foreground">{request.propertyName}</p>
                 </div>
-                <Badge
-                  variant={
-                    request.priority === "urgent"
-                      ? "destructive"
-                      : request.priority === "high"
-                        ? "secondary"
-                        : "outline"
-                  }
-                >
-                  {request.priority}
-                </Badge>
-              </div>
+                <div className="flex flex-col items-end gap-1">
+                  <MaintenancePriorityBadge priority={request.priority} />
+                  <MaintenanceStatusBadge status={request.status} />
+                </div>
+              </Link>
             ))}
           </div>
-          <Button variant="outline" className="w-full mt-4 bg-transparent">
-            View All Requests
-          </Button>
-        </CardContent>
-      </Card>
+        )}
+        <Button variant="outline" className="w-full mt-4 bg-transparent" asChild>
+          <Link to="/maintenance">View All Requests</Link>
+        </Button>
+      </CardContent>
+    </Card>
   )
 }
 

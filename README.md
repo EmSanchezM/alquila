@@ -60,3 +60,9 @@ echo 'DATABASE_URL=postgres://<user>:<password>@localhost:5432/alquila_test' > .
 
 bun run test:server
 ```
+
+Client unit tests cover pure logic (for example the dashboard summary) and also run with `bun test`, so they use the same preload and test database:
+
+```bash
+bun run test:client
+```
