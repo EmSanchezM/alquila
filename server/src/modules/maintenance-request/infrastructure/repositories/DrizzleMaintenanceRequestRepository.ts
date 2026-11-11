@@ -1,8 +1,20 @@
-import { and, eq } from "drizzle-orm";
-import type { MaintenanceRequestRepository } from "@server/modules/maintenance-request/domain/repositories/maintenance-request.repository";
+import { and, eq, getTableColumns, sql } from "drizzle-orm";
+import type { MaintenanceRequestRepository, MaintenanceRequestWithNames } from "@server/modules/maintenance-request/domain/repositories/maintenance-request.repository";
 
 import { db } from "@server/database";
-import { maintenanceRequests, type MaintenanceRequest, type NewMaintenanceRequest } from "@server/database/schema";
+import { maintenanceRequests, properties, renters, type MaintenanceRequest, type NewMaintenanceRequest } from "@server/database/schema";
+
+// Requests with the names the screens show. The renter is optional, so it is a left join
+// and renterName is null without one.
+const withNames = () =>
+  db.select({
+    ...getTableColumns(maintenanceRequests),
+    propertyName: properties.name,
+    renterName: sql<string | null>`${renters.firstName} || ' ' || ${renters.lastName}`,
+  })
+    .from(maintenanceRequests)
+    .innerJoin(properties, eq(maintenanceRequests.propertyId, properties.id))
+    .leftJoin(renters, eq(maintenanceRequests.renterId, renters.id));
 
 export class DrizzleMaintenanceRequestRepository implements MaintenanceRequestRepository {
   async create(maintenanceRequest: Omit<NewMaintenanceRequest, 'createdAt' | 'updatedAt'>): Promise<MaintenanceRequest | null> {
@@ -16,12 +28,12 @@ export class DrizzleMaintenanceRequestRepository implements MaintenanceRequestRe
 
     return newMaintenanceRequest;
   }
-  async findAll(userId: string): Promise<MaintenanceRequest[]> {
-    return await db.select().from(maintenanceRequests).where(and(eq(maintenanceRequests.userId, userId), eq(maintenanceRequests.isActive, true)));
+  async findAll(userId: string): Promise<MaintenanceRequestWithNames[]> {
+    return await withNames().where(and(eq(maintenanceRequests.userId, userId), eq(maintenanceRequests.isActive, true)));
   }
   
-  async findById(id: string, userId: string): Promise<MaintenanceRequest | null> {
-    const [result] = await db.select().from(maintenanceRequests).where(and(eq(maintenanceRequests.id, id), eq(maintenanceRequests.userId, userId), eq(maintenanceRequests.isActive, true)));
+  async findById(id: string, userId: string): Promise<MaintenanceRequestWithNames | null> {
+    const [result] = await withNames().where(and(eq(maintenanceRequests.id, id), eq(maintenanceRequests.userId, userId), eq(maintenanceRequests.isActive, true)));
 
     if(!result) return null;
 
