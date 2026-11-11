@@ -15,6 +15,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
+import { Route as AuthenticatedLeasesIndexRouteImport } from './routes/_authenticated/leases/index'
+import { Route as AuthenticatedLeasesCreateRouteImport } from './routes/_authenticated/leases/create'
 import { Route as AuthenticatedMaintenanceIndexRouteImport } from './routes/_authenticated/maintenance/index'
 import { Route as AuthenticatedPaymentsIndexRouteImport } from './routes/_authenticated/payments/index'
 import { Route as AuthenticatedPaymentsAutomationRouteImport } from './routes/_authenticated/payments/automation'
@@ -23,6 +25,8 @@ import { Route as AuthenticatedPropertiesCreateRouteImport } from './routes/_aut
 import { Route as AuthenticatedRentersIndexRouteImport } from './routes/_authenticated/renters/index'
 import { Route as AuthenticatedRentersCommunicationsRouteImport } from './routes/_authenticated/renters/communications'
 import { Route as AuthenticatedRentersCreateRouteImport } from './routes/_authenticated/renters/create'
+import { Route as AuthenticatedLeasesLeaseIdIndexRouteImport } from './routes/_authenticated/leases/$leaseId/index'
+import { Route as AuthenticatedLeasesLeaseIdEditRouteImport } from './routes/_authenticated/leases/$leaseId/edit'
 import { Route as AuthenticatedPropertiesPropertyIdIndexRouteImport } from './routes/_authenticated/properties/$propertyId/index'
 import { Route as AuthenticatedPropertiesPropertyIdEditRouteImport } from './routes/_authenticated/properties/$propertyId/edit'
 import { Route as AuthenticatedRentersRenterIdIndexRouteImport } from './routes/_authenticated/renters/$renterId/index'
@@ -57,6 +61,18 @@ const AuthSignUpRoute = AuthSignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthenticatedLeasesIndexRoute =
+  AuthenticatedLeasesIndexRouteImport.update({
+    id: '/leases/',
+    path: '/leases/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedLeasesCreateRoute =
+  AuthenticatedLeasesCreateRouteImport.update({
+    id: '/leases/create',
+    path: '/leases/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedMaintenanceIndexRoute =
   AuthenticatedMaintenanceIndexRouteImport.update({
     id: '/maintenance/',
@@ -105,6 +121,18 @@ const AuthenticatedRentersCreateRoute =
     path: '/renters/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedLeasesLeaseIdIndexRoute =
+  AuthenticatedLeasesLeaseIdIndexRouteImport.update({
+    id: '/leases/$leaseId/',
+    path: '/leases/$leaseId/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedLeasesLeaseIdEditRoute =
+  AuthenticatedLeasesLeaseIdEditRouteImport.update({
+    id: '/leases/$leaseId/edit',
+    path: '/leases/$leaseId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedPropertiesPropertyIdIndexRoute =
   AuthenticatedPropertiesPropertyIdIndexRouteImport.update({
     id: '/properties/$propertyId/',
@@ -137,16 +165,20 @@ export interface FileRoutesByFullPath {
   '/documents': typeof AuthenticatedDocumentsRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/leases/create': typeof AuthenticatedLeasesCreateRoute
   '/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
   '/properties/create': typeof AuthenticatedPropertiesCreateRoute
   '/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
   '/renters/create': typeof AuthenticatedRentersCreateRoute
+  '/leases/': typeof AuthenticatedLeasesIndexRoute
   '/maintenance/': typeof AuthenticatedMaintenanceIndexRoute
   '/payments/': typeof AuthenticatedPaymentsIndexRoute
   '/properties/': typeof AuthenticatedPropertiesIndexRoute
   '/renters/': typeof AuthenticatedRentersIndexRoute
+  '/leases/$leaseId/edit': typeof AuthenticatedLeasesLeaseIdEditRoute
   '/properties/$propertyId/edit': typeof AuthenticatedPropertiesPropertyIdEditRoute
   '/renters/$renterId/edit': typeof AuthenticatedRentersRenterIdEditRoute
+  '/leases/$leaseId/': typeof AuthenticatedLeasesLeaseIdIndexRoute
   '/properties/$propertyId/': typeof AuthenticatedPropertiesPropertyIdIndexRoute
   '/renters/$renterId/': typeof AuthenticatedRentersRenterIdIndexRoute
 }
@@ -157,16 +189,20 @@ export interface FileRoutesByTo {
   '/documents': typeof AuthenticatedDocumentsRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/leases/create': typeof AuthenticatedLeasesCreateRoute
   '/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
   '/properties/create': typeof AuthenticatedPropertiesCreateRoute
   '/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
   '/renters/create': typeof AuthenticatedRentersCreateRoute
+  '/leases': typeof AuthenticatedLeasesIndexRoute
   '/maintenance': typeof AuthenticatedMaintenanceIndexRoute
   '/payments': typeof AuthenticatedPaymentsIndexRoute
   '/properties': typeof AuthenticatedPropertiesIndexRoute
   '/renters': typeof AuthenticatedRentersIndexRoute
+  '/leases/$leaseId/edit': typeof AuthenticatedLeasesLeaseIdEditRoute
   '/properties/$propertyId/edit': typeof AuthenticatedPropertiesPropertyIdEditRoute
   '/renters/$renterId/edit': typeof AuthenticatedRentersRenterIdEditRoute
+  '/leases/$leaseId': typeof AuthenticatedLeasesLeaseIdIndexRoute
   '/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdIndexRoute
   '/renters/$renterId': typeof AuthenticatedRentersRenterIdIndexRoute
 }
@@ -178,16 +214,20 @@ export interface FileRoutesById {
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/_authenticated/leases/create': typeof AuthenticatedLeasesCreateRoute
   '/_authenticated/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
   '/_authenticated/properties/create': typeof AuthenticatedPropertiesCreateRoute
   '/_authenticated/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
   '/_authenticated/renters/create': typeof AuthenticatedRentersCreateRoute
+  '/_authenticated/leases/': typeof AuthenticatedLeasesIndexRoute
   '/_authenticated/maintenance/': typeof AuthenticatedMaintenanceIndexRoute
   '/_authenticated/payments/': typeof AuthenticatedPaymentsIndexRoute
   '/_authenticated/properties/': typeof AuthenticatedPropertiesIndexRoute
   '/_authenticated/renters/': typeof AuthenticatedRentersIndexRoute
+  '/_authenticated/leases/$leaseId/edit': typeof AuthenticatedLeasesLeaseIdEditRoute
   '/_authenticated/properties/$propertyId/edit': typeof AuthenticatedPropertiesPropertyIdEditRoute
   '/_authenticated/renters/$renterId/edit': typeof AuthenticatedRentersRenterIdEditRoute
+  '/_authenticated/leases/$leaseId/': typeof AuthenticatedLeasesLeaseIdIndexRoute
   '/_authenticated/properties/$propertyId/': typeof AuthenticatedPropertiesPropertyIdIndexRoute
   '/_authenticated/renters/$renterId/': typeof AuthenticatedRentersRenterIdIndexRoute
 }
@@ -200,16 +240,20 @@ export interface FileRouteTypes {
     | '/documents'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/leases/create'
     | '/payments/automation'
     | '/properties/create'
     | '/renters/communications'
     | '/renters/create'
+    | '/leases/'
     | '/maintenance/'
     | '/payments/'
     | '/properties/'
     | '/renters/'
+    | '/leases/$leaseId/edit'
     | '/properties/$propertyId/edit'
     | '/renters/$renterId/edit'
+    | '/leases/$leaseId/'
     | '/properties/$propertyId/'
     | '/renters/$renterId/'
   fileRoutesByTo: FileRoutesByTo
@@ -220,16 +264,20 @@ export interface FileRouteTypes {
     | '/documents'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/leases/create'
     | '/payments/automation'
     | '/properties/create'
     | '/renters/communications'
     | '/renters/create'
+    | '/leases'
     | '/maintenance'
     | '/payments'
     | '/properties'
     | '/renters'
+    | '/leases/$leaseId/edit'
     | '/properties/$propertyId/edit'
     | '/renters/$renterId/edit'
+    | '/leases/$leaseId'
     | '/properties/$propertyId'
     | '/renters/$renterId'
   id:
@@ -240,16 +288,20 @@ export interface FileRouteTypes {
     | '/_authenticated/documents'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/_authenticated/leases/create'
     | '/_authenticated/payments/automation'
     | '/_authenticated/properties/create'
     | '/_authenticated/renters/communications'
     | '/_authenticated/renters/create'
+    | '/_authenticated/leases/'
     | '/_authenticated/maintenance/'
     | '/_authenticated/payments/'
     | '/_authenticated/properties/'
     | '/_authenticated/renters/'
+    | '/_authenticated/leases/$leaseId/edit'
     | '/_authenticated/properties/$propertyId/edit'
     | '/_authenticated/renters/$renterId/edit'
+    | '/_authenticated/leases/$leaseId/'
     | '/_authenticated/properties/$propertyId/'
     | '/_authenticated/renters/$renterId/'
   fileRoutesById: FileRoutesById
@@ -302,6 +354,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/sign-up'
       preLoaderRoute: typeof AuthSignUpRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_authenticated/leases/': {
+      id: '/_authenticated/leases/'
+      path: '/leases'
+      fullPath: '/leases/'
+      preLoaderRoute: typeof AuthenticatedLeasesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/leases/create': {
+      id: '/_authenticated/leases/create'
+      path: '/leases/create'
+      fullPath: '/leases/create'
+      preLoaderRoute: typeof AuthenticatedLeasesCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/maintenance/': {
       id: '/_authenticated/maintenance/'
@@ -359,6 +425,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRentersCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/leases/$leaseId/': {
+      id: '/_authenticated/leases/$leaseId/'
+      path: '/leases/$leaseId'
+      fullPath: '/leases/$leaseId/'
+      preLoaderRoute: typeof AuthenticatedLeasesLeaseIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/leases/$leaseId/edit': {
+      id: '/_authenticated/leases/$leaseId/edit'
+      path: '/leases/$leaseId/edit'
+      fullPath: '/leases/$leaseId/edit'
+      preLoaderRoute: typeof AuthenticatedLeasesLeaseIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/properties/$propertyId/': {
       id: '/_authenticated/properties/$propertyId/'
       path: '/properties/$propertyId'
@@ -393,16 +473,20 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
+  AuthenticatedLeasesCreateRoute: typeof AuthenticatedLeasesCreateRoute
   AuthenticatedPaymentsAutomationRoute: typeof AuthenticatedPaymentsAutomationRoute
   AuthenticatedPropertiesCreateRoute: typeof AuthenticatedPropertiesCreateRoute
   AuthenticatedRentersCommunicationsRoute: typeof AuthenticatedRentersCommunicationsRoute
   AuthenticatedRentersCreateRoute: typeof AuthenticatedRentersCreateRoute
+  AuthenticatedLeasesIndexRoute: typeof AuthenticatedLeasesIndexRoute
   AuthenticatedMaintenanceIndexRoute: typeof AuthenticatedMaintenanceIndexRoute
   AuthenticatedPaymentsIndexRoute: typeof AuthenticatedPaymentsIndexRoute
   AuthenticatedPropertiesIndexRoute: typeof AuthenticatedPropertiesIndexRoute
   AuthenticatedRentersIndexRoute: typeof AuthenticatedRentersIndexRoute
+  AuthenticatedLeasesLeaseIdEditRoute: typeof AuthenticatedLeasesLeaseIdEditRoute
   AuthenticatedPropertiesPropertyIdEditRoute: typeof AuthenticatedPropertiesPropertyIdEditRoute
   AuthenticatedRentersRenterIdEditRoute: typeof AuthenticatedRentersRenterIdEditRoute
+  AuthenticatedLeasesLeaseIdIndexRoute: typeof AuthenticatedLeasesLeaseIdIndexRoute
   AuthenticatedPropertiesPropertyIdIndexRoute: typeof AuthenticatedPropertiesPropertyIdIndexRoute
   AuthenticatedRentersRenterIdIndexRoute: typeof AuthenticatedRentersRenterIdIndexRoute
 }
@@ -410,18 +494,22 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
+  AuthenticatedLeasesCreateRoute: AuthenticatedLeasesCreateRoute,
   AuthenticatedPaymentsAutomationRoute: AuthenticatedPaymentsAutomationRoute,
   AuthenticatedPropertiesCreateRoute: AuthenticatedPropertiesCreateRoute,
   AuthenticatedRentersCommunicationsRoute:
     AuthenticatedRentersCommunicationsRoute,
   AuthenticatedRentersCreateRoute: AuthenticatedRentersCreateRoute,
+  AuthenticatedLeasesIndexRoute: AuthenticatedLeasesIndexRoute,
   AuthenticatedMaintenanceIndexRoute: AuthenticatedMaintenanceIndexRoute,
   AuthenticatedPaymentsIndexRoute: AuthenticatedPaymentsIndexRoute,
   AuthenticatedPropertiesIndexRoute: AuthenticatedPropertiesIndexRoute,
   AuthenticatedRentersIndexRoute: AuthenticatedRentersIndexRoute,
+  AuthenticatedLeasesLeaseIdEditRoute: AuthenticatedLeasesLeaseIdEditRoute,
   AuthenticatedPropertiesPropertyIdEditRoute:
     AuthenticatedPropertiesPropertyIdEditRoute,
   AuthenticatedRentersRenterIdEditRoute: AuthenticatedRentersRenterIdEditRoute,
+  AuthenticatedLeasesLeaseIdIndexRoute: AuthenticatedLeasesLeaseIdIndexRoute,
   AuthenticatedPropertiesPropertyIdIndexRoute:
     AuthenticatedPropertiesPropertyIdIndexRoute,
   AuthenticatedRentersRenterIdIndexRoute:
