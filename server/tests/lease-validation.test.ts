@@ -54,6 +54,8 @@ describe("POST /leases rejects values the table cannot store with 400", () => {
     ["endDate before startDate", { startDate: "2026-06-01", endDate: "2026-05-31" }],
     ["negative monthlyRent", { monthlyRent: -1 }],
     ["monthlyRent above decimal(10,2)", { monthlyRent: 100_000_000 }],
+    ["monthlyRent with more than 2 decimals", { monthlyRent: 10.555 }],
+    ["securityDeposit with more than 2 decimals", { securityDeposit: 0.001 }],
     ["negative securityDeposit", { securityDeposit: -1 }],
     ["paymentDueDay 0", { paymentDueDay: 0 }],
     ["paymentDueDay 32", { paymentDueDay: 32 }],

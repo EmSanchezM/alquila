@@ -7,7 +7,7 @@ export const imagesSchema = z.array(z.string()).optional();
 const INT4_MAX = 2_147_483_647;
 const count = z.number().int().min(0).max(INT4_MAX);
 // square_meters is decimal(8, 2).
-const squareMeters = z.number().min(0).max(999_999.99).transform(String);
+const squareMeters = z.number().min(0).multipleOf(0.01).max(999_999.99).transform(String);
 
 const requiredFields = {
   name: z.string().max(200),

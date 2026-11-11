@@ -54,6 +54,7 @@ describe("POST /properties rejects values the table cannot store with 400", () =
     ["fractional bathrooms", { bathrooms: 1.5 }],
     ["negative squareMeters", { squareMeters: -10 }],
     ["squareMeters above decimal(8,2)", { squareMeters: 1_000_000 }],
+    ["squareMeters with more than 2 decimals", { squareMeters: 12.345 }],
   ];
 
   for (const [label, override] of cases) {
