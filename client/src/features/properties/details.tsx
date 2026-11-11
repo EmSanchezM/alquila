@@ -6,6 +6,8 @@ import { Bath, Bed, MapPin, Pencil, Square } from 'lucide-react'
 import placeholder from '@/assets/placeholder.svg'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
+import ExpenseSection from '@/features/expenses/components/expense-section'
+import LeaseSection from '@/features/leases/components/lease-section'
 import DeletePropertyButton from '@/features/properties/components/delete-property-button'
 import { LoadErrorState, LoadingState, NotFoundState } from '@/components/shared/resource-states'
 import { ApiError } from '@/lib/services/api-client'
@@ -122,6 +124,11 @@ const PropertiesDetails: FC<PropertiesDetailsProps> = ({ propertyId }) => {
           </Detail>
         </div>
       </section>
+
+      <div className="mt-10 grid gap-10 max-w-5xl">
+        <LeaseSection propertyId={propertyId} />
+        <ExpenseSection propertyId={propertyId} />
+      </div>
     </>
   )
 }

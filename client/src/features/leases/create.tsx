@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link, useNavigate, useSearch } from "@tanstack/react-router"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
@@ -9,6 +9,7 @@ import { emptyLeaseForm, toLeaseCreateInput, type LeaseFormValues } from "@/lib/
 const CreateLease = () => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { propertyId, renterId } = useSearch({ from: "/_authenticated/leases/create" })
 
   const mutation = useMutation({
     mutationFn: (values: LeaseFormValues) => createLease(toLeaseCreateInput(values)),
@@ -47,7 +48,7 @@ const CreateLease = () => {
       </header>
       <section className="mt-8 max-w-4xl">
         <LeaseForm
-          defaultValues={emptyLeaseForm}
+          defaultValues={{ ...emptyLeaseForm, propertyId: propertyId ?? "", renterId: renterId ?? "" }}
           submitLabel="Create lease"
           pendingLabel="Creating..."
           isPending={mutation.isPending}

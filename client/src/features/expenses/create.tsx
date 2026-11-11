@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link, useNavigate, useSearch } from "@tanstack/react-router"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
@@ -10,6 +10,7 @@ import { emptyExpenseForm, toExpenseInput, type ExpenseFormValues } from "@/lib/
 const CreateExpense = () => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { propertyId } = useSearch({ from: "/_authenticated/expenses/create" })
 
   const mutation = useMutation({
     mutationFn: (values: ExpenseFormValues) => createExpense(toExpenseInput(values)),
@@ -48,7 +49,7 @@ const CreateExpense = () => {
       </header>
       <section className="mt-8 max-w-4xl">
         <ExpenseForm
-          defaultValues={emptyExpenseForm(today())}
+          defaultValues={{ ...emptyExpenseForm(today()), ...(propertyId && { propertyId }) }}
           submitLabel="Add expense"
           pendingLabel="Saving..."
           isPending={mutation.isPending}
