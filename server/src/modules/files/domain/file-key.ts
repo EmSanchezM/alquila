@@ -13,3 +13,8 @@ export function isUserFileKey(key: string, userId: string): boolean {
 export function isUserFileUrl(url: string, userId: string): boolean {
   return url.startsWith("/api/files/") && isUserFileKey(url.slice("/api/files/".length), userId);
 }
+
+/** True when the URL points at one of the user's uploaded images (not a PDF). */
+export function isUserImageUrl(url: string, userId: string): boolean {
+  return isUserFileUrl(url, userId) && /\.(jpg|png|webp)$/.test(url);
+}

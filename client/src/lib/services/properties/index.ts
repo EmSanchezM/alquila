@@ -16,6 +16,8 @@ export interface PropertyInput {
   bathrooms: number | null;
   squareMeters: number | null;
   description: string | null;
+  /** Uploaded image URLs; the first is the cover. */
+  images: string[];
 }
 
 const properties = crudClient<Property, PropertyInput>("/properties");
@@ -25,6 +27,10 @@ export const getProperty = properties.get;
 export const createProperty = properties.create;
 export const updateProperty = properties.update;
 export const deleteProperty = properties.remove;
+
+/** The property's image URLs (the column is json); the first is the cover. */
+export const imagesOf = (property: Pick<Property, "images">): string[] =>
+  Array.isArray(property.images) ? property.images.filter((url): url is string => typeof url === "string") : [];
 
 export const propertiesQueryKey = ["properties"] as const;
 

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import ImageListInput from "@/components/shared/image-list-input"
 import {
   PROPERTY_TYPES,
   PropertyFormValidation,
@@ -105,6 +106,18 @@ export default function PropertyForm({ defaultValues, submitLabel, pendingLabel,
               <FormControl>
                 <Textarea rows={4} placeholder="Property description..." {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="images"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Images (optional)</FormLabel>
+              <ImageListInput value={field.value} onChange={field.onChange} />
               <FormMessage />
             </FormItem>
           )}

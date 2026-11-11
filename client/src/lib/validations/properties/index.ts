@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { Property } from "shared";
 
-import type { PropertyInput } from "@/lib/services/properties";
+import { imagesOf, type PropertyInput } from "@/lib/services/properties";
 
 export const PROPERTY_TYPES = [
   { value: "apartment", label: "Apartment" },
@@ -32,6 +32,7 @@ export const PropertyFormValidation = z.object({
     .regex(/^(\d+(\.\d{1,2})?)?$/, "Enter a number with up to 2 decimals")
     .refine((v) => v === "" || Number(v) <= 999_999.99, "Use a value up to 999999.99"),
   description: z.string(),
+  images: z.array(z.string()).max(10, "Use 10 images or fewer"),
 });
 
 export type PropertyFormValues = z.infer<typeof PropertyFormValidation>;
@@ -48,6 +49,7 @@ export const emptyPropertyForm: PropertyFormValues = {
   bathrooms: "",
   squareMeters: "",
   description: "",
+  images: [],
 };
 
 const text = (value: string | null) => value ?? "";
@@ -66,6 +68,7 @@ export function toPropertyForm(property: Property): PropertyFormValues {
     bathrooms: number(property.bathrooms),
     squareMeters: number(property.squareMeters),
     description: text(property.description),
+    images: imagesOf(property),
   };
 }
 
@@ -86,5 +89,6 @@ export function toPropertyInput(values: PropertyFormValues): PropertyInput {
     bathrooms: numberOrNull(values.bathrooms),
     squareMeters: numberOrNull(values.squareMeters),
     description: values.description.trim() === "" ? null : values.description,
+    images: values.images,
   };
 }
