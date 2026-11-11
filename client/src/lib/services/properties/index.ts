@@ -1,8 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import type { Property } from "shared";
 
-// TODO: Switch to the typed `api` client once the server routers keep their route types
-// (each router is declared as `new Hono()` and chained without reassignment, so ApiRoutes is empty).
+import { crudClient, retryServerErrors } from "@/lib/services/api-client";
 
 /** Body accepted by POST and PUT /api/properties. Nullable columns are cleared with null. */
 export interface PropertyInput {
@@ -19,44 +18,15 @@ export interface PropertyInput {
   description: string | null;
 }
 
-export class ApiError extends Error {
-  constructor(message: string, readonly status: number) {
-    super(message);
-  }
-}
+const properties = crudClient<Property, PropertyInput>("/properties");
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`/api/properties${path}`, {
-    ...init,
-    headers: init?.body ? { "content-type": "application/json" } : undefined,
-  });
-  const body = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new ApiError(body?.message ?? "Something went wrong. Try again.", response.status);
-  }
-
-  return body.data as T;
-}
-
-export const getAllProperties = () => request<Property[]>("");
-
-export const getProperty = (id: string) => request<Property>(`/${encodeURIComponent(id)}`);
-
-export const createProperty = (input: PropertyInput) =>
-  request<Property>("", { method: "POST", body: JSON.stringify(input) });
-
-export const updateProperty = (id: string, input: PropertyInput) =>
-  request<Property>(`/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(input) });
-
-export const deleteProperty = (id: string) =>
-  request<void>(`/${encodeURIComponent(id)}`, { method: "DELETE" });
+export const getAllProperties = properties.getAll;
+export const getProperty = properties.get;
+export const createProperty = properties.create;
+export const updateProperty = properties.update;
+export const deleteProperty = properties.remove;
 
 export const propertiesQueryKey = ["properties"] as const;
-
-// A 4xx (e.g. 404 for a missing property) will not change on retry; show it right away.
-const retryServerErrors = (failureCount: number, error: Error) =>
-  !(error instanceof ApiError && error.status < 500) && failureCount < 3;
 
 export const getAllPropertiesQueryOptions = queryOptions({
   queryKey: propertiesQueryKey,

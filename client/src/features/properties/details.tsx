@@ -1,13 +1,15 @@
 import { FC, ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Bath, Bed, Building2, MapPin, Pencil, Square } from 'lucide-react'
+import { Bath, Bed, MapPin, Pencil, Square } from 'lucide-react'
 
 import placeholder from '@/assets/placeholder.svg'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import DeletePropertyButton from '@/features/properties/components/delete-property-button'
-import { ApiError, getPropertyQueryOptions } from '@/lib/services/properties'
+import { LoadErrorState, LoadingState, NotFoundState } from '@/components/shared/resource-states'
+import { ApiError } from '@/lib/services/api-client'
+import { getPropertyQueryOptions } from '@/lib/services/properties'
 
 interface PropertiesDetailsProps {
   propertyId: string
@@ -24,31 +26,20 @@ const PropertiesDetails: FC<PropertiesDetailsProps> = ({ propertyId }) => {
   const { data: property, isLoading, error, refetch } = useQuery(getPropertyQueryOptions(propertyId))
 
   if (isLoading) {
-    return <p className="p-4 text-blue-800">Loading property...</p>
+    return <LoadingState>Loading property...</LoadingState>
   }
 
   if (error instanceof ApiError && error.status === 404) {
     return (
-      <div className="text-center py-12">
-        <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Property not found</h3>
-        <p className="text-gray-500 mb-4">It may have been deleted, or it does not belong to your account.</p>
-        <Button asChild>
-          <Link to="/properties">Back to properties</Link>
-        </Button>
-      </div>
+      <NotFoundState
+        title="Property not found"
+        action={<Button asChild><Link to="/properties">Back to properties</Link></Button>}
+      />
     )
   }
 
   if (error || !property) {
-    return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md flex items-center justify-between gap-4">
-        <p className="text-red-800">Failed to load the property.</p>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          Try again
-        </Button>
-      </div>
-    )
+    return <LoadErrorState message="Failed to load the property." onRetry={() => refetch()} />
   }
 
   return (
