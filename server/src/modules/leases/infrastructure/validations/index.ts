@@ -1,18 +1,33 @@
 import { z } from "zod";
 
+// Limits mirror the `leases` table, so invalid values answer 400 instead of failing in Postgres.
+export const leaseStatuses = ["pending", "active", "expired", "terminated"] as const;
+
+// monthly_rent and security_deposit are decimal(10, 2).
+const money = z.number().min(0).max(99_999_999.99).transform(String);
+
+const endNotBeforeStart = (lease: { startDate?: string, endDate?: string }) =>
+  !lease.startDate || !lease.endDate || lease.endDate >= lease.startDate;
+const endNotBeforeStartIssue = { message: "endDate must be on or after startDate", path: ["endDate"] };
+
+// Columns that are nullable or have a table default: optional, and null clears the nullable ones.
+const optionalFields = {
+  securityDeposit: money.nullable().optional(),
+  paymentDueDay: z.number().int().min(1).max(31).optional(),
+  status: z.enum(leaseStatuses).optional(),
+  contractFile: z.string().max(500).nullable().optional(),
+  terms: z.string().nullable().optional(),
+  autoRenew: z.boolean().optional(),
+};
+
 export const creatLeaseSchema = z.object({
   propertyId: z.string(),
   renterId: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  monthlyRent: z.number().transform(String),
-  securityDeposit: z.number().transform(String),
-  paymentDueDay: z.number(),
-  status: z.string(),
-  contractFile: z.string(),
-  terms: z.string(),
-  autoRenew: z.boolean(),
-});
+  startDate: z.iso.date(),
+  endDate: z.iso.date(),
+  monthlyRent: money,
+  ...optionalFields,
+}).refine(endNotBeforeStart, endNotBeforeStartIssue);
 
 export const findAllLeaseSchema = z.object({
   page: z.number().optional(),
@@ -33,16 +48,11 @@ export const updateLeaseSchema = z.object({
     id: z.string(),
   }),
   body: z.object({
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
-    monthlyRent: z.number().transform(String).optional(),
-    securityDeposit: z.number().transform(String).optional(),
-    paymentDueDay: z.number().optional(),
-    status: z.string().optional(),
-    contractFile: z.string().optional(),
-    terms: z.string().optional(),
-    autoRenew: z.boolean().optional(),
-  }),
+    startDate: z.iso.date().optional(),
+    endDate: z.iso.date().optional(),
+    monthlyRent: money.optional(),
+    ...optionalFields,
+  }).refine(endNotBeforeStart, endNotBeforeStartIssue),
 });
 
 export type CreateLease = z.infer<typeof creatLeaseSchema>;

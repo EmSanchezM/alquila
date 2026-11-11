@@ -40,6 +40,9 @@ const Header = ({ user }: Props) => {
               <Link to="/renters" className="text-gray-600 hover:text-gray-900">
                 Renters
               </Link>
+              <Link to="/leases" className="text-gray-600 hover:text-gray-900">
+                Leases
+              </Link>
               <Link to="/payments" className="text-gray-600 hover:text-gray-900">
                 Payments
               </Link>
