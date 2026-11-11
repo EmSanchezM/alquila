@@ -1,127 +1,46 @@
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Link } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
+import { AlertTriangle, CheckCircle, Clock, Plus, Search, Wrench } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Wrench, Search, Plus, Calendar, User, DollarSign, CheckCircle, Clock, Settings } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { LoadErrorState, LoadingState } from "@/components/shared/resource-states"
+import { MaintenancePriorityBadge, MaintenanceStatusBadge } from "@/features/maintenance/components/maintenance-badges"
+import { getAllMaintenanceRequestsQueryOptions, labelOf, MAINTENANCE_CATEGORIES, MAINTENANCE_STATUSES } from "@/lib/services/maintenance"
+import { formatDay } from "@/lib/utils/format"
+
+const isActive = (status: string) => status === "open" || status === "in_progress"
 
 export default function MaintenancePage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
 
-  // Mock data - in real app, this would come from your database
-  const maintenanceRequests = [
-    {
-      id: 1,
-      title: "Kitchen Faucet Leak",
-      description: "The kitchen faucet is dripping constantly and needs repair",
-      property: "Sunset Apartments - Apt 101",
-      tenant: "María García",
-      category: "plumbing",
-      priority: "high",
-      status: "open",
-      reportedDate: "2025-01-05",
-      scheduledDate: "2025-01-10",
-      assignedTo: "Mike's Plumbing",
-      estimatedCost: 150,
-      actualCost: null,
-    },
-    {
-      id: 2,
-      title: "Air Conditioning Not Working",
-      description: "AC unit stopped working, no cold air coming out",
-      property: "Ocean View Condo - Apt 205",
-      tenant: "Carlos López",
-      category: "hvac",
-      priority: "urgent",
-      status: "in_progress",
-      reportedDate: "2025-01-03",
-      scheduledDate: "2025-01-08",
-      assignedTo: "Cool Air Services",
-      estimatedCost: 300,
-      actualCost: null,
-    },
-    {
-      id: 3,
-      title: "Light Bulb Replacement",
-      description: "Several light bulbs in the hallway need replacement",
-      property: "Downtown Loft - Apt 302",
-      tenant: null,
-      category: "electrical",
-      priority: "low",
-      status: "completed",
-      reportedDate: "2025-01-01",
-      scheduledDate: "2025-01-02",
-      assignedTo: "Building Maintenance",
-      estimatedCost: 25,
-      actualCost: 20,
-    },
+  const { data: requests = [], isLoading, error, refetch } = useQuery(getAllMaintenanceRequestsQueryOptions)
+
+  const search = searchTerm.toLowerCase()
+  const filteredRequests = requests
+    .filter((request) => {
+      const matchesSearch =
+        request.title.toLowerCase().includes(search) ||
+        request.propertyName.toLowerCase().includes(search) ||
+        (request.assignedTo ?? "").toLowerCase().includes(search)
+      return matchesSearch && (statusFilter === "all" || request.status === statusFilter)
+    })
+    .sort((a, b) => b.reportedDate.localeCompare(a.reportedDate))
+
+  const count = (predicate: (status: string, priority: string) => boolean) =>
+    requests.filter((r) => predicate(r.status, r.priority)).length
+
+  const stats = [
+    { title: "Open", value: count((s) => s === "open"), note: "Waiting to be handled", icon: <Wrench className="h-4 w-4 text-orange-500" /> },
+    { title: "In Progress", value: count((s) => s === "in_progress"), note: "Being worked on", icon: <Clock className="h-4 w-4 text-blue-500" /> },
+    { title: "Urgent", value: count((s, p) => isActive(s) && p === "urgent"), note: "Open or in progress", icon: <AlertTriangle className="h-4 w-4 text-red-500" /> },
+    { title: "Completed", value: count((s) => s === "completed" || s === "closed"), note: "Completed or closed", icon: <CheckCircle className="h-4 w-4 text-green-500" /> },
   ]
-
-  const filteredRequests = maintenanceRequests.filter((request) => {
-    const matchesSearch =
-      request.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.property.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || request.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle className="h-4 w-4 text-green-500" />
-      case "in_progress":
-        return <Clock className="h-4 w-4 text-blue-500" />
-      case "open":
-        return <Wrench className="h-4 w-4 text-orange-500" />
-      default:
-        return null
-    }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "default"
-      case "in_progress":
-        return "secondary"
-      case "open":
-        return "outline"
-      default:
-        return "outline"
-    }
-  }
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "urgent":
-        return "destructive"
-      case "high":
-        return "secondary"
-      case "medium":
-        return "outline"
-      case "low":
-        return "outline"
-      default:
-        return "outline"
-    }
-  }
-
-  const openRequests = maintenanceRequests.filter((r) => r.status === "open").length
-  const inProgressRequests = maintenanceRequests.filter((r) => r.status === "in_progress").length
-  const completedThisMonth = maintenanceRequests.filter((r) => r.status === "completed").length
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -133,241 +52,122 @@ export default function MaintenancePage() {
               <Wrench className="h-8 w-8 text-orange-600" />
               <h1 className="text-2xl font-bold text-gray-900">Maintenance</h1>
             </div>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Request
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>Create Maintenance Request</DialogTitle>
-                  <DialogDescription>Report a new maintenance issue</DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title</Label>
-                    <Input id="title" placeholder="Kitchen Faucet Leak" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea id="description" placeholder="Describe the issue in detail..." />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="property">Property</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select property" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="apt101">Sunset Apartments - Apt 101</SelectItem>
-                          <SelectItem value="apt205">Ocean View Condo - Apt 205</SelectItem>
-                          <SelectItem value="apt302">Downtown Loft - Apt 302</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="plumbing">Plumbing</SelectItem>
-                          <SelectItem value="electrical">Electrical</SelectItem>
-                          <SelectItem value="hvac">HVAC</SelectItem>
-                          <SelectItem value="general">General</SelectItem>
-                          <SelectItem value="appliances">Appliances</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="priority">Priority</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select priority" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="low">Low</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
-                          <SelectItem value="urgent">Urgent</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="estimated-cost">Estimated Cost</Label>
-                      <Input id="estimated-cost" type="number" placeholder="150" />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={() => setIsAddDialogOpen(false)}>Create Request</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button asChild>
+              <Link to="/maintenance/create">
+                <Plus className="h-4 w-4 mr-2" />
+                New Request
+              </Link>
+            </Button>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Open Requests</CardTitle>
-              <Wrench className="h-4 w-4 text-orange-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{openRequests}</div>
-              <p className="text-xs text-muted-foreground">Awaiting assignment</p>
-            </CardContent>
-          </Card>
+        {error && <LoadErrorState message="Failed to load maintenance requests." onRetry={() => refetch()} />}
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-              <Clock className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{inProgressRequests}</div>
-              <p className="text-xs text-muted-foreground">Being worked on</p>
-            </CardContent>
-          </Card>
+        {isLoading && <LoadingState>Loading maintenance requests...</LoadingState>}
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed</CardTitle>
-              <CheckCircle className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{completedThisMonth}</div>
-              <p className="text-xs text-muted-foreground">This month</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters */}
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search maintenance requests..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="open">Open</SelectItem>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
+        {!isLoading && !error && (
+          <>
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              {stats.map((stat) => (
+                <Card key={stat.title}>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                    {stat.icon}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                    <p className="text-xs text-muted-foreground">{stat.note}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Maintenance Requests */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredRequests.map((request) => (
-            <Card key={request.id}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg">{request.title}</CardTitle>
-                    <CardDescription className="mt-1">{request.property}</CardDescription>
+            {/* Filters */}
+            <Card className="mb-6">
+              <CardContent className="pt-6">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      placeholder="Search by title, property or assignee..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
                   </div>
-                  <div className="flex space-x-2">
-                    <Badge variant={getPriorityColor(request.priority)}>{request.priority}</Badge>
-                    <Button variant="ghost" size="sm">
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600 mb-4">{request.description}</p>
-
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="flex items-center space-x-2">
-                    {getStatusIcon(request.status)}
-                    <Badge variant={getStatusColor(request.status)}>{request.status.replace("_", " ")}</Badge>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm">{new Date(request.reportedDate).toLocaleDateString()}</span>
-                  </div>
-                </div>
-
-                {request.tenant && (
-                  <div className="flex items-center space-x-2 mb-2">
-                    <User className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm">Reported by: {request.tenant}</span>
-                  </div>
-                )}
-
-                {request.assignedTo && (
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Wrench className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm">Assigned to: {request.assignedTo}</span>
-                  </div>
-                )}
-
-                <div className="flex items-center space-x-2 mb-4">
-                  <DollarSign className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm">
-                    Estimated: ${request.estimatedCost}
-                    {request.actualCost && ` | Actual: $${request.actualCost}`}
-                  </span>
-                </div>
-
-                <div className="flex space-x-2">
-                  {request.status === "open" && (
-                    <Button size="sm" className="flex-1">
-                      Assign Technician
-                    </Button>
-                  )}
-                  {request.status === "in_progress" && (
-                    <Button size="sm" className="flex-1">
-                      Mark Complete
-                    </Button>
-                  )}
-                  <Button variant="outline" size="sm">
-                    View Details
-                  </Button>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full sm:w-48" aria-label="Filter by status">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      {MAINTENANCE_STATUSES.map((status) => (
+                        <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
 
-        {filteredRequests.length === 0 && (
-          <div className="text-center py-12">
-            <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No maintenance requests found</h3>
-            <p className="text-gray-500 mb-4">
-              {searchTerm ? "Try adjusting your search terms" : "All maintenance requests are up to date"}
-            </p>
-            <Button onClick={() => setIsAddDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Request
-            </Button>
-          </div>
+            {filteredRequests.length > 0 && (
+              <Card>
+                <CardContent className="pt-6 overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Request</TableHead>
+                        <TableHead>Property</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Priority</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Reported</TableHead>
+                        <TableHead>Assigned to</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredRequests.map((request) => (
+                        <TableRow key={request.id}>
+                          <TableCell className="font-medium">
+                            <Link to="/maintenance/$requestId" params={{ requestId: request.id }} className="text-blue-600 hover:underline">
+                              {request.title}
+                            </Link>
+                          </TableCell>
+                          <TableCell>{request.propertyName}</TableCell>
+                          <TableCell>{labelOf(MAINTENANCE_CATEGORIES, request.category)}</TableCell>
+                          <TableCell><MaintenancePriorityBadge priority={request.priority} /></TableCell>
+                          <TableCell><MaintenanceStatusBadge status={request.status} /></TableCell>
+                          <TableCell className="whitespace-nowrap">{formatDay(request.reportedDate.slice(0, 10))}</TableCell>
+                          <TableCell>{request.assignedTo ?? "—"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+
+            {filteredRequests.length === 0 && (
+              <div className="text-center py-12">
+                <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No maintenance requests found</h3>
+                <p className="text-gray-500 mb-4">
+                  {searchTerm || statusFilter !== "all" ? "Try adjusting your search or filters" : "Log the first issue reported in one of your properties"}
+                </p>
+                {!searchTerm && statusFilter === "all" && (
+                  <Button asChild>
+                    <Link to="/maintenance/create">
+                      <Plus className="h-4 w-4 mr-2" />
+                      New Request
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>
