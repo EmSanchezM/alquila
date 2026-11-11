@@ -14,6 +14,7 @@ import {
   getMaintenanceRequestQueryOptions,
   MAINTENANCE_CATEGORIES,
   maintenanceQueryKey,
+  photosOf,
 } from '@/lib/services/maintenance'
 import { formatDay, formatMoney } from '@/lib/utils/format'
 import { labelOf } from '@/lib/utils/options'
@@ -127,6 +128,19 @@ const MaintenanceDetails: FC<MaintenanceDetailsProps> = ({ requestId }) => {
           <Detail label="Estimated cost">{request.estimatedCost !== null && formatMoney(request.estimatedCost)}</Detail>
           <Detail label="Actual cost">{request.actualCost !== null && formatMoney(request.actualCost)}</Detail>
         </dl>
+
+        {photosOf(request).length > 0 && (
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 mb-2">Photos</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {photosOf(request).map((url, index) => (
+                <a key={url} href={url} target="_blank" rel="noreferrer" className="block aspect-video rounded-md overflow-hidden border">
+                  <img src={url} alt={`Photo ${index + 1} of ${request.title}`} className="w-full h-full object-cover" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         <Detail label="Notes">
           {request.notes && <p className="whitespace-pre-line">{request.notes}</p>}

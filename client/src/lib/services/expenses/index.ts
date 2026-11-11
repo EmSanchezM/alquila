@@ -48,6 +48,7 @@ export interface ExpenseInput {
   vendor: string | null;
   isRecurring: boolean;
   recurringFrequency: string | null;
+  receiptFile: string | null;
   notes: string | null;
 }
 

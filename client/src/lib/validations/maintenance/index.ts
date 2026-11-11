@@ -4,6 +4,7 @@ import {
   MAINTENANCE_CATEGORIES,
   MAINTENANCE_PRIORITIES,
   MAINTENANCE_STATUSES,
+  photosOf,
   type MaintenanceRequest,
   type MaintenanceRequestInput,
 } from "@/lib/services/maintenance";
@@ -37,6 +38,7 @@ export const MaintenanceFormValidation = z.object({
   assignedTo: z.string().trim().max(100, "Use 100 characters or fewer"),
   estimatedCost: cost,
   actualCost: cost,
+  photos: z.array(z.string()).max(10, "Use 10 photos or fewer"),
   notes: z.string(),
 });
 
@@ -59,6 +61,7 @@ export const emptyMaintenanceForm = (today: string): MaintenanceFormValues => ({
   assignedTo: "",
   estimatedCost: "",
   actualCost: "",
+  photos: [],
   notes: "",
 });
 
@@ -81,6 +84,7 @@ export function toMaintenanceForm(request: MaintenanceRequest): MaintenanceFormV
     assignedTo: request.assignedTo ?? "",
     estimatedCost: amount(request.estimatedCost),
     actualCost: amount(request.actualCost),
+    photos: photosOf(request),
     notes: request.notes ?? "",
   };
 }
@@ -109,6 +113,7 @@ export function toMaintenanceInput(values: MaintenanceFormValues, original?: Mai
     assignedTo: orNull(values.assignedTo),
     estimatedCost: amount(values.estimatedCost),
     actualCost: amount(values.actualCost),
+    photos: values.photos,
     notes: values.notes.trim() === "" ? null : values.notes,
   };
 }

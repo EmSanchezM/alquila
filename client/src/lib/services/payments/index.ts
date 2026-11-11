@@ -50,6 +50,7 @@ export interface PaymentInput {
   paymentMethod: PaymentMethod | null;
   status: PaymentStatus;
   reference: string | null;
+  receiptFile: string | null;
   notes: string | null;
 }
 

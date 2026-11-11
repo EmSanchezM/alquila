@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ReceiptInput } from "@/components/shared/receipt"
 import { EXPENSE_CATEGORIES, RECURRING_FREQUENCIES } from "@/lib/services/expenses"
 import { getAllPropertiesQueryOptions } from "@/lib/services/properties"
 import { ExpenseFormValidation, NO_PROPERTY, type ExpenseFormValues } from "@/lib/validations/expenses"
@@ -32,6 +33,7 @@ export default function ExpenseForm({ defaultValues, submitLabel, pendingLabel, 
     defaultValues,
   })
   const isRecurring = useWatch({ control: form.control, name: "isRecurring" })
+  const receipt = useWatch({ control: form.control, name: ["receiptFile", "receiptName"] })
 
   const properties = useQuery(getAllPropertiesQueryOptions)
 
@@ -112,6 +114,25 @@ export default function ExpenseForm({ defaultValues, submitLabel, pendingLabel, 
           />
           {isRecurring && select("recurringFrequency", "Repeats", RECURRING_FREQUENCIES)}
         </div>
+
+        <FormField
+          control={form.control}
+          name="receiptFile"
+          render={() => (
+            <FormItem>
+              <FormLabel>Receipt (optional)</FormLabel>
+              <ReceiptInput
+                url={receipt[0]}
+                name={receipt[1]}
+                onChange={({ url, name }) => {
+                  form.setValue("receiptFile", url, { shouldDirty: true })
+                  form.setValue("receiptName", name)
+                }}
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

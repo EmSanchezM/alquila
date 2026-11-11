@@ -66,8 +66,14 @@ export interface MaintenanceRequestInput {
   assignedTo: string | null;
   estimatedCost: number | null;
   actualCost: number | null;
+  /** Uploaded image URLs. */
+  photos: string[];
   notes: string | null;
 }
+
+/** The request's photo URLs (the column is json). */
+export const photosOf = (request: Pick<MaintenanceRequest, "photos">): string[] =>
+  Array.isArray(request.photos) ? request.photos.filter((url): url is string => typeof url === "string") : [];
 
 const BASE = "/maintenance-requests";
 const requests = crudClient<MaintenanceRequestWithNames, MaintenanceRequestInput>(BASE);

@@ -7,6 +7,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Button } from '@/components/ui/button'
 import DeleteResourceButton from '@/components/shared/delete-resource-button'
 import { LoadErrorState, LoadingState, NotFoundState } from '@/components/shared/resource-states'
+import { ReceiptLink } from '@/components/shared/receipt'
 import PaymentStatusBadge from '@/features/payments/components/payment-status-badge'
 import { ApiError } from '@/lib/services/api-client'
 import { deletePayment, getPaymentQueryOptions, paymentMethodLabel, paymentsQueryKey } from '@/lib/services/payments'
@@ -106,6 +107,7 @@ const PaymentDetails: FC<PaymentDetailsProps> = ({ paymentId }) => {
           <Detail label="Paid date">{payment.paidDate && formatDay(payment.paidDate)}</Detail>
           <Detail label="Method">{paymentMethodLabel(payment.paymentMethod)}</Detail>
           <Detail label="Reference">{payment.reference}</Detail>
+          <Detail label="Receipt">{payment.receiptFile && <ReceiptLink url={payment.receiptFile} />}</Detail>
         </dl>
 
         <Detail label="Notes">
