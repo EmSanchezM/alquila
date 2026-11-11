@@ -5,7 +5,7 @@ export const paymentStatuses = ["pending", "paid", "overdue", "partial"] as cons
 export const paymentMethods = ["cash", "transfer", "check", "card"] as const;
 
 // amount is decimal(10, 2); a payment of 0 has no meaning.
-const amount = z.number().positive().max(99_999_999.99).transform(String);
+const amount = z.number().positive().multipleOf(0.01).max(99_999_999.99).transform(String);
 
 // Columns that are nullable or have a table default: optional, and null clears the nullable ones.
 const optionalFields = {

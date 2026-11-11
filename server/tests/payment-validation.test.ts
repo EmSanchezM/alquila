@@ -52,6 +52,8 @@ describe("POST /payments rejects values the table cannot store with 400", () => 
     ["zero amount", { amount: 0 }],
     ["negative amount", { amount: -5 }],
     ["amount above decimal(10,2)", { amount: 100_000_000 }],
+    ["amount below one cent (Postgres would store 0.00)", { amount: 0.001 }],
+    ["amount with more than 2 decimals", { amount: 10.555 }],
     ["dueDate that is not a date", { dueDate: "soon" }],
     ["empty paidDate", { paidDate: "" }],
     ["impossible paidDate", { paidDate: "2026-02-30" }],

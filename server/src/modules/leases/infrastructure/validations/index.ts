@@ -4,7 +4,7 @@ import { z } from "zod";
 export const leaseStatuses = ["pending", "active", "expired", "terminated"] as const;
 
 // monthly_rent and security_deposit are decimal(10, 2).
-const money = z.number().min(0).max(99_999_999.99).transform(String);
+const money = z.number().min(0).multipleOf(0.01).max(99_999_999.99).transform(String);
 
 const endNotBeforeStart = (lease: { startDate?: string, endDate?: string }) =>
   !lease.startDate || !lease.endDate || lease.endDate >= lease.startDate;
