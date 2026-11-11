@@ -1,16 +1,28 @@
 import { z } from "zod";
 
+// Limits mirror the `payments` table, so invalid values answer 400 instead of failing in Postgres.
+export const paymentStatuses = ["pending", "paid", "overdue", "partial"] as const;
+export const paymentMethods = ["cash", "transfer", "check", "card"] as const;
+
+// amount is decimal(10, 2); a payment of 0 has no meaning.
+const amount = z.number().positive().max(99_999_999.99).transform(String);
+
+// Columns that are nullable or have a table default: optional, and null clears the nullable ones.
+const optionalFields = {
+  paidDate: z.iso.date().nullable().optional(),
+  paymentMethod: z.enum(paymentMethods).nullable().optional(),
+  status: z.enum(paymentStatuses).optional(),
+  reference: z.string().max(100).nullable().optional(),
+  receiptFile: z.string().max(500).nullable().optional(),
+  notes: z.string().nullable().optional(),
+  customFields: z.record(z.string(), z.unknown()).nullable().optional(),
+};
+
 export const createPaymentSchema = z.object({
   leaseId: z.string(),
-  amount: z.number().transform(String),
-  dueDate: z.string(),
-  paidDate: z.string(),
-  paymentMethod: z.string(),
-  status: z.string(),
-  reference: z.string(),
-  receiptFile: z.string(),
-  notes: z.string(),
-  customFields: z.record(z.string(), z.unknown()),
+  amount,
+  dueDate: z.iso.date(),
+  ...optionalFields,
 });
 
 export const findAllPaymentsSchema = z.object({
@@ -33,15 +45,9 @@ export const updatePaymentsSchema = z.object({
   }),
   body: z.object({
     leaseId: z.string().optional(),
-    amount: z.number().transform(String).optional(),
-    dueDate: z.string().optional(),
-    paidDate: z.string().optional(),
-    paymentMethod: z.string().optional(),
-    status: z.string().optional(),
-    reference: z.string().optional(),
-    receiptFile: z.string().optional(),
-    notes: z.string().optional(),
-    customFields: z.record(z.string(), z.unknown()).optional(),
+    amount: amount.optional(),
+    dueDate: z.iso.date().optional(),
+    ...optionalFields,
   }),
 });
 

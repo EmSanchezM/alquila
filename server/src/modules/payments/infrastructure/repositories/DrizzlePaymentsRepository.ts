@@ -1,8 +1,21 @@
-import { and, eq } from "drizzle-orm";
-import type { PaymentsRepository } from "@server/modules/payments/domain/repositories/payments.repository";
+import { and, eq, getTableColumns, sql } from "drizzle-orm";
+import type { PaymentsRepository, PaymentWithNames } from "@server/modules/payments/domain/repositories/payments.repository";
 
 import { db } from "@server/database";
-import { payments, type Payment, type NewPayment } from "@server/database/schema";
+import { leases, payments, properties, renters, type Payment, type NewPayment } from "@server/database/schema";
+
+// Payments with the names of their lease's property and renter. Inner joins are safe: every
+// reference is NOT NULL, and soft-deleted rows are kept.
+const withNames = () =>
+  db.select({
+    ...getTableColumns(payments),
+    propertyName: properties.name,
+    renterName: sql<string>`${renters.firstName} || ' ' || ${renters.lastName}`,
+  })
+    .from(payments)
+    .innerJoin(leases, eq(payments.leaseId, leases.id))
+    .innerJoin(properties, eq(leases.propertyId, properties.id))
+    .innerJoin(renters, eq(leases.renterId, renters.id));
 
 export class DrizzlePaymentsRepository implements PaymentsRepository {
   async create(payment: Omit<NewPayment, 'createdAt' | 'updatedAt'>): Promise<Payment | null> {
@@ -14,12 +27,12 @@ export class DrizzlePaymentsRepository implements PaymentsRepository {
 
     return newPayment;
   }
-  async findAll(userId: string): Promise<Payment[]> {
-    return await db.select().from(payments).where(and(eq(payments.userId, userId), eq(payments.isActive, true)));
+  async findAll(userId: string): Promise<PaymentWithNames[]> {
+    return await withNames().where(and(eq(payments.userId, userId), eq(payments.isActive, true)));
   }
   
-  async findById(id: string, userId: string): Promise<Payment | null> {
-    const [result] = await db.select().from(payments).where(and(eq(payments.id, id), eq(payments.userId, userId), eq(payments.isActive, true)));
+  async findById(id: string, userId: string): Promise<PaymentWithNames | null> {
+    const [result] = await withNames().where(and(eq(payments.id, id), eq(payments.userId, userId), eq(payments.isActive, true)));
 
     if(!result) return null;
 
