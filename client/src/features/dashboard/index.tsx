@@ -30,13 +30,12 @@ export default function Dashboard() {
     return <LoadingState>Loading dashboard...</LoadingState>
   }
 
-  if (all.some((q) => q.error)) {
-    return (
-      <LoadErrorState
-        message="Failed to load the dashboard."
-        onRetry={() => all.filter((q) => q.error).forEach((q) => q.refetch())}
-      />
-    )
+  // A failed background refetch keeps the previous data: only a query with nothing to show blocks the page.
+  const failed = all.filter((q) => q.error)
+  const retry = () => failed.forEach((q) => q.refetch())
+
+  if (failed.some((q) => !q.data)) {
+    return <LoadErrorState message="Failed to load the dashboard." onRetry={retry} />
   }
 
   const summary = summarizeDashboard({
@@ -49,6 +48,8 @@ export default function Dashboard() {
 
   return (
     <>
+    {failed.length > 0 && <LoadErrorState message="Some data could not be refreshed. Showing the last loaded values." onRetry={retry} />}
+
     {/* Stats Overview */}
     <StatsOverview summary={summary} />
 
