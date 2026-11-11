@@ -1,18 +1,26 @@
 import { z } from "zod";
 
+// Limits mirror the `renters` table, so invalid values answer 400 instead of failing in Postgres.
+export const verificationStatuses = ["pending", "verified", "rejected"] as const;
+
+// Columns that are nullable in the table: optional, and null clears them.
+const nullableFields = {
+  email: z.email().max(255).nullable().optional(),
+  phoneNumber: z.string().max(20).nullable().optional(),
+  dniNumber: z.string().max(50).nullable().optional(),
+  verificationStatus: z.enum(verificationStatuses).optional(),
+  notes: z.string().nullable().optional(),
+};
+
 export const createRenterSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  email: z.string(),
-  phoneNumber: z.string(),
-  dniNumber: z.string(),
+  firstName: z.string().max(100),
+  lastName: z.string().max(100),
+  ...nullableFields,
   emergencyContact: z.object({
     name: z.string(),
     phone: z.string(),
     relationship: z.string(),
-  }),
-  verificationStatus: z.string(),
-  notes: z.string(),
+  }).nullable().optional(),
 });
 
 export const findAllRenterSchema = z.object({
@@ -34,18 +42,14 @@ export const updateRenterSchema = z.object({
     id: z.string(),
   }),
   body: z.object({
-    firstName: z.string().optional(),
-    lastName: z.string().optional(),
-    email: z.string().optional(),
-    phoneNumber: z.string().optional(),
-    dniNumber: z.string().optional(),
+    firstName: z.string().max(100).optional(),
+    lastName: z.string().max(100).optional(),
+    ...nullableFields,
     emergencyContact: z.object({
       name: z.string().optional(),
       phone: z.string().optional(),
       relationship: z.string().optional(),
-    }).optional(),
-    verificationStatus: z.string().optional(),
-    notes: z.string().optional(),
+    }).nullable().optional(),
   }),
 });
 

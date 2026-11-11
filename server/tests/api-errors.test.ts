@@ -1,6 +1,7 @@
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { afterAll, beforeAll, describe, expect, spyOn, test } from "bun:test";
 
 import app from "@server/app";
+import { DrizzleRentersRepository } from "@server/modules/renters/infrastructure/repositories/DrizzleRentersRepository";
 import { createFixtures } from "./helpers";
 
 const f = createFixtures();
@@ -38,14 +39,21 @@ describe("missing records answer 404", () => {
 
 describe("unexpected errors answer 500 without internals", () => {
   test("database failure does not leak SQL", async () => {
-    // renters.first_name is varchar(100): zod accepts the value, Postgres rejects it.
-    const { status, json } = await f.request("POST", "/renters", {
-      firstName: "x".repeat(300), lastName: "L", email: "l@test.com", phoneNumber: "1", dniNumber: "1",
-      emergencyContact: { name: "M", phone: "1", relationship: "mother" }, verificationStatus: "pending", notes: "",
-    });
+    // Every body is validated before Postgres, so simulate the driver failing instead.
+    const failure = spyOn(DrizzleRentersRepository.prototype, "findAll").mockRejectedValue(
+      new Error('Failed query: select "password" from "users"'),
+    );
+    const silenced = spyOn(console, "error").mockImplementation(() => {});
 
-    expect(status).toBe(500);
-    expect(json).toEqual({ success: false, message: "Internal server error" });
+    try {
+      const { status, json } = await f.request("GET", "/renters");
+
+      expect(status).toBe(500);
+      expect(json).toEqual({ success: false, message: "Internal server error" });
+    } finally {
+      failure.mockRestore();
+      silenced.mockRestore();
+    }
   });
 });
 
