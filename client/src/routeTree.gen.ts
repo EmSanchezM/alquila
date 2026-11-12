@@ -46,6 +46,8 @@ import { Route as AuthenticatedRentersRenterIdEditRouteImport } from './routes/_
 import { Route as AuthenticatedRentersCommunicationsIndexRouteImport } from './routes/_authenticated/renters/communications/index'
 import { Route as AuthenticatedRentersCommunicationsCommunicationIdRouteImport } from './routes/_authenticated/renters/communications/$communicationId'
 import { Route as AuthenticatedRentersCommunicationsLogRouteImport } from './routes/_authenticated/renters/communications/log'
+import { Route as AuthenticatedRentersCommunicationsTemplatesCreateRouteImport } from './routes/_authenticated/renters/communications/templates/create'
+import { Route as AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRouteImport } from './routes/_authenticated/renters/communications/templates/$templateId/edit'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -263,6 +265,18 @@ const AuthenticatedRentersCommunicationsLogRoute =
     path: '/renters/communications/log',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedRentersCommunicationsTemplatesCreateRoute =
+  AuthenticatedRentersCommunicationsTemplatesCreateRouteImport.update({
+    id: '/renters/communications/templates/create',
+    path: '/renters/communications/templates/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRoute =
+  AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRouteImport.update({
+    id: '/renters/communications/templates/$templateId/edit',
+    path: '/renters/communications/templates/$templateId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedRouteWithChildren
@@ -302,6 +316,8 @@ export interface FileRoutesByFullPath {
   '/properties/$propertyId/': typeof AuthenticatedPropertiesPropertyIdIndexRoute
   '/renters/$renterId/': typeof AuthenticatedRentersRenterIdIndexRoute
   '/renters/communications/': typeof AuthenticatedRentersCommunicationsIndexRoute
+  '/renters/communications/templates/create': typeof AuthenticatedRentersCommunicationsTemplatesCreateRoute
+  '/renters/communications/templates/$templateId/edit': typeof AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedRouteWithChildren
@@ -341,6 +357,8 @@ export interface FileRoutesByTo {
   '/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdIndexRoute
   '/renters/$renterId': typeof AuthenticatedRentersRenterIdIndexRoute
   '/renters/communications': typeof AuthenticatedRentersCommunicationsIndexRoute
+  '/renters/communications/templates/create': typeof AuthenticatedRentersCommunicationsTemplatesCreateRoute
+  '/renters/communications/templates/$templateId/edit': typeof AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -381,6 +399,8 @@ export interface FileRoutesById {
   '/_authenticated/properties/$propertyId/': typeof AuthenticatedPropertiesPropertyIdIndexRoute
   '/_authenticated/renters/$renterId/': typeof AuthenticatedRentersRenterIdIndexRoute
   '/_authenticated/renters/communications/': typeof AuthenticatedRentersCommunicationsIndexRoute
+  '/_authenticated/renters/communications/templates/create': typeof AuthenticatedRentersCommunicationsTemplatesCreateRoute
+  '/_authenticated/renters/communications/templates/$templateId/edit': typeof AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -422,6 +442,8 @@ export interface FileRouteTypes {
     | '/properties/$propertyId/'
     | '/renters/$renterId/'
     | '/renters/communications/'
+    | '/renters/communications/templates/create'
+    | '/renters/communications/templates/$templateId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -461,6 +483,8 @@ export interface FileRouteTypes {
     | '/properties/$propertyId'
     | '/renters/$renterId'
     | '/renters/communications'
+    | '/renters/communications/templates/create'
+    | '/renters/communications/templates/$templateId/edit'
   id:
     | '__root__'
     | '/_authenticated'
@@ -500,6 +524,8 @@ export interface FileRouteTypes {
     | '/_authenticated/properties/$propertyId/'
     | '/_authenticated/renters/$renterId/'
     | '/_authenticated/renters/communications/'
+    | '/_authenticated/renters/communications/templates/create'
+    | '/_authenticated/renters/communications/templates/$templateId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -768,6 +794,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRentersCommunicationsLogRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/renters/communications/templates/create': {
+      id: '/_authenticated/renters/communications/templates/create'
+      path: '/renters/communications/templates/create'
+      fullPath: '/renters/communications/templates/create'
+      preLoaderRoute: typeof AuthenticatedRentersCommunicationsTemplatesCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/renters/communications/templates/$templateId/edit': {
+      id: '/_authenticated/renters/communications/templates/$templateId/edit'
+      path: '/renters/communications/templates/$templateId/edit'
+      fullPath: '/renters/communications/templates/$templateId/edit'
+      preLoaderRoute: typeof AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -805,6 +845,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPropertiesPropertyIdIndexRoute: typeof AuthenticatedPropertiesPropertyIdIndexRoute
   AuthenticatedRentersRenterIdIndexRoute: typeof AuthenticatedRentersRenterIdIndexRoute
   AuthenticatedRentersCommunicationsIndexRoute: typeof AuthenticatedRentersCommunicationsIndexRoute
+  AuthenticatedRentersCommunicationsTemplatesCreateRoute: typeof AuthenticatedRentersCommunicationsTemplatesCreateRoute
+  AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRoute: typeof AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -855,6 +897,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedRentersRenterIdIndexRoute,
   AuthenticatedRentersCommunicationsIndexRoute:
     AuthenticatedRentersCommunicationsIndexRoute,
+  AuthenticatedRentersCommunicationsTemplatesCreateRoute:
+    AuthenticatedRentersCommunicationsTemplatesCreateRoute,
+  AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRoute:
+    AuthenticatedRentersCommunicationsTemplatesTemplateIdEditRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate, useSearch } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { ArrowDownLeft, ArrowUpRight, CalendarDays, MessageSquare, Plus, Search } from "lucide-react"
 
@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import TemplatesTab from "@/features/communications/templates/templates-tab"
 import { LoadErrorState, LoadingState } from "@/components/shared/resource-states"
 import { CommunicationTypeBadge, DirectionLabel } from "@/features/communications/components/communication-badges"
 import { formatMoment } from "@/lib/utils/format"
@@ -16,6 +18,8 @@ import { COMMUNICATION_TYPES, getAllCommunicationsQueryOptions } from "@/lib/ser
 export default function CommunicationsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [typeFilter, setTypeFilter] = useState("all")
+  const { tab = "history" } = useSearch({ from: "/_authenticated/renters/communications/" })
+  const navigate = useNavigate()
 
   const { data: communications = [], isLoading, error, refetch } = useQuery(getAllCommunicationsQueryOptions)
 
@@ -56,6 +60,17 @@ export default function CommunicationsPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Tabs value={tab} onValueChange={(value) => navigate({ to: "/renters/communications", search: { tab: value as "history" | "templates" } })}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="templates">Templates</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="templates">
+          <TemplatesTab />
+        </TabsContent>
+
+        <TabsContent value="history">
         {error && !communications.length && <LoadErrorState message="Failed to load communications." onRetry={() => refetch()} />}
 
         {isLoading && <LoadingState>Loading communications...</LoadingState>}
@@ -158,6 +173,8 @@ export default function CommunicationsPage() {
             )}
           </>
         )}
+        </TabsContent>
+        </Tabs>
       </main>
     </div>
   )
