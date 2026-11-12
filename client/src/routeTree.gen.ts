@@ -28,7 +28,6 @@ import { Route as AuthenticatedPaymentsCreateRouteImport } from './routes/_authe
 import { Route as AuthenticatedPropertiesIndexRouteImport } from './routes/_authenticated/properties/index'
 import { Route as AuthenticatedPropertiesCreateRouteImport } from './routes/_authenticated/properties/create'
 import { Route as AuthenticatedRentersIndexRouteImport } from './routes/_authenticated/renters/index'
-import { Route as AuthenticatedRentersCommunicationsRouteImport } from './routes/_authenticated/renters/communications'
 import { Route as AuthenticatedRentersCreateRouteImport } from './routes/_authenticated/renters/create'
 import { Route as AuthenticatedDocumentsDocumentIdIndexRouteImport } from './routes/_authenticated/documents/$documentId/index'
 import { Route as AuthenticatedDocumentsDocumentIdEditRouteImport } from './routes/_authenticated/documents/$documentId/edit'
@@ -44,6 +43,9 @@ import { Route as AuthenticatedPropertiesPropertyIdIndexRouteImport } from './ro
 import { Route as AuthenticatedPropertiesPropertyIdEditRouteImport } from './routes/_authenticated/properties/$propertyId/edit'
 import { Route as AuthenticatedRentersRenterIdIndexRouteImport } from './routes/_authenticated/renters/$renterId/index'
 import { Route as AuthenticatedRentersRenterIdEditRouteImport } from './routes/_authenticated/renters/$renterId/edit'
+import { Route as AuthenticatedRentersCommunicationsIndexRouteImport } from './routes/_authenticated/renters/communications/index'
+import { Route as AuthenticatedRentersCommunicationsCommunicationIdRouteImport } from './routes/_authenticated/renters/communications/$communicationId'
+import { Route as AuthenticatedRentersCommunicationsLogRouteImport } from './routes/_authenticated/renters/communications/log'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -153,12 +155,6 @@ const AuthenticatedRentersIndexRoute =
     path: '/renters/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedRentersCommunicationsRoute =
-  AuthenticatedRentersCommunicationsRouteImport.update({
-    id: '/renters/communications',
-    path: '/renters/communications',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedRentersCreateRoute =
   AuthenticatedRentersCreateRouteImport.update({
     id: '/renters/create',
@@ -249,6 +245,24 @@ const AuthenticatedRentersRenterIdEditRoute =
     path: '/renters/$renterId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedRentersCommunicationsIndexRoute =
+  AuthenticatedRentersCommunicationsIndexRouteImport.update({
+    id: '/renters/communications/',
+    path: '/renters/communications/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRentersCommunicationsCommunicationIdRoute =
+  AuthenticatedRentersCommunicationsCommunicationIdRouteImport.update({
+    id: '/renters/communications/$communicationId',
+    path: '/renters/communications/$communicationId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRentersCommunicationsLogRoute =
+  AuthenticatedRentersCommunicationsLogRouteImport.update({
+    id: '/renters/communications/log',
+    path: '/renters/communications/log',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedRouteWithChildren
@@ -263,7 +277,6 @@ export interface FileRoutesByFullPath {
   '/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
   '/payments/create': typeof AuthenticatedPaymentsCreateRoute
   '/properties/create': typeof AuthenticatedPropertiesCreateRoute
-  '/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
   '/renters/create': typeof AuthenticatedRentersCreateRoute
   '/documents/': typeof AuthenticatedDocumentsIndexRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
@@ -279,6 +292,8 @@ export interface FileRoutesByFullPath {
   '/payments/$paymentId/edit': typeof AuthenticatedPaymentsPaymentIdEditRoute
   '/properties/$propertyId/edit': typeof AuthenticatedPropertiesPropertyIdEditRoute
   '/renters/$renterId/edit': typeof AuthenticatedRentersRenterIdEditRoute
+  '/renters/communications/$communicationId': typeof AuthenticatedRentersCommunicationsCommunicationIdRoute
+  '/renters/communications/log': typeof AuthenticatedRentersCommunicationsLogRoute
   '/documents/$documentId/': typeof AuthenticatedDocumentsDocumentIdIndexRoute
   '/expenses/$expenseId/': typeof AuthenticatedExpensesExpenseIdIndexRoute
   '/leases/$leaseId/': typeof AuthenticatedLeasesLeaseIdIndexRoute
@@ -286,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/payments/$paymentId/': typeof AuthenticatedPaymentsPaymentIdIndexRoute
   '/properties/$propertyId/': typeof AuthenticatedPropertiesPropertyIdIndexRoute
   '/renters/$renterId/': typeof AuthenticatedRentersRenterIdIndexRoute
+  '/renters/communications/': typeof AuthenticatedRentersCommunicationsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedRouteWithChildren
@@ -300,7 +316,6 @@ export interface FileRoutesByTo {
   '/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
   '/payments/create': typeof AuthenticatedPaymentsCreateRoute
   '/properties/create': typeof AuthenticatedPropertiesCreateRoute
-  '/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
   '/renters/create': typeof AuthenticatedRentersCreateRoute
   '/documents': typeof AuthenticatedDocumentsIndexRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
@@ -316,6 +331,8 @@ export interface FileRoutesByTo {
   '/payments/$paymentId/edit': typeof AuthenticatedPaymentsPaymentIdEditRoute
   '/properties/$propertyId/edit': typeof AuthenticatedPropertiesPropertyIdEditRoute
   '/renters/$renterId/edit': typeof AuthenticatedRentersRenterIdEditRoute
+  '/renters/communications/$communicationId': typeof AuthenticatedRentersCommunicationsCommunicationIdRoute
+  '/renters/communications/log': typeof AuthenticatedRentersCommunicationsLogRoute
   '/documents/$documentId': typeof AuthenticatedDocumentsDocumentIdIndexRoute
   '/expenses/$expenseId': typeof AuthenticatedExpensesExpenseIdIndexRoute
   '/leases/$leaseId': typeof AuthenticatedLeasesLeaseIdIndexRoute
@@ -323,6 +340,7 @@ export interface FileRoutesByTo {
   '/payments/$paymentId': typeof AuthenticatedPaymentsPaymentIdIndexRoute
   '/properties/$propertyId': typeof AuthenticatedPropertiesPropertyIdIndexRoute
   '/renters/$renterId': typeof AuthenticatedRentersRenterIdIndexRoute
+  '/renters/communications': typeof AuthenticatedRentersCommunicationsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -338,7 +356,6 @@ export interface FileRoutesById {
   '/_authenticated/payments/automation': typeof AuthenticatedPaymentsAutomationRoute
   '/_authenticated/payments/create': typeof AuthenticatedPaymentsCreateRoute
   '/_authenticated/properties/create': typeof AuthenticatedPropertiesCreateRoute
-  '/_authenticated/renters/communications': typeof AuthenticatedRentersCommunicationsRoute
   '/_authenticated/renters/create': typeof AuthenticatedRentersCreateRoute
   '/_authenticated/documents/': typeof AuthenticatedDocumentsIndexRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
@@ -354,6 +371,8 @@ export interface FileRoutesById {
   '/_authenticated/payments/$paymentId/edit': typeof AuthenticatedPaymentsPaymentIdEditRoute
   '/_authenticated/properties/$propertyId/edit': typeof AuthenticatedPropertiesPropertyIdEditRoute
   '/_authenticated/renters/$renterId/edit': typeof AuthenticatedRentersRenterIdEditRoute
+  '/_authenticated/renters/communications/$communicationId': typeof AuthenticatedRentersCommunicationsCommunicationIdRoute
+  '/_authenticated/renters/communications/log': typeof AuthenticatedRentersCommunicationsLogRoute
   '/_authenticated/documents/$documentId/': typeof AuthenticatedDocumentsDocumentIdIndexRoute
   '/_authenticated/expenses/$expenseId/': typeof AuthenticatedExpensesExpenseIdIndexRoute
   '/_authenticated/leases/$leaseId/': typeof AuthenticatedLeasesLeaseIdIndexRoute
@@ -361,6 +380,7 @@ export interface FileRoutesById {
   '/_authenticated/payments/$paymentId/': typeof AuthenticatedPaymentsPaymentIdIndexRoute
   '/_authenticated/properties/$propertyId/': typeof AuthenticatedPropertiesPropertyIdIndexRoute
   '/_authenticated/renters/$renterId/': typeof AuthenticatedRentersRenterIdIndexRoute
+  '/_authenticated/renters/communications/': typeof AuthenticatedRentersCommunicationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -377,7 +397,6 @@ export interface FileRouteTypes {
     | '/payments/automation'
     | '/payments/create'
     | '/properties/create'
-    | '/renters/communications'
     | '/renters/create'
     | '/documents/'
     | '/expenses/'
@@ -393,6 +412,8 @@ export interface FileRouteTypes {
     | '/payments/$paymentId/edit'
     | '/properties/$propertyId/edit'
     | '/renters/$renterId/edit'
+    | '/renters/communications/$communicationId'
+    | '/renters/communications/log'
     | '/documents/$documentId/'
     | '/expenses/$expenseId/'
     | '/leases/$leaseId/'
@@ -400,6 +421,7 @@ export interface FileRouteTypes {
     | '/payments/$paymentId/'
     | '/properties/$propertyId/'
     | '/renters/$renterId/'
+    | '/renters/communications/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -414,7 +436,6 @@ export interface FileRouteTypes {
     | '/payments/automation'
     | '/payments/create'
     | '/properties/create'
-    | '/renters/communications'
     | '/renters/create'
     | '/documents'
     | '/expenses'
@@ -430,6 +451,8 @@ export interface FileRouteTypes {
     | '/payments/$paymentId/edit'
     | '/properties/$propertyId/edit'
     | '/renters/$renterId/edit'
+    | '/renters/communications/$communicationId'
+    | '/renters/communications/log'
     | '/documents/$documentId'
     | '/expenses/$expenseId'
     | '/leases/$leaseId'
@@ -437,6 +460,7 @@ export interface FileRouteTypes {
     | '/payments/$paymentId'
     | '/properties/$propertyId'
     | '/renters/$renterId'
+    | '/renters/communications'
   id:
     | '__root__'
     | '/_authenticated'
@@ -451,7 +475,6 @@ export interface FileRouteTypes {
     | '/_authenticated/payments/automation'
     | '/_authenticated/payments/create'
     | '/_authenticated/properties/create'
-    | '/_authenticated/renters/communications'
     | '/_authenticated/renters/create'
     | '/_authenticated/documents/'
     | '/_authenticated/expenses/'
@@ -467,6 +490,8 @@ export interface FileRouteTypes {
     | '/_authenticated/payments/$paymentId/edit'
     | '/_authenticated/properties/$propertyId/edit'
     | '/_authenticated/renters/$renterId/edit'
+    | '/_authenticated/renters/communications/$communicationId'
+    | '/_authenticated/renters/communications/log'
     | '/_authenticated/documents/$documentId/'
     | '/_authenticated/expenses/$expenseId/'
     | '/_authenticated/leases/$leaseId/'
@@ -474,6 +499,7 @@ export interface FileRouteTypes {
     | '/_authenticated/payments/$paymentId/'
     | '/_authenticated/properties/$propertyId/'
     | '/_authenticated/renters/$renterId/'
+    | '/_authenticated/renters/communications/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -616,13 +642,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRentersIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/renters/communications': {
-      id: '/_authenticated/renters/communications'
-      path: '/renters/communications'
-      fullPath: '/renters/communications'
-      preLoaderRoute: typeof AuthenticatedRentersCommunicationsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/renters/create': {
       id: '/_authenticated/renters/create'
       path: '/renters/create'
@@ -728,6 +747,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRentersRenterIdEditRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/renters/communications/': {
+      id: '/_authenticated/renters/communications/'
+      path: '/renters/communications'
+      fullPath: '/renters/communications/'
+      preLoaderRoute: typeof AuthenticatedRentersCommunicationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/renters/communications/$communicationId': {
+      id: '/_authenticated/renters/communications/$communicationId'
+      path: '/renters/communications/$communicationId'
+      fullPath: '/renters/communications/$communicationId'
+      preLoaderRoute: typeof AuthenticatedRentersCommunicationsCommunicationIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/renters/communications/log': {
+      id: '/_authenticated/renters/communications/log'
+      path: '/renters/communications/log'
+      fullPath: '/renters/communications/log'
+      preLoaderRoute: typeof AuthenticatedRentersCommunicationsLogRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -740,7 +780,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPaymentsAutomationRoute: typeof AuthenticatedPaymentsAutomationRoute
   AuthenticatedPaymentsCreateRoute: typeof AuthenticatedPaymentsCreateRoute
   AuthenticatedPropertiesCreateRoute: typeof AuthenticatedPropertiesCreateRoute
-  AuthenticatedRentersCommunicationsRoute: typeof AuthenticatedRentersCommunicationsRoute
   AuthenticatedRentersCreateRoute: typeof AuthenticatedRentersCreateRoute
   AuthenticatedDocumentsIndexRoute: typeof AuthenticatedDocumentsIndexRoute
   AuthenticatedExpensesIndexRoute: typeof AuthenticatedExpensesIndexRoute
@@ -756,6 +795,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPaymentsPaymentIdEditRoute: typeof AuthenticatedPaymentsPaymentIdEditRoute
   AuthenticatedPropertiesPropertyIdEditRoute: typeof AuthenticatedPropertiesPropertyIdEditRoute
   AuthenticatedRentersRenterIdEditRoute: typeof AuthenticatedRentersRenterIdEditRoute
+  AuthenticatedRentersCommunicationsCommunicationIdRoute: typeof AuthenticatedRentersCommunicationsCommunicationIdRoute
+  AuthenticatedRentersCommunicationsLogRoute: typeof AuthenticatedRentersCommunicationsLogRoute
   AuthenticatedDocumentsDocumentIdIndexRoute: typeof AuthenticatedDocumentsDocumentIdIndexRoute
   AuthenticatedExpensesExpenseIdIndexRoute: typeof AuthenticatedExpensesExpenseIdIndexRoute
   AuthenticatedLeasesLeaseIdIndexRoute: typeof AuthenticatedLeasesLeaseIdIndexRoute
@@ -763,6 +804,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPaymentsPaymentIdIndexRoute: typeof AuthenticatedPaymentsPaymentIdIndexRoute
   AuthenticatedPropertiesPropertyIdIndexRoute: typeof AuthenticatedPropertiesPropertyIdIndexRoute
   AuthenticatedRentersRenterIdIndexRoute: typeof AuthenticatedRentersRenterIdIndexRoute
+  AuthenticatedRentersCommunicationsIndexRoute: typeof AuthenticatedRentersCommunicationsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -774,8 +816,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPaymentsAutomationRoute: AuthenticatedPaymentsAutomationRoute,
   AuthenticatedPaymentsCreateRoute: AuthenticatedPaymentsCreateRoute,
   AuthenticatedPropertiesCreateRoute: AuthenticatedPropertiesCreateRoute,
-  AuthenticatedRentersCommunicationsRoute:
-    AuthenticatedRentersCommunicationsRoute,
   AuthenticatedRentersCreateRoute: AuthenticatedRentersCreateRoute,
   AuthenticatedDocumentsIndexRoute: AuthenticatedDocumentsIndexRoute,
   AuthenticatedExpensesIndexRoute: AuthenticatedExpensesIndexRoute,
@@ -796,6 +836,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPropertiesPropertyIdEditRoute:
     AuthenticatedPropertiesPropertyIdEditRoute,
   AuthenticatedRentersRenterIdEditRoute: AuthenticatedRentersRenterIdEditRoute,
+  AuthenticatedRentersCommunicationsCommunicationIdRoute:
+    AuthenticatedRentersCommunicationsCommunicationIdRoute,
+  AuthenticatedRentersCommunicationsLogRoute:
+    AuthenticatedRentersCommunicationsLogRoute,
   AuthenticatedDocumentsDocumentIdIndexRoute:
     AuthenticatedDocumentsDocumentIdIndexRoute,
   AuthenticatedExpensesExpenseIdIndexRoute:
@@ -809,6 +853,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedPropertiesPropertyIdIndexRoute,
   AuthenticatedRentersRenterIdIndexRoute:
     AuthenticatedRentersRenterIdIndexRoute,
+  AuthenticatedRentersCommunicationsIndexRoute:
+    AuthenticatedRentersCommunicationsIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

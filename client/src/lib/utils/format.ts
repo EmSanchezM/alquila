@@ -15,3 +15,7 @@ export const today = () => {
   const pad = (n: number) => String(n).padStart(2, "0")
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
 }
+
+/** A date and time for a timestamp, in the viewer's time zone. */
+export const formatMoment = (iso: string) =>
+  new Date(iso).toLocaleString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })
