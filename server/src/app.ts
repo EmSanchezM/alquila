@@ -16,6 +16,7 @@ import maintenanceRequestRouter from "./modules/maintenance-request/presentation
 import documentRouter from "./modules/documents/presentation/routes";
 import paymentRouter from "./modules/payments/presentation/routes";
 import fileRouter from "./modules/files/presentation/routes";
+import communicationRouter from "./modules/communications/presentation/routes";
 
 const app = new Hono()
 app.use("*", logger());
@@ -35,7 +36,8 @@ const api = new Hono()
   .route("/maintenance-requests", maintenanceRequestRouter)
   .route("/documents", documentRouter)
   .route("/payments", paymentRouter)
-  .route("/files", fileRouter);
+  .route("/files", fileRouter)
+  .route("/communications", communicationRouter);
 
 const routes = app.route("/api", api);
 
