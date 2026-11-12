@@ -368,6 +368,7 @@ export type MaintenanceRequest = typeof maintenanceRequests.$inferSelect;
 export type Document = typeof documents.$inferSelect;
 export type Payment = typeof payments.$inferSelect;
 export type Communication = typeof communications.$inferSelect;
+export type CommunicationTemplate = typeof communicationTemplates.$inferSelect;
 
 
 export type NewProperty = typeof properties.$inferInsert;
@@ -378,3 +379,4 @@ export type NewMaintenanceRequest = typeof maintenanceRequests.$inferInsert;
 export type NewDocument = typeof documents.$inferInsert;
 export type NewPayment = typeof payments.$inferInsert;
 export type NewCommunication = typeof communications.$inferInsert;
+export type NewCommunicationTemplate = typeof communicationTemplates.$inferInsert;

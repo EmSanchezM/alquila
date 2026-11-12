@@ -17,6 +17,7 @@ import documentRouter from "./modules/documents/presentation/routes";
 import paymentRouter from "./modules/payments/presentation/routes";
 import fileRouter from "./modules/files/presentation/routes";
 import communicationRouter from "./modules/communications/presentation/routes";
+import templateRouter from "./modules/communication-templates/presentation/routes";
 
 const app = new Hono()
 app.use("*", logger());
@@ -37,7 +38,8 @@ const api = new Hono()
   .route("/documents", documentRouter)
   .route("/payments", paymentRouter)
   .route("/files", fileRouter)
-  .route("/communications", communicationRouter);
+  .route("/communications", communicationRouter)
+  .route("/communication-templates", templateRouter);
 
 const routes = app.route("/api", api);
 

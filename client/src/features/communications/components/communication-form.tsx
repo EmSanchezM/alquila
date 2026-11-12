@@ -9,6 +9,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { COMMUNICATION_DIRECTIONS, COMMUNICATION_STATUSES, COMMUNICATION_TYPES } from "@/lib/services/communications"
+import { getAllTemplatesQueryOptions } from "@/lib/services/communication-templates"
+import { getAllLeasesQueryOptions } from "@/lib/services/leases"
+import { formatDay, formatMoney, today } from "@/lib/utils/format"
+import { nextDueDate, renderTemplate, type TemplateValues } from "@/lib/utils/template"
 import { getAllPropertiesQueryOptions } from "@/lib/services/properties"
 import { getAllRentersQueryOptions, renterName } from "@/lib/services/renters"
 import { CommunicationFormValidation, NO_LINK, type CommunicationFormValues } from "@/lib/validations/communications"
@@ -31,6 +35,31 @@ export default function CommunicationForm({ defaultValues, isPending, error, can
 
   const properties = useQuery(getAllPropertiesQueryOptions)
   const renters = useQuery(getAllRentersQueryOptions)
+  const leases = useQuery(getAllLeasesQueryOptions)
+  const templates = useQuery(getAllTemplatesQueryOptions)
+
+  /** Fills type, subject and message from a template, with the selected renter's data and active lease. */
+  function applyTemplate(templateId: string) {
+    const template = templates.data?.find((t) => t.id === templateId)
+    if (!template) return
+
+    const renterId = form.getValues("renterId")
+    const renter = renters.data?.find((r) => r.id === renterId)
+    const lease = leases.data?.find((l) => l.renterId === renterId && l.status === "active")
+    const values: TemplateValues = {
+      ...(renter && { tenant_name: renterName(renter) }),
+      ...(lease && {
+        property_name: lease.propertyName,
+        amount: formatMoney(lease.monthlyRent),
+        due_date: formatDay(nextDueDate(today(), lease.paymentDueDay)),
+      }),
+    }
+
+    form.setValue("type", template.type, { shouldValidate: true })
+    form.setValue("subject", renderTemplate(template.subject ?? "", values))
+    form.setValue("message", renderTemplate(template.content, values), { shouldValidate: true })
+    if (lease && form.getValues("propertyId") === NO_LINK) form.setValue("propertyId", lease.propertyId)
+  }
 
   const select = (name: SelectFieldName, label: string, options: readonly { value: string, label: string }[], disabled = false) => (
     <FormField
@@ -85,6 +114,24 @@ export default function CommunicationForm({ defaultValues, isPending, error, can
             )}
           />
         </div>
+
+        {(templates.data?.length ?? 0) > 0 && (
+          <div className="grid gap-2">
+            <label className="text-sm font-medium" id="use-template-label">Use template (optional)</label>
+            {/* Wait for renters and leases: picking a template before they load would leave variables unfilled. */}
+            <Select value="" onValueChange={applyTemplate} disabled={renters.isLoading || leases.isLoading}>
+              <SelectTrigger className="w-full sm:max-w-sm" aria-labelledby="use-template-label">
+                <SelectValue placeholder="Select a template" />
+              </SelectTrigger>
+              <SelectContent>
+                {templates.data?.map((template) => (
+                  <SelectItem key={template.id} value={template.id}>{template.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-gray-500">Pick the renter first: the template's variables are filled with their name and active lease.</p>
+          </div>
+        )}
 
         <FormField
           control={form.control}
